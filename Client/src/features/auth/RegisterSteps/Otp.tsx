@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import FormHelperText from "@mui/material/FormHelperText";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 type stepTwoProps = {
   value: string;
@@ -16,6 +17,7 @@ type stepTwoProps = {
   serverError: string | null;
   email: string;
   handleNext: () => void;
+  handleBack: () => void;
   isPending: boolean;
 };
 
@@ -26,12 +28,14 @@ export function Otp({
   serverError,
   email,
   handleNext,
+  handleBack,
   isPending,
 }: stepTwoProps) {
   const theme = useTheme();
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
   const timerLength = 300000;
   const [endTime, setEndTime] = useState(Date.now() + timerLength);
+  const isSmOrLarger = useMediaQuery(theme.breakpoints.up("sm"));
 
   const onResendCick = () => {
     setEndTime(Date.now() + timerLength);
@@ -101,6 +105,7 @@ export function Otp({
             variant="text"
             disableRipple
             disableTouchRipple
+            disableFocusRipple
             disabled={isResendDisabled}
             onClick={onResendCick}
             sx={{
@@ -126,6 +131,12 @@ export function Otp({
       >
         {serverError !== null ? serverError : "Continue"}
       </Button>
+
+      {isSmOrLarger && (
+        <Button variant="outlined" type="button" size="large" onClick={handleBack}>
+          Back
+        </Button>
+      )}
     </Stack>
   );
 }

@@ -11,6 +11,8 @@ import { useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import Button from "@mui/material/Button";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import {
   usernameSchema,
@@ -123,6 +125,17 @@ export function Register() {
     }
   };
 
+  const handleBack = () => {
+    switch (step) {
+      case 1:
+      case 2:
+        setStep(0);
+        break;
+      case 3:
+        setStep(2);
+    }
+  };
+
   const onSubmit = (data: registerSchema) => {
     console.log(data);
   };
@@ -145,6 +158,17 @@ export function Register() {
         activeStep={step}
         setActiveStep={(value) => setStep(value)}
       />
+      {/*Render Back button if it's a mobile screen*/}
+      {step !== 0 && !isSmOrLarger && (
+        <Button
+          variant="text"
+          type="button"
+          startIcon={<ArrowBackIcon />}
+          onClick={handleBack}
+          sx={{ alignSelf: "start" }}
+        />
+      )}
+
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           {step === 0 && (
@@ -165,6 +189,7 @@ export function Register() {
                   error={errors.otp}
                   serverError={serverError}
                   handleNext={handleNext}
+                  handleBack={handleBack}
                   isPending={verifyOtpMutation.isPending}
                 />
               )}
