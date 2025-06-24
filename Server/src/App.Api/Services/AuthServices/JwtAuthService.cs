@@ -1,4 +1,5 @@
 using App.Api.Data;
+using App.Api.Data.Entities;
 using App.Api.Services.EmailServices;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,9 +9,19 @@ public class JwtAuthService(AppDbContext context, IEmailService emailService) : 
 {
     public async Task<Results> VerifyUserCredentialsAsync(string username, string email)
     {
-        var exists = await context.Users.AnyAsync(u => u.Username == username || u.Email == email);
-        if (exists)
-            return Results.Failure("User with Credentials Exists");
+        var existingUser = await context.Users.FirstOrDefaultAsync(u =>
+            u.Username == username || u.Email == email
+        );
+
+        if (existingUser is not null)
+        {
+            if (existingUser.Role != UserRoles.Unverified)
+            {
+                return Results.Failure("User with Credentials Exists");
+            }
+            context.Users.Remove(existingUser);
+            await context.SaveChangesAsync();
+        }
 
         string otp = (Random.NextInt() % 1000000).ToString("000000");
         var emailResult = await emailService.SendEmailVerificationAsync(
@@ -20,6 +31,19 @@ public class JwtAuthService(AppDbContext context, IEmailService emailService) : 
         );
         if (!emailResult.IsSuccess)
             return Results.Failure(emailResult.ErrorMessage!);
+
+        var newUser = new User
+        {
+            Username = username,
+            Email = email,
+            Otp = otp,
+            OtpExpiresAt = DateTime.Now.AddMinutes(1.5),
+            Role = UserRoles.Unverified,
+        };
+
+        // Update database
+        context.Users.Add(newUser);
+        await context.SaveChangesAsync();
 
         return Results.Success();
     }

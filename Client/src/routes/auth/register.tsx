@@ -80,8 +80,8 @@ export function Register() {
       console.log("Verification successful: ", data.data);
       setStep(1);
     },
-    onError: (error: AxiosError<{ message: string }>) => {
-      const errorMessage = error.response?.data.message || error.message;
+    onError: (error: AxiosError) => {
+      const errorMessage = error.request.response || error.message;
       handleServerError(errorMessage);
     },
   });
