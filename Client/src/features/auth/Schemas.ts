@@ -18,7 +18,7 @@ export const emailSchema = z
   .max(100, "Maximum 100 characters")
   .email("Invalid email address");
 
-export const otpSchema = z.string().length(5, "Invalid code");
+export const otpSchema = z.string().length(6, "Invalid code");
 
 export const passwordSchema = z
   .string()

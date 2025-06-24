@@ -44,7 +44,7 @@ if (builder.Environment.IsDevelopment())
 }
 
 // JWT Authentication Service
-builder.Services.AddScoped<IAuthService, JwtAuthService>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 
 var app = builder.Build();
 

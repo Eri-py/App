@@ -22,7 +22,7 @@ import {
 } from "../../features/auth/Schemas";
 import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndEmail";
 import HorizontalLinearStepper from "../../features/auth/components/HorizontalLinearStepper";
-import { verifyOtp, verifyRegistrationCredentials } from "../../api/auth";
+import { verifyOtp, startRegisteration } from "../../api/auth";
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
 import { Otp } from "../../features/auth/RegisterSteps/Otp";
 
@@ -76,7 +76,8 @@ export function Register() {
 
   const verifyCredentialsMutation = useMutation({
     mutationFn: ({ username, email }: { username: string; email: string }) =>
-      verifyRegistrationCredentials(username, email),
+      startRegisteration(username, email),
+
     onSuccess: () => {
       setStep(1);
     },
@@ -87,13 +88,15 @@ export function Register() {
   });
 
   const verifyOtpMutation = useMutation({
-    mutationFn: (otp: string) => verifyOtp(otp),
+    mutationFn: ({ username, email, otp }: { username: string; email: string; otp: string }) =>
+      verifyOtp(username, email, otp),
+
     onSuccess: () => {
       setStep(2);
     },
-    onError: (error) => {
-      console.log("Verification failed: ", error.message);
-      handleServerError(error.message);
+    onError: (error: AxiosError) => {
+      const errorMessage = error.request.response || error.message;
+      handleServerError(errorMessage);
     },
   });
 
@@ -110,6 +113,12 @@ export function Register() {
           await verifyCredentialsMutation.mutateAsync({ username, email });
           break;
         }
+        case 1: {
+          const [username, email] = methods.getValues(["username", "email"]);
+          const [otp] = values;
+          await verifyOtpMutation.mutateAsync({ username, email, otp });
+          break;
+        }
       }
     }
   };
@@ -117,6 +126,7 @@ export function Register() {
   const onSubmit = (data: registerSchema) => {
     console.log(data);
   };
+
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
   const form = (
     <Stack

@@ -30,7 +30,7 @@ export function Otp({
 }: stepTwoProps) {
   const theme = useTheme();
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
-  const timerLength = 90000;
+  const timerLength = 300000;
   const [endTime, setEndTime] = useState(Date.now() + timerLength);
 
   const onResendCick = () => {
@@ -50,7 +50,7 @@ export function Otp({
           color={theme.palette.text.secondary}
           sx={{ textWrap: "nowrap" }}
         >
-          Enter the <b>5 digit code</b> sent to the email address below
+          Enter the <b>6 digit code</b> sent to the email address below
           <br /> <b>{email ? email.toLowerCase() : "dummyemail@gmail.com"}</b>
         </Typography>
       </Stack>
