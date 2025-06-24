@@ -1,4 +1,4 @@
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -22,8 +22,9 @@ import {
 } from "../../features/auth/Schemas";
 import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndEmail";
 import HorizontalLinearStepper from "../../features/auth/components/HorizontalLinearStepper";
-import { verifyRegistrationCredentials } from "../../api/auth";
+import { verifyOtp, verifyRegistrationCredentials } from "../../api/auth";
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
+import { Otp } from "../../features/auth/RegisterSteps/Otp";
 
 export const Route = createFileRoute("/auth/register")({
   component: Register,
@@ -76,13 +77,23 @@ export function Register() {
   const verifyCredentialsMutation = useMutation({
     mutationFn: ({ username, email }: { username: string; email: string }) =>
       verifyRegistrationCredentials(username, email),
-    onSuccess: (data) => {
-      console.log("Verification successful: ", data.data);
+    onSuccess: () => {
       setStep(1);
     },
     onError: (error: AxiosError) => {
       const errorMessage = error.request.response || error.message;
       handleServerError(errorMessage);
+    },
+  });
+
+  const verifyOtpMutation = useMutation({
+    mutationFn: (otp: string) => verifyOtp(otp),
+    onSuccess: () => {
+      setStep(2);
+    },
+    onError: (error) => {
+      console.log("Verification failed: ", error.message);
+      handleServerError(error.message);
     },
   });
 
@@ -131,6 +142,22 @@ export function Register() {
               handleNext={handleNext}
               isPending={verifyCredentialsMutation.isPending}
               serverError={serverError}
+            />
+          )}
+          {step === 1 && (
+            <Controller
+              control={methods.control}
+              name="otp"
+              render={({ field, formState: { errors } }) => (
+                <Otp
+                  {...field}
+                  email={methods.getValues("email")}
+                  error={errors.otp}
+                  serverError={serverError}
+                  handleNext={handleNext}
+                  isPending={verifyOtpMutation.isPending}
+                />
+              )}
             />
           )}
         </form>
