@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace App.Api.Dtos;
 
-public record class VerifyRegistrationCredentialRequest
+public record class StartRegistrationRequest
 {
     [Required]
     public string? Username { get; set; }
