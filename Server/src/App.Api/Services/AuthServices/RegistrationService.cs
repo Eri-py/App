@@ -57,7 +57,7 @@ public class RegistrationService(AppDbContext context, IEmailService emailServic
         var user = await context.Users.FirstOrDefaultAsync(u =>
             u.Username == username && u.Email == email && u.Otp == otp
         );
-        if (user is null || user.OtpExpiresAt < DateTime.Now)
+        if (user is null || user.OtpExpiresAt < DateTime.UtcNow)
         {
             return Result.BadRequest("Invalid Verification code");
         }
