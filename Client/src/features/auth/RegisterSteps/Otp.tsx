@@ -8,34 +8,35 @@ import Button from "@mui/material/Button";
 import FormHelperText from "@mui/material/FormHelperText";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
-type stepTwoProps = {
+type otpProps = {
+  email: string;
   value: string;
   onChange: (value: string) => void;
   error: FieldError | undefined;
   serverError: string | null;
-  email: string;
-  handleNext: () => void;
+  isSmOrLarger?: boolean;
   handleBack: () => void;
+  handleNext: () => void;
   isPending: boolean;
 };
 
 export function Otp({
+  email,
   value,
   onChange,
   error,
   serverError,
-  email,
-  handleNext,
+  isSmOrLarger,
   handleBack,
+  handleNext,
   isPending,
-}: stepTwoProps) {
+}: otpProps) {
   const theme = useTheme();
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
+
   const timerLength = 300000;
   const [endTime, setEndTime] = useState(Date.now() + timerLength);
-  const isSmOrLarger = useMediaQuery(theme.breakpoints.up("sm"));
 
   const onResendCick = () => {
     setEndTime(Date.now() + timerLength);
@@ -55,7 +56,7 @@ export function Otp({
           sx={{ textWrap: "nowrap" }}
         >
           Enter the <b>6 digit code</b> sent to the email address below
-          <br /> <b>{email ? email.toLowerCase() : "dummyemail@gmail.com"}</b>
+          <br /> <b>{email ? email.toLowerCase() : "someone@example.com"}</b>
         </Typography>
       </Stack>
 

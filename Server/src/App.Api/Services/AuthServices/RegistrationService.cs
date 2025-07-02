@@ -1,7 +1,6 @@
 using App.Api.Data;
 using App.Api.Data.Entities;
 using App.Api.Services.EmailServices;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Api.Services.AuthServices;
@@ -9,69 +8,68 @@ namespace App.Api.Services.AuthServices;
 public class RegistrationService(AppDbContext context, IEmailService emailService)
     : IRegistrationService
 {
-    public async Task<Results> StartRegistrationAsync(string username, string email)
+    public async Task<Result> StartRegistrationAsync(string username, string email)
     {
         var user = await context.Users.FirstOrDefaultAsync(u =>
             u.Username == username || u.Email == email
         );
-
         string otp = (Random.NextInt() % 1000000).ToString("000000");
 
         if (user is not null)
         {
             if (user.Role != UserRoles.Unverified)
             {
-                return Results.Failure("User with these credentials already exists");
+                return Result.Conflict("User with these credentials already exists");
             }
-
+            user.Username = username;
+            user.Email = email;
             user.Otp = otp;
-            user.OtpExpiresAt = DateTime.Now.AddMinutes(5);
+            user.OtpExpiresAt = DateTime.UtcNow.AddMinutes(5);
         }
         else
         {
-            // Create new user
             var newUser = new User
             {
                 Username = username,
                 Email = email,
                 Otp = otp,
-                OtpExpiresAt = DateTime.Now.AddMinutes(5),
+                OtpExpiresAt = DateTime.UtcNow.AddMinutes(5),
                 Role = UserRoles.Unverified,
             };
             context.Users.Add(newUser);
         }
+
+        await context.SaveChangesAsync();
 
         var emailResult = await emailService.SendEmailVerificationAsync(
             to: email,
             username: username,
             verificationToken: otp
         );
-        // if (!emailResult.IsSuccess)
-        //     return Results.Failure(emailResult.ErrorMessage!);
+        if (!emailResult.IsSuccess)
+            return emailResult;
 
-        await context.SaveChangesAsync();
-        return Results.Success();
+        return Result.NoContent();
     }
 
-    public async Task<Results> VerifyOtpAsync(string username, string email, string otp)
+    public async Task<Result> VerifyOtpAsync(string username, string email, string otp)
     {
         var user = await context.Users.FirstOrDefaultAsync(u =>
             u.Username == username && u.Email == email && u.Otp == otp
         );
-
         if (user is null || user.OtpExpiresAt < DateTime.Now)
         {
-            return Results.Failure("Invalid Verification code");
+            return Result.BadRequest("Invalid Verification code");
         }
 
         user.Otp = null;
         user.OtpExpiresAt = null;
         await context.SaveChangesAsync();
 
-        return Results.Success();
+        return Result.NoContent();
     }
 
-    public Task<Results> CompleteRegistrationAsync()
+    public Task<Result> CompleteRegistrationAsync()
     {
         throw new NotImplementedException();
     }

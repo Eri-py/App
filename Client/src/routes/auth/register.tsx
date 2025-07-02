@@ -23,7 +23,7 @@ import {
   dateOfBirthSchema,
 } from "../../features/auth/Schemas";
 import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndEmail";
-import HorizontalLinearStepper from "../../features/auth/components/HorizontalLinearStepper";
+import { HorizontalLinearStepper } from "../../features/auth/components/HorizontalLinearStepper";
 import { verifyOtp, startRegisteration } from "../../api/auth";
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
 import { Otp } from "../../features/auth/RegisterSteps/Otp";
@@ -54,8 +54,8 @@ const registrationSteps: Record<number, (keyof registerSchema)[]> = {
 const registrationStepsLabels: string[] = [
   "Username and Email",
   "Verifiction Code",
-  "Step three",
-  "Step four",
+  "Password",
+  "Personal Details",
 ];
 
 export function Register() {
@@ -188,8 +188,9 @@ export function Register() {
                   email={methods.getValues("email")}
                   error={errors.otp}
                   serverError={serverError}
-                  handleNext={handleNext}
+                  isSmOrLarger={isSmOrLarger}
                   handleBack={handleBack}
+                  handleNext={handleNext}
                   isPending={verifyOtpMutation.isPending}
                 />
               )}

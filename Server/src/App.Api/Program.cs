@@ -7,7 +7,6 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -40,10 +39,10 @@ if (builder.Environment.IsDevelopment())
     );
 
     // Testing Email Service
-    builder.Services.AddScoped<IEmailService, MailkitEmailService>();
+    builder.Services.AddScoped<IEmailService, MailtrapEmailService>();
 }
 
-// JWT Authentication Service
+// Authentication Services
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 
 var app = builder.Build();

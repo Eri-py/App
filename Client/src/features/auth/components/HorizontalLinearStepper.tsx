@@ -9,10 +9,7 @@ type HorizontalLinearStepperProps = {
   setActiveStep: (value: number) => void;
 };
 
-export default function HorizontalLinearStepper({
-  steps,
-  activeStep,
-}: HorizontalLinearStepperProps) {
+export function HorizontalLinearStepper({ steps, activeStep }: HorizontalLinearStepperProps) {
   return (
     <Box>
       <Stepper activeStep={activeStep} alternativeLabel>
