@@ -1,25 +1,28 @@
 import { useTheme } from "@mui/material/styles";
 import { useFormContext } from "react-hook-form";
 import { useState } from "react";
+import type { ReactNode } from "@tanstack/react-router";
 
 import TextField from "@mui/material/TextField";
-import LockIcon from "@mui/icons-material/Lock";
 import Button from "@mui/material/Button";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-type PasswordFieldProps = {
+type CustomTextFieldProps = {
+  type: string;
   label: string;
   fieldValue: string;
+  startIcon: ReactNode;
 };
 
-export function PasswordField({ label, fieldValue }: PasswordFieldProps) {
+export function CustomTextField({ type, label, fieldValue, startIcon }: CustomTextFieldProps) {
   const theme = useTheme();
   const {
     register,
     formState: { errors },
   } = useFormContext();
 
+  const isPasswordField = type === "password";
   const [isPasswordVisible, setPasswordVisible] = useState(false);
 
   const getEndAdornment = () => {
@@ -35,7 +38,7 @@ export function PasswordField({ label, fieldValue }: PasswordFieldProps) {
         }}
         sx={{
           padding: "0",
-          color: "black",
+          color: theme.palette.text.primary,
           "&:hover": {
             background: "none",
           },
@@ -49,14 +52,14 @@ export function PasswordField({ label, fieldValue }: PasswordFieldProps) {
   return (
     <TextField
       variant="outlined"
-      type={isPasswordVisible ? "text" : "password"}
+      type={isPasswordField ? (isPasswordVisible ? "text" : "password") : type}
       label={label}
       error={!!errors[fieldValue]}
       helperText={errors[fieldValue]?.message as string}
       slotProps={{
         input: {
-          startAdornment: <LockIcon />,
-          endAdornment: getEndAdornment(),
+          startAdornment: startIcon,
+          endAdornment: isPasswordField && getEndAdornment(),
           sx: {
             gap: "0.75rem",
             backgroundColor: theme.palette.background.paper,

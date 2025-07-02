@@ -1,7 +1,5 @@
-import { useFormContext } from "react-hook-form";
 import { Link } from "@tanstack/react-router";
 
-import TextField from "@mui/material/TextField";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import Button from "@mui/material/Button";
@@ -13,6 +11,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 import { FacebookIcon, GoogleIcon } from "../../../components/CustomIcons";
+import { CustomTextField } from "../components/CustomTextField";
 
 const CircularButton = styled(Button)(({ theme }) => ({
   minWidth: "48px",
@@ -38,10 +37,6 @@ type usernameAndEmailProps = {
 
 export function UsernameAndEmail({ handleNext, isPending, serverError }: usernameAndEmailProps) {
   const theme = useTheme();
-  const {
-    register,
-    formState: { errors },
-  } = useFormContext();
 
   return (
     <Stack gap={3} paddingInline={1.5}>
@@ -54,43 +49,18 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: usernam
         </Typography>
       </Stack>
 
-      <TextField
-        variant="outlined"
+      <CustomTextField
         type="text"
         label="Username"
-        error={!!errors.username}
-        helperText={errors.username?.message as string}
-        slotProps={{
-          input: {
-            startAdornment: <PersonOutlinedIcon />,
-            sx: {
-              gap: "0.75rem",
-              backgroundColor: theme.palette.background.paper,
-            },
-          },
-          htmlInput: {
-            ...register("username"),
-          },
-        }}
+        fieldValue="username"
+        startIcon={<PersonOutlinedIcon />}
       />
 
-      <TextField
-        variant="outlined"
+      <CustomTextField
         type="email"
         label="Email"
-        placeholder="e.g Someone@example.com"
-        error={!!errors.email}
-        helperText={errors.email?.message as string}
-        slotProps={{
-          input: {
-            startAdornment: <EmailOutlinedIcon />,
-            sx: {
-              gap: "0.75rem",
-              backgroundColor: theme.palette.background.paper,
-            },
-          },
-          htmlInput: { ...register("email") },
-        }}
+        fieldValue="email"
+        startIcon={<EmailOutlinedIcon />}
       />
 
       <Button
@@ -119,6 +89,7 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: usernam
         <Divider sx={{ flexGrow: 1 }} />
       </Box>
 
+      {/*OAuth Button group*/}
       <Stack direction="row" spacing={2} alignSelf="center">
         <CircularButton type="button" variant="outlined">
           <GoogleIcon width="32px" />
@@ -136,6 +107,7 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: usernam
         </CircularButton>
       </Stack>
 
+      {/*Footer*/}
       <Stack gap={2}>
         <Divider sx={{ borderColor: theme.palette.divider }} />
         <Typography

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const genericTextSchema = (fieldLabel: string) =>
-  z.string().min(1, `Please enter a ${fieldLabel}`).max(100, "Maximum 100 characters");
+  z.string().min(1, `Please enter ${fieldLabel}`).max(100, "Maximum 100 characters");
 
 export const usernameSchema = z
   .string()
@@ -22,13 +22,13 @@ export const otpSchema = z.string().length(6, "Invalid code");
 
 export const passwordSchema = z
   .string()
-  .min(8, "Password must be greater than 8 characters")
-  .max(64, "Password must be less than 15 characters")
-  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-  .regex(/[0-9]/, "Password must contain at least one digit")
-  .regex(/[#?!@$%^&\-.]/, "Password must contain at least one special character")
-  .regex(/^[A-Za-z0-9#?!@$%^&\-.]+$/, "Password contains invalid characters");
+  .min(8, "Invalid Password")
+  .max(64, "Invalid Password")
+  .regex(/[A-Z]/, "Invalid Password")
+  .regex(/[a-z]/, "Invalid Password")
+  .regex(/[0-9]/, "Invalid Password")
+  .regex(/[#?!@$%^&\-.]/, "Invalid Password")
+  .regex(/^[A-Za-z0-9#?!@$%^&\-.]+$/, "Invalid Password");
 
 export const dateOfBirthSchema = z.string().refine(
   (value) => {

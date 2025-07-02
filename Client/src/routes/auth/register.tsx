@@ -1,5 +1,5 @@
 import { useForm, FormProvider, Controller } from "react-hook-form";
-import { z } from "zod";
+import { string, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -36,7 +36,7 @@ const ResgisterSchema = z.object({
   email: emailSchema,
   otp: otpSchema,
   password: passwordSchema,
-  confirmPassword: genericTextSchema("Password again"),
+  confirmPassword: string().min(3, "Enter password again"),
   name: genericTextSchema("Name"),
   dateOfBirth: dateOfBirthSchema,
 });
@@ -58,7 +58,7 @@ const registrationStepsLabels: string[] = [
 ];
 
 export function Register() {
-  const [step, setStep] = useState<number>(1);
+  const [step, setStep] = useState<number>(0);
   const [serverError, setServerError] = useState<string | null>(null);
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
@@ -120,20 +120,15 @@ export function Register() {
           await verifyOtpMutation.mutateAsync({ username, email, otp });
           break;
         }
+        case 2: {
+          const [password, confirmPassword] = values;
+          if (password !== confirmPassword) {
+            methods.setError("confirmPassword", { message: "Passwords do not match" });
+            return;
+          }
+          setStep(3);
+        }
       }
-    }
-  };
-
-  const handleBack = () => {
-    methods.resetField("otp");
-
-    switch (step) {
-      case 1:
-      case 2:
-        setStep(0);
-        break;
-      case 3:
-        setStep(2);
     }
   };
 
@@ -179,7 +174,7 @@ export function Register() {
                   email={methods.getValues("email")}
                   error={errors.otp}
                   serverError={serverError}
-                  handleBack={handleBack}
+                  handleBack={() => setStep(0)}
                   handleNext={handleNext}
                   isPending={verifyOtpMutation.isPending}
                 />
@@ -189,7 +184,6 @@ export function Register() {
           {step === 2 && (
             <Password
               handleNext={handleNext}
-              handleBack={handleBack}
               isPending={verifyCredentialsMutation.isPending}
               serverError={serverError}
             />
