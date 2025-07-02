@@ -92,6 +92,12 @@ export function Otp({
                 </b>
               </Typography>
             );
+          } else {
+            return (
+              <Typography fontSize={15} color={theme.palette.error.main} textAlign="center">
+                Code expired
+              </Typography>
+            );
           }
         }}
       />
