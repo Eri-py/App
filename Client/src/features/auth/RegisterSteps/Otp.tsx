@@ -15,7 +15,6 @@ type otpProps = {
   onChange: (value: string) => void;
   error: FieldError | undefined;
   serverError: string | null;
-  isSmOrLarger?: boolean;
   handleBack: () => void;
   handleNext: () => void;
   isPending: boolean;
@@ -27,7 +26,6 @@ export function Otp({
   onChange,
   error,
   serverError,
-  isSmOrLarger,
   handleBack,
   handleNext,
   isPending,
@@ -94,6 +92,12 @@ export function Otp({
                 </b>
               </Typography>
             );
+          } else {
+            return (
+              <Typography fontSize={15} color={theme.palette.error.main} textAlign="center">
+                Code expired
+              </Typography>
+            );
           }
         }}
       />
@@ -133,11 +137,9 @@ export function Otp({
         {serverError !== null ? serverError : "Continue"}
       </Button>
 
-      {isSmOrLarger && (
-        <Button variant="outlined" type="button" size="large" onClick={handleBack}>
-          Back
-        </Button>
-      )}
+      <Button variant="outlined" type="button" size="large" onClick={handleBack}>
+        Back
+      </Button>
     </Stack>
   );
 }

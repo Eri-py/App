@@ -1,5 +1,5 @@
 import { useForm, FormProvider, Controller } from "react-hook-form";
-import { z } from "zod";
+import { string, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -11,8 +11,6 @@ import { useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Button from "@mui/material/Button";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import {
   usernameSchema,
@@ -27,6 +25,7 @@ import { HorizontalLinearStepper } from "../../features/auth/components/Horizont
 import { verifyOtp, startRegisteration } from "../../api/auth";
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
 import { Otp } from "../../features/auth/RegisterSteps/Otp";
+import { Password } from "../../features/auth/RegisterSteps/Password";
 
 export const Route = createFileRoute("/auth/register")({
   component: Register,
@@ -37,7 +36,7 @@ const ResgisterSchema = z.object({
   email: emailSchema,
   otp: otpSchema,
   password: passwordSchema,
-  confirmPassword: genericTextSchema("Password again"),
+  confirmPassword: string().min(3, "Enter password again"),
   name: genericTextSchema("Name"),
   dateOfBirth: dateOfBirthSchema,
 });
@@ -121,18 +120,15 @@ export function Register() {
           await verifyOtpMutation.mutateAsync({ username, email, otp });
           break;
         }
+        case 2: {
+          const [password, confirmPassword] = values;
+          if (password !== confirmPassword) {
+            methods.setError("confirmPassword", { message: "Passwords do not match" });
+            return;
+          }
+          setStep(3);
+        }
       }
-    }
-  };
-
-  const handleBack = () => {
-    switch (step) {
-      case 1:
-      case 2:
-        setStep(0);
-        break;
-      case 3:
-        setStep(2);
     }
   };
 
@@ -158,16 +154,6 @@ export function Register() {
         activeStep={step}
         setActiveStep={(value) => setStep(value)}
       />
-      {/*Render Back button if it's a mobile screen*/}
-      {step !== 0 && !isSmOrLarger && (
-        <Button
-          variant="text"
-          type="button"
-          startIcon={<ArrowBackIcon />}
-          onClick={handleBack}
-          sx={{ alignSelf: "start" }}
-        />
-      )}
 
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
@@ -188,12 +174,18 @@ export function Register() {
                   email={methods.getValues("email")}
                   error={errors.otp}
                   serverError={serverError}
-                  isSmOrLarger={isSmOrLarger}
-                  handleBack={handleBack}
+                  handleBack={() => setStep(0)}
                   handleNext={handleNext}
                   isPending={verifyOtpMutation.isPending}
                 />
               )}
+            />
+          )}
+          {step === 2 && (
+            <Password
+              handleNext={handleNext}
+              isPending={verifyCredentialsMutation.isPending}
+              serverError={serverError}
             />
           )}
         </form>
