@@ -1,30 +1,57 @@
 using App.Api.Dtos;
+using App.Api.Services;
 using App.Api.Services.AuthServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(IAuthService authService) : ControllerBase
+    public class AuthController(IRegistrationService registrationService) : ControllerBase
     {
-        [HttpPost("register/verify-credentials")]
-        public async Task<ActionResult<string>> VerifyRegistrationCredentials(
-            [FromBody] VerifyRegistrationCredentialRequest request
+        [HttpPost("register/start")]
+        public async Task<ActionResult> StartRegistration(
+            [FromBody] StartRegistrationRequest request
         )
         {
-            var username = request.Username!.ToLower();
-            var email = request.Email!.ToLower();
-            var result = await authService.VerifyUserCredentialsAsync(
-                username: username,
-                email: email
+            var result = await registrationService.StartRegistrationAsync(
+                username: request.Username!.ToLower(),
+                email: request.Email!.ToLower()
             );
 
-            if (!result.IsSuccess)
-                return BadRequest(result.ErrorMessage);
+            return ResultMapper(result);
+        }
 
-            return Ok();
+        [HttpPost("register/verify-otp")]
+        public async Task<ActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
+        {
+            var result = await registrationService.VerifyOtpAsync(
+                username: request.Username!.ToLower(),
+                email: request.Email!.ToLower(),
+                otp: request.Otp!
+            );
+
+            return ResultMapper(result);
+        }
+
+        private ActionResult ResultMapper(Result result)
+        {
+            return result.ResultType switch
+            {
+                ResultTypes.Success => Ok(result.Message),
+                ResultTypes.NoContent => NoContent(),
+                ResultTypes.Created => CreatedAtAction(null, null, result.Message),
+
+                ResultTypes.BadRequest => BadRequest(result.Message),
+                ResultTypes.Unauthorized => Unauthorized(result.Message),
+                ResultTypes.Forbidden => Forbid(result.Message!),
+                ResultTypes.NotFound => NotFound(result.Message),
+                ResultTypes.Conflict => Conflict(result.Message),
+                ResultTypes.TooManyRequests => StatusCode(429, result.Message),
+                ResultTypes.InternalServerError => StatusCode(500, result.Message),
+
+                _ => StatusCode(500, "An unexpected error occurred"),
+            };
         }
     }
 }

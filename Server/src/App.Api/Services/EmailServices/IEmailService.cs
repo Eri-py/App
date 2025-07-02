@@ -4,8 +4,8 @@ namespace App.Api.Services.EmailServices;
 
 public interface IEmailService
 {
-    public Task<bool> SendEmailAsync(string to, string subject, string body);
-    public Task<Results> SendEmailVerificationAsync(
+    public Task<Result> SendEmailAsync(string to, string subject, string body);
+    public Task<Result> SendEmailVerificationAsync(
         string to,
         string username,
         string verificationToken

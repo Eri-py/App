@@ -4,17 +4,17 @@ using MimeKit;
 
 namespace App.Api.Services.EmailServices;
 
-public class MailkitEmailService(IConfiguration configuration) : IEmailService
+public class MailtrapEmailService(IConfiguration configuration) : IEmailService
 {
-    public async Task<bool> SendEmailAsync(string to, string subject, string body)
+    public async Task<Result> SendEmailAsync(string to, string subject, string body)
     {
         try
         {
             var message = new MimeMessage();
             message.From.Add(
                 new MailboxAddress(
-                    configuration["Mailkit:FromName"],
-                    configuration["Mailkit:FromAddress"]
+                    configuration["Mailtrap:FromName"],
+                    configuration["Mailtrap:FromAddress"]
                 )
             );
             message.To.Add(MailboxAddress.Parse(to));
@@ -25,29 +25,29 @@ public class MailkitEmailService(IConfiguration configuration) : IEmailService
 
             using var client = new SmtpClient();
             await client.ConnectAsync(
-                configuration["Mailkit:Host"],
-                int.Parse(configuration["Mailkit:Port"]!),
+                configuration["Mailtrap:Host"],
+                int.Parse(configuration["Mailtrap:Port"]!),
                 SecureSocketOptions.StartTls
             );
 
             await client.AuthenticateAsync(
-                configuration["Mailkit:Username"],
-                configuration["Mailkit:Password"]
+                configuration["Mailtrap:Username"],
+                configuration["Mailtrap:Password"]
             );
 
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
 
-            return true;
+            return Result.NoContent();
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            return false;
+            return Result.InternalServerError("Error sending email");
         }
     }
 
-    public async Task<Results> SendEmailVerificationAsync(
+    public async Task<Result> SendEmailVerificationAsync(
         string to,
         string username,
         string verificationCode
@@ -64,10 +64,7 @@ public class MailkitEmailService(IConfiguration configuration) : IEmailService
             .Replace("{{Username}}", username)
             .Replace("{{VerificationCode}}", verificationCode);
 
-        var isSuccess = await SendEmailAsync(to, "Verify Your Email Address", htmlBody);
-        if (!isSuccess)
-            return Results.Failure("Error sending verification email");
-
-        return Results.Success();
+        var emailResult = await SendEmailAsync(to, "Verify Your Email Address", htmlBody);
+        return emailResult;
     }
 }

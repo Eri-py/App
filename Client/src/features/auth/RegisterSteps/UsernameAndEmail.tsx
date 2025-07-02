@@ -20,7 +20,6 @@ const CircularButton = styled(Button)(({ theme }) => ({
   aspectRatio: "1",
   borderRadius: "50%",
   border: `1px solid ${theme.palette.primary.main}`,
-  color: theme.palette.text.primary,
   "&:hover": {
     borderColor: theme.palette.primary.light,
   },
@@ -31,13 +30,13 @@ const CustomLink = styled(Link)(({ theme }) => ({
   fontWeight: 500,
 }));
 
-type stepOneProps = {
+type usernameAndEmailProps = {
   handleNext: () => void;
   isPending: boolean;
   serverError: string | null;
 };
 
-export function UsernameAndEmail({ handleNext, isPending, serverError }: stepOneProps) {
+export function UsernameAndEmail({ handleNext, isPending, serverError }: usernameAndEmailProps) {
   const theme = useTheme();
   const {
     register,
@@ -63,7 +62,7 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: stepOne
         helperText={errors.username?.message as string}
         slotProps={{
           input: {
-            startAdornment: <PersonOutlinedIcon sx={{ color: theme.palette.text.secondary }} />,
+            startAdornment: <PersonOutlinedIcon />,
             sx: {
               gap: "0.75rem",
               backgroundColor: theme.palette.background.paper,
@@ -74,16 +73,17 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: stepOne
           },
         }}
       />
+
       <TextField
         variant="outlined"
         type="email"
         label="Email"
-        placeholder="e.g Example@gmail.com"
+        placeholder="e.g Someone@example.com"
         error={!!errors.email}
         helperText={errors.email?.message as string}
         slotProps={{
           input: {
-            startAdornment: <EmailOutlinedIcon sx={{ color: theme.palette.text.primary }} />,
+            startAdornment: <EmailOutlinedIcon />,
             sx: {
               gap: "0.75rem",
               backgroundColor: theme.palette.background.paper,
@@ -92,6 +92,7 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: stepOne
           htmlInput: { ...register("email") },
         }}
       />
+
       <Button
         variant="contained"
         size="large"
@@ -131,7 +132,7 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: stepOne
           />
         </CircularButton>
         <CircularButton type="button" variant="outlined">
-          <FacebookIcon width="32" />
+          <FacebookIcon width="32px" />
         </CircularButton>
       </Stack>
 
