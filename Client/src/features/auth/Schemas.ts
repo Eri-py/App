@@ -1,8 +1,5 @@
 import { z } from "zod";
 
-export const genericTextSchema = (fieldLabel: string) =>
-  z.string().min(1, `Please enter ${fieldLabel}`).max(100, "Maximum 100 characters");
-
 export const usernameSchema = z
   .string()
   .min(3, "Username must be at least 3 characters")
@@ -18,8 +15,6 @@ export const emailSchema = z
   .max(100, "Maximum 100 characters")
   .email("Invalid email address");
 
-export const otpSchema = z.string().length(6, "Invalid code");
-
 export const passwordSchema = z
   .string()
   .min(8, "Invalid Password")
@@ -30,24 +25,8 @@ export const passwordSchema = z
   .regex(/[#?!@$%^&\-.]/, "Invalid Password")
   .regex(/^[A-Za-z0-9#?!@$%^&\-.]+$/, "Invalid Password");
 
-export const dateOfBirthSchema = z.string().refine(
-  (value) => {
-    const inputDate = new Date(value);
-    const now = new Date();
-
-    if (isNaN(inputDate.getTime())) {
-      return false;
-    }
-
-    // Calculate age more reliably
-    const age = now.getFullYear() - inputDate.getFullYear();
-    const monthDiff = now.getMonth() - inputDate.getMonth();
-    const dayDiff = now.getDate() - inputDate.getDate();
-
-    // Adjust age if birthday hasn't occurred this year
-    const actualAge = monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
-
-    return actualAge >= 13;
-  },
-  { message: "You must be at least 13 years old." }
-);
+export const dateSchema = z.object({
+  day: z.string(),
+  month: z.string(),
+  year: z.string(),
+});

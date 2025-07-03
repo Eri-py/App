@@ -1,10 +1,19 @@
-import { apiClient } from "./client";
+import { apiClient } from "./Client";
+import type {
+  completeRegistrationRequest,
+  startRegistrationRequest,
+  verifyOtpRequest,
+} from "./Dtos";
 
 // Registration
-export const startRegisteration = (username: string, email: string) => {
-  return apiClient.post("auth/register/start", { username, email });
+export const startRegistration = (data: startRegistrationRequest) => {
+  return apiClient.post("auth/register/start", data);
 };
 
-export const verifyOtp = (username: string, email: string, otp: string) => {
-  return apiClient.post("auth/register/verify-otp", { username, email, otp });
+export const verifyOtp = (data: verifyOtpRequest) => {
+  return apiClient.post("auth/register/verify-otp", data);
+};
+
+export const completeRegistration = (data: completeRegistrationRequest) => {
+  return apiClient.post("auth/register/complete", data);
 };

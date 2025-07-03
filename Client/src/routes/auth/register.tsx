@@ -1,4 +1,4 @@
-import { useForm, FormProvider, Controller } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { string, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -15,17 +15,21 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import {
   usernameSchema,
   emailSchema,
-  otpSchema,
   passwordSchema,
-  genericTextSchema,
-  dateOfBirthSchema,
+  dateSchema,
 } from "../../features/auth/Schemas";
 import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndEmail";
 import { HorizontalLinearStepper } from "../../features/auth/components/HorizontalLinearStepper";
-import { verifyOtp, startRegisteration } from "../../api/auth";
+import { verifyOtp, startRegistration, completeRegistration } from "../../api/Auth";
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
 import { Otp } from "../../features/auth/RegisterSteps/Otp";
 import { Password } from "../../features/auth/RegisterSteps/Password";
+import { PersonalDetails } from "../../features/auth/RegisterSteps/PersonalDetails";
+import type {
+  completeRegistrationRequest,
+  startRegistrationRequest,
+  verifyOtpRequest,
+} from "../../api/Dtos";
 
 export const Route = createFileRoute("/auth/register")({
   component: Register,
@@ -34,20 +38,21 @@ export const Route = createFileRoute("/auth/register")({
 const ResgisterSchema = z.object({
   username: usernameSchema,
   email: emailSchema,
-  otp: otpSchema,
+  otp: z.string().length(6, "Invalid code"),
   password: passwordSchema,
-  confirmPassword: string().min(3, "Enter password again"),
-  name: genericTextSchema("Name"),
-  dateOfBirth: dateOfBirthSchema,
+  confirmPassword: string().min(3, "Please enter password again"),
+  firstname: string().min(3, "Firstname is required").max(64),
+  lastname: string().min(3, "Lastname is required").max(64),
+  dateOfBirth: dateSchema,
 });
 
-type registerSchema = z.infer<typeof ResgisterSchema>;
+export type registerSchema = z.infer<typeof ResgisterSchema>;
 
 const registrationSteps: Record<number, (keyof registerSchema)[]> = {
   0: ["username", "email"],
   1: ["otp"],
   2: ["password", "confirmPassword"],
-  3: ["name", "dateOfBirth"],
+  3: ["firstname", "lastname", "dateOfBirth"],
 };
 
 const registrationStepsLabels: string[] = [
@@ -68,37 +73,31 @@ export function Register() {
     resolver: zodResolver(ResgisterSchema),
   });
 
-  const handleServerError = (error: string) => {
-    setServerError(error);
+  const handleServerError = (error: AxiosError) => {
+    const errorMessage = error.request.response || error.message;
+    setServerError(errorMessage);
+
     setTimeout(() => {
       setServerError(null);
     }, 2000);
   };
 
-  const verifyCredentialsMutation = useMutation({
-    mutationFn: ({ username, email }: { username: string; email: string }) =>
-      startRegisteration(username, email),
-
-    onSuccess: () => {
-      setStep(1);
-    },
-    onError: (error: AxiosError) => {
-      const errorMessage = error.request.response || error.message;
-      handleServerError(errorMessage);
-    },
+  const startRegistrationMutation = useMutation({
+    mutationFn: (data: startRegistrationRequest) => startRegistration(data),
+    onSuccess: () => setStep(1),
+    onError: (error: AxiosError) => handleServerError(error),
   });
 
   const verifyOtpMutation = useMutation({
-    mutationFn: ({ username, email, otp }: { username: string; email: string; otp: string }) =>
-      verifyOtp(username, email, otp),
+    mutationFn: (data: verifyOtpRequest) => verifyOtp(data),
+    onSuccess: () => setStep(2),
+    onError: (error: AxiosError) => handleServerError(error),
+  });
 
-    onSuccess: () => {
-      setStep(2);
-    },
-    onError: (error: AxiosError) => {
-      const errorMessage = error.request.response || error.message;
-      handleServerError(errorMessage);
-    },
+  const completeRegistrationMutation = useMutation({
+    mutationFn: (data: completeRegistrationRequest) => completeRegistration(data),
+    onSuccess: (data) => console.log(data),
+    onError: (error: AxiosError) => handleServerError(error),
   });
 
   const handleNext = async () => {
@@ -106,34 +105,37 @@ export function Register() {
     const isValid = await methods.trigger(currentStep);
 
     if (isValid) {
-      const values = methods.getValues(currentStep);
-
       switch (step) {
         case 0: {
-          const [username, email] = values;
-          await verifyCredentialsMutation.mutateAsync({ username, email });
+          const username = methods.getValues("username");
+          const email = methods.getValues("email");
+          await startRegistrationMutation.mutateAsync({ username, email });
           break;
         }
         case 1: {
-          const [username, email] = methods.getValues(["username", "email"]);
-          const [otp] = values;
+          const username = methods.getValues("username");
+          const email = methods.getValues("email");
+          const otp = methods.getValues("otp");
           await verifyOtpMutation.mutateAsync({ username, email, otp });
           break;
         }
         case 2: {
-          const [password, confirmPassword] = values;
+          const password = methods.getValues("password");
+          const confirmPassword = methods.getValues("confirmPassword");
           if (password !== confirmPassword) {
             methods.setError("confirmPassword", { message: "Passwords do not match" });
-            return;
+            break;
           }
           setStep(3);
+          break;
         }
       }
     }
   };
 
-  const onSubmit = (data: registerSchema) => {
-    console.log(data);
+  const onSubmit = async (formData: registerSchema) => {
+    console.log(formData);
+    // await completeRegistrationMutation.mutateAsync(formData);
   };
 
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
@@ -160,31 +162,23 @@ export function Register() {
           {step === 0 && (
             <UsernameAndEmail
               handleNext={handleNext}
-              isPending={verifyCredentialsMutation.isPending}
+              isPending={startRegistrationMutation.isPending}
               serverError={serverError}
             />
           )}
           {step === 1 && (
-            <Controller
-              control={methods.control}
-              name="otp"
-              render={({ field, formState: { errors } }) => (
-                <Otp
-                  {...field}
-                  email={methods.getValues("email")}
-                  error={errors.otp}
-                  serverError={serverError}
-                  handleBack={() => setStep(0)}
-                  handleNext={handleNext}
-                  isPending={verifyOtpMutation.isPending}
-                />
-              )}
+            <Otp
+              email={methods.getValues("email")}
+              handleNext={handleNext}
+              handleBack={() => setStep(0)}
+              isPending={verifyOtpMutation.isPending}
+              serverError={serverError}
             />
           )}
-          {step === 2 && (
-            <Password
-              handleNext={handleNext}
-              isPending={verifyCredentialsMutation.isPending}
+          {step === 2 && <Password handleNext={handleNext} />}
+          {step === 3 && (
+            <PersonalDetails
+              isPending={completeRegistrationMutation.isPending}
               serverError={serverError}
             />
           )}

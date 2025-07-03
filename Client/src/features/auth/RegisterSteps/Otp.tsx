@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { type FieldError } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import Countdown, { zeroPad } from "react-countdown";
 
 import { useTheme } from "@mui/material/styles";
@@ -11,26 +11,15 @@ import Typography from "@mui/material/Typography";
 
 type otpProps = {
   email: string;
-  value: string;
-  onChange: (value: string) => void;
-  error: FieldError | undefined;
   serverError: string | null;
   handleBack: () => void;
   handleNext: () => void;
   isPending: boolean;
 };
 
-export function Otp({
-  email,
-  value,
-  onChange,
-  error,
-  serverError,
-  handleBack,
-  handleNext,
-  isPending,
-}: otpProps) {
+export function Otp({ email, serverError, handleBack, handleNext, isPending }: otpProps) {
   const theme = useTheme();
+  const { control } = useFormContext();
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
 
   const timerLength = 300000;
@@ -58,21 +47,29 @@ export function Otp({
         </Typography>
       </Stack>
 
-      <MuiOtpInput
-        value={value || ""}
-        length={6}
-        onChange={onChange}
-        TextFieldsProps={{
-          slotProps: {
-            htmlInput: { inputMode: "numeric", pattern: "[0-9]*" },
-          },
-        }}
+      <Controller
+        name="otp"
+        control={control}
+        render={({ field: { value, onChange }, formState: { errors } }) => (
+          <>
+            <MuiOtpInput
+              value={value || ""}
+              length={6}
+              onChange={onChange}
+              TextFieldsProps={{
+                slotProps: {
+                  htmlInput: { inputMode: "numeric", pattern: "[0-9]*" },
+                },
+              }}
+            />
+            {errors.otp?.message && (
+              <FormHelperText error sx={{ margin: "-1rem 0 0 0" }}>
+                {errors.otp.message as string}
+              </FormHelperText>
+            )}
+          </>
+        )}
       />
-      {error?.message && (
-        <FormHelperText error sx={{ margin: "-1rem 0 0 0" }}>
-          {error.message}
-        </FormHelperText>
-      )}
 
       <Countdown
         key={endTime}
