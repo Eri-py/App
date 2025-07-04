@@ -1,5 +1,5 @@
 import { useTheme } from "@mui/material/styles";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, get } from "react-hook-form";
 import { useState } from "react";
 import type { ReactNode } from "@tanstack/react-router";
 import { type FieldPath } from "react-hook-form";
@@ -18,6 +18,7 @@ type CustomTextFieldProps = {
   fieldValue: FieldPath<validSchema>;
   startIcon?: ReactNode;
   flex?: number;
+  autoComplete?: string;
 };
 
 export function CustomTextField({
@@ -26,6 +27,7 @@ export function CustomTextField({
   fieldValue,
   startIcon,
   flex = 1,
+  autoComplete,
 }: CustomTextFieldProps) {
   const theme = useTheme();
   const {
@@ -65,8 +67,9 @@ export function CustomTextField({
       variant="outlined"
       type={isPasswordField ? (isPasswordVisible ? "text" : "password") : type}
       label={label}
-      error={!!errors[fieldValue]}
-      helperText={errors[fieldValue]?.message as string}
+      error={!!get(errors, fieldValue)}
+      helperText={get(errors, fieldValue)?.message as string}
+      autoComplete={autoComplete}
       sx={{ flex: flex }}
       slotProps={{
         input: {

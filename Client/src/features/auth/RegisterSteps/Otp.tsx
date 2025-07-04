@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, get, useFormContext } from "react-hook-form";
 import Countdown, { zeroPad } from "react-countdown";
 
 import { useTheme } from "@mui/material/styles";
@@ -51,7 +51,7 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
         name="otp"
         control={control}
         render={({ field: { value, onChange }, formState: { errors } }) => (
-          <>
+          <Stack>
             <MuiOtpInput
               value={value || ""}
               length={6}
@@ -62,12 +62,10 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
                 },
               }}
             />
-            {errors.otp?.message && (
-              <FormHelperText error sx={{ margin: "-1rem 0 0 0" }}>
-                {errors.otp.message as string}
-              </FormHelperText>
+            {get(errors, "otp")?.message && (
+              <FormHelperText error>{get(errors, "otp").message as string}</FormHelperText>
             )}
-          </>
+          </Stack>
         )}
       />
 
