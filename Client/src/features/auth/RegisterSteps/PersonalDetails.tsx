@@ -45,6 +45,7 @@ export function PersonalDetails({ isPending, serverError }: PersonalDetailsProps
         label="Firstname"
         fieldValue="firstname"
         startIcon={<PersonOutlineIcon />}
+        autoComplete="off"
       />
 
       <CustomTextField
@@ -52,10 +53,17 @@ export function PersonalDetails({ isPending, serverError }: PersonalDetailsProps
         label="Lastname"
         fieldValue="lastname"
         startIcon={<PersonOutlineIcon />}
+        autoComplete="off"
       />
 
       <Stack direction="row" gap={3}>
-        <CustomTextField type="text" label="Day" fieldValue="dateOfBirth.day" flex={1.5} />
+        <CustomTextField
+          type="text"
+          label="Day"
+          fieldValue="dateOfBirth.day"
+          flex={1.5}
+          autoComplete="off"
+        />
 
         <Controller
           name="dateOfBirth.month"
@@ -72,7 +80,13 @@ export function PersonalDetails({ isPending, serverError }: PersonalDetailsProps
           )}
         />
 
-        <CustomTextField type="text" label="Year" fieldValue="dateOfBirth.year" flex={1.5} />
+        <CustomTextField
+          type="text"
+          label="Year"
+          fieldValue="dateOfBirth.year"
+          flex={1.5}
+          autoComplete="off"
+        />
       </Stack>
 
       <Button

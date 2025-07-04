@@ -18,6 +18,7 @@ type CustomTextFieldProps = {
   fieldValue: FieldPath<validSchema>;
   startIcon?: ReactNode;
   flex?: number;
+  autoComplete?: string;
 };
 
 export function CustomTextField({
@@ -26,6 +27,7 @@ export function CustomTextField({
   fieldValue,
   startIcon,
   flex = 1,
+  autoComplete,
 }: CustomTextFieldProps) {
   const theme = useTheme();
   const {
@@ -67,6 +69,7 @@ export function CustomTextField({
       label={label}
       error={!!get(errors, fieldValue)}
       helperText={get(errors, fieldValue)?.message as string}
+      autoComplete={autoComplete}
       sx={{ flex: flex }}
       slotProps={{
         input: {

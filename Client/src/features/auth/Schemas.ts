@@ -21,8 +21,27 @@ export const passwordSchema = z
   .regex(/[#?!@$%^&\-.]/, "Invalid Password")
   .regex(/^[A-Za-z0-9#?!@$%^&\-.]+$/, "Invalid Password");
 
+const daySchema = z
+  .string()
+  .min(1, "Day is required")
+  .max(2, "Invalid day")
+  .refine((val) => {
+    const day = Number(val);
+    return !isNaN(day) && day >= 1 && day <= 31;
+  }, "Invalid day");
+
+const monthSchema = z
+  .string()
+  .refine((val) => !isNaN(Date.parse(`1 ${val} 2000`)), "Invalid month");
+
+const yearSchema = z.string().refine((val) => {
+  const year = Number(val);
+  const age = new Date().getFullYear() - year;
+  return !isNaN(year) && val.length === 4 && age >= 0 && age <= 120;
+}, "Invalid year");
+
 export const dateSchema = z.object({
-  day: z.string().min(1, "Day is required"),
-  month: z.string("Month is required"),
-  year: z.string().min(1, "Year is required"),
+  day: daySchema,
+  month: monthSchema,
+  year: yearSchema,
 });

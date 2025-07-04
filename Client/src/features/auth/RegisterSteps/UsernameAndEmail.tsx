@@ -40,6 +40,7 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: usernam
         label="Username"
         fieldValue="username"
         startIcon={<AccountCircleOutlinedIcon />}
+        autoComplete="off"
       />
 
       <CustomTextField
@@ -47,6 +48,7 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: usernam
         label="Email"
         fieldValue="email"
         startIcon={<EmailOutlinedIcon />}
+        autoComplete="email"
       />
 
       <Button

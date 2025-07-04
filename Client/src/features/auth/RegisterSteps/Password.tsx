@@ -25,6 +25,7 @@ export function Password({ handleNext }: PasswordProps) {
         label="Password"
         fieldValue="password"
         startIcon={<LockIcon />}
+        autoComplete="off"
       />
 
       <Stack gap={0.5} marginLeft={1.5} marginTop={-2}>
@@ -53,6 +54,7 @@ export function Password({ handleNext }: PasswordProps) {
         label="Confirm Password"
         fieldValue="confirmPassword"
         startIcon={<LockIcon />}
+        autoComplete="off"
       />
 
       <Button type="button" variant="contained" size="large" onClick={handleNext}>
