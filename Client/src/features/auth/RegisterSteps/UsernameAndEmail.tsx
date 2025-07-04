@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import Button from "@mui/material/Button";
 import AppleIcon from "@mui/icons-material/Apple";
@@ -53,7 +53,7 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: usernam
         type="text"
         label="Username"
         fieldValue="username"
-        startIcon={<PersonOutlinedIcon />}
+        startIcon={<AccountCircleOutlinedIcon />}
       />
 
       <CustomTextField

@@ -2,20 +2,31 @@ import { useTheme } from "@mui/material/styles";
 import { useFormContext } from "react-hook-form";
 import { useState } from "react";
 import type { ReactNode } from "@tanstack/react-router";
+import { type FieldPath } from "react-hook-form";
 
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import type { registerSchema } from "../../../routes/auth/register";
+
+type validSchema = registerSchema;
 
 type CustomTextFieldProps = {
   type: string;
   label: string;
-  fieldValue: string;
-  startIcon: ReactNode;
+  fieldValue: FieldPath<validSchema>;
+  startIcon?: ReactNode;
+  flex?: number;
 };
 
-export function CustomTextField({ type, label, fieldValue, startIcon }: CustomTextFieldProps) {
+export function CustomTextField({
+  type,
+  label,
+  fieldValue,
+  startIcon,
+  flex = 1,
+}: CustomTextFieldProps) {
   const theme = useTheme();
   const {
     register,
@@ -56,9 +67,10 @@ export function CustomTextField({ type, label, fieldValue, startIcon }: CustomTe
       label={label}
       error={!!errors[fieldValue]}
       helperText={errors[fieldValue]?.message as string}
+      sx={{ flex: flex }}
       slotProps={{
         input: {
-          startAdornment: startIcon,
+          startAdornment: startIcon ?? "",
           endAdornment: isPasswordField && getEndAdornment(),
           sx: {
             gap: "0.75rem",

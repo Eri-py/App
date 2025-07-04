@@ -9,11 +9,9 @@ import { CustomTextField } from "../components/CustomTextField";
 
 type PasswordProps = {
   handleNext: () => void;
-  isPending: boolean;
-  serverError: string | null;
 };
 
-export function Password({ handleNext, isPending, serverError }: PasswordProps) {
+export function Password({ handleNext }: PasswordProps) {
   const theme = useTheme();
 
   return (
@@ -57,15 +55,8 @@ export function Password({ handleNext, isPending, serverError }: PasswordProps) 
         startIcon={<LockIcon />}
       />
 
-      <Button
-        type="button"
-        variant="contained"
-        size="large"
-        onClick={handleNext}
-        loading={isPending}
-        disabled={serverError !== null}
-      >
-        {serverError !== null ? serverError : "Continue"}
+      <Button type="button" variant="contained" size="large" onClick={handleNext}>
+        {"Continue"}
       </Button>
     </Stack>
   );
