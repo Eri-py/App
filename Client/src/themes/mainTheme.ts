@@ -42,6 +42,8 @@ export const mainTheme = (isDarkMode: boolean) =>
       MuiFormHelperText: {
         styleOverrides: {
           root: {
+            margin: 0,
+            textWrap: "nowrap",
             fontSize: ".75rem",
           },
         },

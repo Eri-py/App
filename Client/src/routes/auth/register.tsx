@@ -1,5 +1,5 @@
 import { useForm, FormProvider } from "react-hook-form";
-import { string, z } from "zod";
+import { string, z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";

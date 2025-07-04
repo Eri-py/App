@@ -1,28 +1,14 @@
 import { Link } from "@tanstack/react-router";
 
+import { styled, useTheme } from "@mui/material/styles";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import Button from "@mui/material/Button";
-import AppleIcon from "@mui/icons-material/Apple";
 import Stack from "@mui/material/Stack";
-import { styled, useTheme } from "@mui/material/styles";
-import Divider from "@mui/material/Divider";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-import { FacebookIcon, GoogleIcon } from "../../../components/CustomIcons";
 import { CustomTextField } from "../components/CustomTextField";
-
-const CircularButton = styled(Button)(({ theme }) => ({
-  minWidth: "48px",
-  padding: "0.6rem",
-  aspectRatio: "1",
-  borderRadius: "50%",
-  border: `1px solid ${theme.palette.primary.main}`,
-  "&:hover": {
-    borderColor: theme.palette.primary.light,
-  },
-}));
+import { OAuthButtonGroup } from "../components/OAuthButtonGroup";
 
 const CustomLink = styled(Link)(({ theme }) => ({
   color: theme.palette.primary.main,
@@ -54,6 +40,7 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: usernam
         label="Username"
         fieldValue="username"
         startIcon={<AccountCircleOutlinedIcon />}
+        autoComplete="off"
       />
 
       <CustomTextField
@@ -61,6 +48,7 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: usernam
         label="Email"
         fieldValue="email"
         startIcon={<EmailOutlinedIcon />}
+        autoComplete="email"
       />
 
       <Button
@@ -74,42 +62,9 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: usernam
         {serverError !== null ? serverError : "Continue"}
       </Button>
 
-      <Box sx={{ display: "flex", alignItems: "center", my: -1.5 }}>
-        <Divider sx={{ flexGrow: 1 }} />
-        <Typography
-          variant="body2"
-          sx={{
-            mx: 2,
-            color: theme.palette.text.secondary,
-            fontSize: "0.875rem",
-          }}
-        >
-          or
-        </Typography>
-        <Divider sx={{ flexGrow: 1 }} />
-      </Box>
+      <OAuthButtonGroup />
 
-      {/*OAuth Button group*/}
-      <Stack direction="row" spacing={2} alignSelf="center">
-        <CircularButton type="button" variant="outlined">
-          <GoogleIcon width="32px" />
-        </CircularButton>
-        <CircularButton type="button" variant="outlined">
-          <AppleIcon
-            fontSize="large"
-            sx={{
-              color: theme.palette.mode === "dark" ? "#ffffff" : "#000000",
-            }}
-          />
-        </CircularButton>
-        <CircularButton type="button" variant="outlined">
-          <FacebookIcon width="32px" />
-        </CircularButton>
-      </Stack>
-
-      {/*Footer*/}
       <Stack gap={2}>
-        <Divider sx={{ borderColor: theme.palette.divider }} />
         <Typography
           alignSelf="center"
           sx={{
