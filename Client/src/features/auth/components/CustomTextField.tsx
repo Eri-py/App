@@ -1,5 +1,5 @@
 import { useTheme } from "@mui/material/styles";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, get } from "react-hook-form";
 import { useState } from "react";
 import type { ReactNode } from "@tanstack/react-router";
 import { type FieldPath } from "react-hook-form";
@@ -65,8 +65,8 @@ export function CustomTextField({
       variant="outlined"
       type={isPasswordField ? (isPasswordVisible ? "text" : "password") : type}
       label={label}
-      error={!!errors[fieldValue]}
-      helperText={errors[fieldValue]?.message as string}
+      error={!!get(errors, fieldValue)}
+      helperText={get(errors, fieldValue)?.message as string}
       sx={{ flex: flex }}
       slotProps={{
         input: {

@@ -1,10 +1,11 @@
-import { Controller, useFormContext } from "react-hook-form";
-import { useTheme } from "@mui/material/styles";
+import { Controller, useFormContext, get } from "react-hook-form";
 
+import { useTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import FormHelperText from "@mui/material/FormHelperText";
 
 import { CustomTextField } from "../components/CustomTextField";
 import { Selector } from "../components/Selector";
@@ -55,19 +56,22 @@ export function PersonalDetails({ isPending, serverError }: PersonalDetailsProps
 
       <Stack direction="row" gap={3}>
         <CustomTextField type="text" label="Day" fieldValue="dateOfBirth.day" flex={1.5} />
+
         <Controller
           name="dateOfBirth.month"
           control={control}
-          render={({ field }) => (
-            <Selector
-              label="Month"
-              value={field.value}
-              onChange={field.onChange}
-              menuItems={months}
-              flex={2}
-            />
+          render={({ field: { value, onChange }, formState: { errors } }) => (
+            <Stack flex={2}>
+              <Selector label="Month" value={value} onChange={onChange} menuItems={months} />
+              {get(errors, "dateOfBirth.month")?.message && (
+                <FormHelperText error>
+                  {get(errors, "dateOfBirth.month").message as string}
+                </FormHelperText>
+              )}
+            </Stack>
           )}
         />
+
         <CustomTextField type="text" label="Year" fieldValue="dateOfBirth.year" flex={1.5} />
       </Stack>
 

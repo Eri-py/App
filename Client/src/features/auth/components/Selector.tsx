@@ -1,4 +1,4 @@
-import Box from "@mui/material/Box";
+import { useTheme } from "@mui/material/styles";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -9,28 +9,28 @@ type SelectorProps = {
   menuItems: string[];
   value: string;
   onChange: (value: string) => void;
-  flex?: number;
 };
 
-export function Selector({ label, menuItems, value, onChange, flex = 1 }: SelectorProps) {
-  const items = menuItems.map((item) => (
-    <MenuItem key={item} value={item}>
-      {item}
-    </MenuItem>
-  ));
+export function Selector({ label, menuItems, value, onChange }: SelectorProps) {
+  const theme = useTheme();
   return (
-    <Box flex={flex}>
-      <FormControl fullWidth>
-        <InputLabel id="label">{label}</InputLabel>
-        <Select
-          labelId="label"
-          value={value || ""}
-          label={label}
-          onChange={(e) => onChange(e.target.value)}
-        >
-          {items}
-        </Select>
-      </FormControl>
-    </Box>
+    <FormControl fullWidth>
+      <InputLabel id="label">{label}</InputLabel>
+      <Select
+        labelId="label"
+        value={value || ""}
+        label={label}
+        onChange={(e) => onChange(e.target.value)}
+        sx={{
+          backgroundColor: theme.palette.background.paper,
+        }}
+      >
+        {menuItems.map((item) => (
+          <MenuItem key={item} value={item}>
+            {item}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   );
 }
