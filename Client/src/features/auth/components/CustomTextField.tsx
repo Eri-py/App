@@ -1,9 +1,9 @@
-import { useTheme } from "@mui/material/styles";
 import { useFormContext, get } from "react-hook-form";
 import { useState } from "react";
 import type { ReactNode } from "@tanstack/react-router";
 import { type FieldPath } from "react-hook-form";
 
+import { useTheme } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -38,7 +38,7 @@ export function CustomTextField({
   const isPasswordField = type === "password";
   const [isPasswordVisible, setPasswordVisible] = useState(false);
 
-  const getEndAdornment = () => {
+  const passwordEndAdornment = () => {
     return (
       <Button
         type="button"
@@ -74,7 +74,7 @@ export function CustomTextField({
       slotProps={{
         input: {
           startAdornment: startIcon ?? "",
-          endAdornment: isPasswordField && getEndAdornment(),
+          endAdornment: isPasswordField && passwordEndAdornment(),
           sx: {
             gap: "0.75rem",
             backgroundColor: theme.palette.background.paper,

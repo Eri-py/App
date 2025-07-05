@@ -8,6 +8,7 @@ public interface IEmailService
     public Task<Result> SendEmailVerificationAsync(
         string to,
         string username,
-        string verificationToken
+        string verificationToken,
+        string codeLimit
     );
 }

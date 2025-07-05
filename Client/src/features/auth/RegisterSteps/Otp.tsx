@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Controller, get, useFormContext } from "react-hook-form";
 import Countdown, { zeroPad } from "react-countdown";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { AxiosResponse } from "axios";
 
 import { useTheme } from "@mui/material/styles";
 import { MuiOtpInput } from "mui-one-time-password-input";
@@ -8,6 +10,9 @@ import Button from "@mui/material/Button";
 import FormHelperText from "@mui/material/FormHelperText";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+
+import type { resendVerifcationCodeRequest } from "../../../api/Dtos";
+import { resendVerifcationCode } from "../../../api/Auth";
 
 type otpProps = {
   email: string;
@@ -20,13 +25,23 @@ type otpProps = {
 export function Otp({ email, serverError, handleBack, handleNext, isPending }: otpProps) {
   const theme = useTheme();
   const { control } = useFormContext();
+
+  const queryClient = useQueryClient();
+  let otpExpiresAt = new Date(queryClient.getQueryData(["otpExpiresAt"]) as string).getTime();
+  const [endTime, setEndTime] = useState(otpExpiresAt);
+
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
 
-  const timerLength = 300000;
-  const [endTime, setEndTime] = useState(Date.now() + timerLength);
+  const resendVerifcationMutation = useMutation({
+    mutationFn: (data: resendVerifcationCodeRequest) => resendVerifcationCode(data),
+    onSuccess: (response: AxiosResponse) => {
+      otpExpiresAt = new Date(response.data as string).getTime();
+      setEndTime(otpExpiresAt);
+    },
+  });
 
-  const onResendCick = () => {
-    setEndTime(Date.now() + timerLength);
+  const handleResend = async () => {
+    await resendVerifcationMutation.mutateAsync({ identifier: email });
     setIsResendDisabled(true);
   };
 
@@ -43,7 +58,7 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
           sx={{ textWrap: "nowrap" }}
         >
           Enter the <b>6 digit code</b> sent to the email address below
-          <br /> <b>{email ? email.toLowerCase() : "someone@example.com"}</b>
+          <br /> <b>{email.toLowerCase()}</b>
         </Typography>
       </Stack>
 
@@ -73,9 +88,12 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
         key={endTime}
         date={endTime}
         onStart={() => {
-          setTimeout(() => {
-            setIsResendDisabled(false);
-          }, timerLength / 2);
+          setTimeout(
+            () => {
+              setIsResendDisabled(false);
+            },
+            (endTime - Date.now()) / 2
+          );
         }}
         renderer={({ minutes, seconds, completed }) => {
           if (!completed) {
@@ -107,7 +125,7 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
             disableTouchRipple
             disableFocusRipple
             disabled={isResendDisabled}
-            onClick={onResendCick}
+            onClick={handleResend}
             sx={{
               padding: "0",
               textDecoration: "underline !important",

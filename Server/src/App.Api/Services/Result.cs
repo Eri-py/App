@@ -15,18 +15,6 @@ public enum ResultTypes
     InternalServerError,
 }
 
-public record class Result<T>(string? Message, ResultTypes ResultType, T? Content = default)
-{
-    public bool IsSuccess =>
-        ResultType is ResultTypes.Success or ResultTypes.NoContent or ResultTypes.Created;
-
-    public static Result<T> Success(T content, string message) =>
-        new(message, ResultTypes.Success, content);
-
-    public static Result<T> Created(T content, string message) =>
-        new(message, ResultTypes.Created, content);
-}
-
 public record Result(string? Message, ResultTypes ResultType)
 {
     public bool IsSuccess =>
@@ -53,4 +41,19 @@ public record Result(string? Message, ResultTypes ResultType)
 
     public static Result InternalServerError(string message) =>
         new(message, ResultTypes.InternalServerError);
+}
+
+public record Result<T>(string? Message, ResultTypes ResultType, T? Content = default)
+{
+    public static Result<T> Success(T content, string message) =>
+        new(message, ResultTypes.Success, content);
+
+    public static Result<T> Created(T content, string message) =>
+        new(message, ResultTypes.Created, content);
+
+    public static implicit operator Result<T>(Result result) =>
+        new(result.Message, result.ResultType);
+
+    public static implicit operator Result(Result<T> result) =>
+        new(result.Message, result.ResultType);
 }

@@ -21,6 +21,7 @@ const CircularButton = styled(Button)(({ theme }) => ({
 
 export function OAuthButtonGroup() {
   const theme = useTheme();
+
   return (
     <Stack gap={2}>
       <Box sx={{ display: "flex", alignItems: "center", my: -1.5 }}>

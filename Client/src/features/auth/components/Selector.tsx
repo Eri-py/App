@@ -13,6 +13,7 @@ type SelectorProps = {
 
 export function Selector({ label, menuItems, value, onChange }: SelectorProps) {
   const theme = useTheme();
+
   return (
     <FormControl fullWidth>
       <InputLabel id="label">{label}</InputLabel>

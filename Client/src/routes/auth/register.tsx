@@ -2,7 +2,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { string, z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { type AxiosError } from "axios";
 
@@ -63,6 +63,7 @@ const registrationStepsLabels: string[] = [
 ];
 
 export function Register() {
+  const queryClient = useQueryClient();
   const [step, setStep] = useState<number>(0);
   const [serverError, setServerError] = useState<string | null>(null);
   const defaultTheme = useTheme();
@@ -84,7 +85,10 @@ export function Register() {
 
   const startRegistrationMutation = useMutation({
     mutationFn: (data: startRegistrationRequest) => startRegistration(data),
-    onSuccess: () => setStep(1),
+    onSuccess: (response) => {
+      queryClient.setQueryData(["otpExpiresAt"], response.data);
+      setStep(1);
+    },
     onError: (error: AxiosError) => handleServerError(error),
   });
 

@@ -10,7 +10,7 @@ namespace App.Api.Controllers
     public class AuthController(IRegistrationService registrationService) : ControllerBase
     {
         [HttpPost("register/start")]
-        public async Task<ActionResult> StartRegistration(
+        public async Task<ActionResult<string>> StartRegistration(
             [FromBody] StartRegistrationRequest request
         )
         {
@@ -19,7 +19,7 @@ namespace App.Api.Controllers
                 email: request.Email!.ToLower()
             );
 
-            return ResultMapper(result);
+            return ResultMapper.Map(result);
         }
 
         [HttpPost("register/verify-otp")]
@@ -31,27 +31,19 @@ namespace App.Api.Controllers
                 otp: request.Otp!
             );
 
-            return ResultMapper(result);
+            return ResultMapper.Map(result);
         }
 
-        private ActionResult ResultMapper(Result result)
+        [HttpPost("resend-verification-code")]
+        public async Task<ActionResult<string>> ResendVerificationCode(
+            [FromBody] ResendVerificationCodeRequest request
+        )
         {
-            return result.ResultType switch
-            {
-                ResultTypes.Success => Ok(result.Message),
-                ResultTypes.NoContent => NoContent(),
-                ResultTypes.Created => CreatedAtAction(null, null, result.Message),
+            var result = await registrationService.ResendVerificationCodeAsync(
+                identifier: request.Identifier!.ToLower()
+            );
 
-                ResultTypes.BadRequest => BadRequest(result.Message),
-                ResultTypes.Unauthorized => Unauthorized(result.Message),
-                ResultTypes.Forbidden => Forbid(result.Message!),
-                ResultTypes.NotFound => NotFound(result.Message),
-                ResultTypes.Conflict => Conflict(result.Message),
-                ResultTypes.TooManyRequests => StatusCode(429, result.Message),
-                ResultTypes.InternalServerError => StatusCode(500, result.Message),
-
-                _ => StatusCode(500, "An unexpected error occurred"),
-            };
+            return ResultMapper.Map(result);
         }
     }
 }

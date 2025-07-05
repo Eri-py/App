@@ -50,19 +50,21 @@ public class MailtrapEmailService(IConfiguration configuration) : IEmailService
     public async Task<Result> SendEmailVerificationAsync(
         string to,
         string username,
-        string verificationCode
+        string verificationCode,
+        string codeLimit
     )
     {
         var templatePath = Path.Combine(
             Directory.GetCurrentDirectory(),
             "Templates",
-            "EmailVerification.html"
+            "VerificationEmailTemplate.html"
         );
         var htmlTemplate = await File.ReadAllTextAsync(templatePath);
 
         var htmlBody = htmlTemplate
             .Replace("{{Username}}", username)
-            .Replace("{{VerificationCode}}", verificationCode);
+            .Replace("{{VerificationCode}}", verificationCode)
+            .Replace("{{CodeLimit}}", codeLimit);
 
         var emailResult = await SendEmailAsync(to, "Verify Your Email Address", htmlBody);
         return emailResult;
