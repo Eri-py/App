@@ -1,0 +1,29 @@
+{
+  "dotnet.defaultSolution": "Server/src/App.sln",
+  "editor.formatOnSave": true,
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": ["^@mui/[^/]+$"],
+  "[csharp]": {
+    "editor.defaultFormatter": "csharpier.csharpier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/node_modules": true,
+    "**/tsconfig.json": true,
+    "**/jsconfig.json": true,
+    "**/tsconfig.*.json": true,
+    "**/eslint.*": true,
+    "**/package-lock.json": true,
+    "**/package.json": true,
+    "**/vite.config.ts": true,
+    "**/vite-env.d.ts": true,
+    "**/.tanstack": true,
+    "**/routeTree.gen.ts": true
+  }
+}
