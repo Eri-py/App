@@ -1,0 +1,24 @@
+{
+  "configurations": [
+    {
+      "name": "Server: development",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "dotnet",
+      "args": ["watch", "run", "--non-interactive"],
+      "cwd": "${workspaceFolder}/Server/src/App.Api",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_WATCH_SUPPRESS_EMOJIS": "1"
+      },
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(http?://\\S+)",
+        "uriFormat": "%s/scalar/v1",
+        "killOnServerStop": true
+      }
+    }
+  ]
+}
