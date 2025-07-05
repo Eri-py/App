@@ -68,7 +68,7 @@ export function CustomTextField({
       type={isPasswordField ? (isPasswordVisible ? "text" : "password") : type}
       label={label}
       error={!!get(errors, fieldValue)}
-      helperText={get(errors, fieldValue)?.message as string}
+      helperText={get(errors, fieldValue)?.message}
       autoComplete={autoComplete}
       sx={{ flex: flex }}
       slotProps={{

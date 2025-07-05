@@ -28,7 +28,7 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
   const { control } = useFormContext();
 
   const queryClient = useQueryClient();
-  let otpExpiresAt = parseISO(queryClient.getQueryData(["otpExpiresAt"]) as string).getTime();
+  let otpExpiresAt = parseISO(queryClient.getQueryData(["otpExpiresAt"]) ?? "").getTime();
   const [endTime, setEndTime] = useState(otpExpiresAt);
 
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
@@ -36,7 +36,7 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
   const resendVerifcationMutation = useMutation({
     mutationFn: (data: resendVerifcationCodeRequest) => resendVerifcationCode(data),
     onSuccess: (response: AxiosResponse) => {
-      otpExpiresAt = parseISO(response.data as string).getTime();
+      otpExpiresAt = parseISO(response.data).getTime();
       setEndTime(otpExpiresAt);
       setIsResendDisabled(true);
     },
@@ -79,7 +79,7 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
               }}
             />
             {get(errors, "otp")?.message && (
-              <FormHelperText error>{get(errors, "otp").message as string}</FormHelperText>
+              <FormHelperText error>{get(errors, "otp").message ?? ""}</FormHelperText>
             )}
           </Stack>
         )}
@@ -125,10 +125,11 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
             disableRipple
             disableTouchRipple
             disableFocusRipple
-            disabled={isResendDisabled}
+            disabled={resendVerifcationMutation.isPending}
             onClick={handleResend}
             sx={{
-              padding: "0",
+              padding: "0 0 .1rem 0",
+              width: "fit-content",
               textDecoration: "underline !important",
               "&:hover": {
                 background: "none",

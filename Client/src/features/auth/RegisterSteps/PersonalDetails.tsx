@@ -47,7 +47,7 @@ export function PersonalDetails({ isPending, serverError }: PersonalDetailsProps
           <SegmentedDatePicker
             value={value}
             onChange={onChange}
-            errors={get(errors, "dateOfBirth")?.message as string}
+            errors={get(errors, "dateOfBirth")?.message}
           />
         )}
       />
