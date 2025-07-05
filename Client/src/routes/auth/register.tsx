@@ -12,12 +12,7 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import {
-  usernameSchema,
-  emailSchema,
-  passwordSchema,
-  dateSchema,
-} from "../../features/auth/Schemas";
+import { usernameSchema, emailSchema, passwordSchema } from "../../features/auth/Schemas";
 import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndEmail";
 import { HorizontalLinearStepper } from "../../features/auth/components/HorizontalLinearStepper";
 import { verifyOtp, startRegistration, completeRegistration } from "../../api/Auth";
@@ -38,12 +33,12 @@ export const Route = createFileRoute("/auth/register")({
 const ResgisterSchema = z.object({
   username: usernameSchema,
   email: emailSchema,
-  otp: z.string().length(6, "Invalid code"),
+  otp: z.string("Invalid otp").length(6, "Invalid code"),
   password: passwordSchema,
-  confirmPassword: string().min(3, "Please enter password again"),
-  firstname: string().min(3, "Firstname is required").max(64),
-  lastname: string().min(3, "Lastname is required").max(64),
-  dateOfBirth: dateSchema,
+  confirmPassword: string("Invalid password").nonempty("Please enter password again"),
+  firstname: string("Invalid firstname").nonempty("Firstname is required").max(64),
+  lastname: string("Invalid lastname").nonempty("Lastname is required").max(64),
+  dateOfBirth: string(),
 });
 
 export type registerSchema = z.infer<typeof ResgisterSchema>;

@@ -9,13 +9,14 @@ type SelectorProps = {
   menuItems: string[];
   value: string;
   onChange: (value: string) => void;
+  flex?: number;
 };
 
-export function Selector({ label, menuItems, value, onChange }: SelectorProps) {
+export function Selector({ label, menuItems, value, onChange, flex }: SelectorProps) {
   const theme = useTheme();
 
   return (
-    <FormControl fullWidth>
+    <FormControl fullWidth sx={{ flex: flex }}>
       <InputLabel id="label">{label}</InputLabel>
       <Select
         labelId="label"

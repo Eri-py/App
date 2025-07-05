@@ -3,6 +3,7 @@ import { Controller, get, useFormContext } from "react-hook-form";
 import Countdown, { zeroPad } from "react-countdown";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
+import { parseISO } from "date-fns";
 
 import { useTheme } from "@mui/material/styles";
 import { MuiOtpInput } from "mui-one-time-password-input";
@@ -27,7 +28,7 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
   const { control } = useFormContext();
 
   const queryClient = useQueryClient();
-  let otpExpiresAt = new Date(queryClient.getQueryData(["otpExpiresAt"]) as string).getTime();
+  let otpExpiresAt = parseISO(queryClient.getQueryData(["otpExpiresAt"]) as string).getTime();
   const [endTime, setEndTime] = useState(otpExpiresAt);
 
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
@@ -35,14 +36,14 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
   const resendVerifcationMutation = useMutation({
     mutationFn: (data: resendVerifcationCodeRequest) => resendVerifcationCode(data),
     onSuccess: (response: AxiosResponse) => {
-      otpExpiresAt = new Date(response.data as string).getTime();
+      otpExpiresAt = parseISO(response.data as string).getTime();
       setEndTime(otpExpiresAt);
+      setIsResendDisabled(true);
     },
   });
 
   const handleResend = async () => {
     await resendVerifcationMutation.mutateAsync({ identifier: email });
-    setIsResendDisabled(true);
   };
 
   return (

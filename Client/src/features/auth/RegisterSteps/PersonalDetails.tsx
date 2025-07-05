@@ -1,34 +1,18 @@
-import { Controller, useFormContext, get } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
 import { useTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import FormHelperText from "@mui/material/FormHelperText";
 
 import { CustomTextField } from "../components/CustomTextField";
-import { Selector } from "../components/Selector";
+import { SegmentedDatePicker } from "../components/SegmentedDatePicker";
 
 type PersonalDetailsProps = {
   isPending: boolean;
   serverError: string | null;
 };
-
-const months: string[] = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
 
 export function PersonalDetails({ isPending, serverError }: PersonalDetailsProps) {
   const theme = useTheme();
@@ -56,38 +40,13 @@ export function PersonalDetails({ isPending, serverError }: PersonalDetailsProps
         autoComplete="family-name"
       />
 
-      <Stack direction="row" gap={3}>
-        <CustomTextField
-          type="text"
-          label="Day"
-          fieldValue="dateOfBirth.day"
-          flex={1.5}
-          autoComplete="bday-day"
-        />
-
-        <Controller
-          name="dateOfBirth.month"
-          control={control}
-          render={({ field: { value, onChange }, formState: { errors } }) => (
-            <Stack flex={2}>
-              <Selector label="Month" value={value} onChange={onChange} menuItems={months} />
-              {get(errors, "dateOfBirth.month")?.message && (
-                <FormHelperText error>
-                  {get(errors, "dateOfBirth.month").message as string}
-                </FormHelperText>
-              )}
-            </Stack>
-          )}
-        />
-
-        <CustomTextField
-          type="text"
-          label="Year"
-          fieldValue="dateOfBirth.year"
-          flex={1.5}
-          autoComplete="bday-year"
-        />
-      </Stack>
+      <Controller
+        name="dateOfBirth"
+        control={control}
+        render={({ field: { value, onChange } }) => (
+          <SegmentedDatePicker value={value} onChange={onChange} />
+        )}
+      />
 
       <Button
         type="submit"
