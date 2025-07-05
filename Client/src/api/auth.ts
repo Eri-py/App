@@ -1,6 +1,7 @@
 import { apiClient } from "./Client";
 import type {
   completeRegistrationRequest,
+  resendVerifcationCodeRequest,
   startRegistrationRequest,
   verifyOtpRequest,
 } from "./Dtos";
@@ -16,4 +17,8 @@ export const verifyOtp = (data: verifyOtpRequest) => {
 
 export const completeRegistration = (data: completeRegistrationRequest) => {
   return apiClient.post("auth/register/complete", data);
+};
+
+export const resendVerifcationCode = (data: resendVerifcationCodeRequest) => {
+  return apiClient.post("auth/resend-verification-code", data);
 };

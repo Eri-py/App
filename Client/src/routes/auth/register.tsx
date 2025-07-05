@@ -2,7 +2,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { string, z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { type AxiosError } from "axios";
 
@@ -38,11 +38,11 @@ export const Route = createFileRoute("/auth/register")({
 const ResgisterSchema = z.object({
   username: usernameSchema,
   email: emailSchema,
-  otp: z.string().length(6, "Invalid code"),
+  otp: z.string("Invalid otp").length(6, "Invalid code"),
   password: passwordSchema,
-  confirmPassword: string().min(3, "Please enter password again"),
-  firstname: string().min(3, "Firstname is required").max(64),
-  lastname: string().min(3, "Lastname is required").max(64),
+  confirmPassword: string("Invalid password").nonempty("Please enter password again"),
+  firstname: string("Invalid firstname").nonempty("Firstname is required").max(64),
+  lastname: string("Invalid lastname").nonempty("Lastname is required").max(64),
   dateOfBirth: dateSchema,
 });
 
@@ -63,13 +63,15 @@ const registrationStepsLabels: string[] = [
 ];
 
 export function Register() {
+  const queryClient = useQueryClient();
   const [step, setStep] = useState<number>(0);
   const [serverError, setServerError] = useState<string | null>(null);
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
 
   const methods = useForm<registerSchema>({
-    mode: "all",
+    mode: "onChange",
+    delayError: 200,
     resolver: zodResolver(ResgisterSchema),
   });
 
@@ -84,7 +86,10 @@ export function Register() {
 
   const startRegistrationMutation = useMutation({
     mutationFn: (data: startRegistrationRequest) => startRegistration(data),
-    onSuccess: () => setStep(1),
+    onSuccess: (response) => {
+      queryClient.setQueryData(["otpExpiresAt"], response.data);
+      setStep(1);
+    },
     onError: (error: AxiosError) => handleServerError(error),
   });
 

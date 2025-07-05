@@ -19,6 +19,7 @@
     "@tanstack/react-router": "^1.121.34",
     "@tanstack/react-router-devtools": "^1.121.34",
     "axios": "^1.10.0",
+    "date-fns": "^4.1.0",
     "mui-one-time-password-input": "^5.0.0",
     "react": "^19.1.0",
     "react-countdown": "^2.3.6",

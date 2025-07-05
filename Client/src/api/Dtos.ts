@@ -11,4 +11,4 @@ export type completeRegistrationRequest = {
   dateOfBirth: string;
 };
 
-export type startRegistrationResponse = { otpExpiresAt: string };
+export type resendVerifcationCodeRequest = { identifier: string };
