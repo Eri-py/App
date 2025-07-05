@@ -12,7 +12,12 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { usernameSchema, emailSchema, passwordSchema } from "../../features/auth/Schemas";
+import {
+  usernameSchema,
+  emailSchema,
+  passwordSchema,
+  dateSchema,
+} from "../../features/auth/Schemas";
 import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndEmail";
 import { HorizontalLinearStepper } from "../../features/auth/components/HorizontalLinearStepper";
 import { verifyOtp, startRegistration, completeRegistration } from "../../api/Auth";
@@ -38,7 +43,7 @@ const ResgisterSchema = z.object({
   confirmPassword: string("Invalid password").nonempty("Please enter password again"),
   firstname: string("Invalid firstname").nonempty("Firstname is required").max(64),
   lastname: string("Invalid lastname").nonempty("Lastname is required").max(64),
-  dateOfBirth: string(),
+  dateOfBirth: dateSchema,
 });
 
 export type registerSchema = z.infer<typeof ResgisterSchema>;
@@ -65,7 +70,8 @@ export function Register() {
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
 
   const methods = useForm<registerSchema>({
-    mode: "all",
+    mode: "onChange",
+    delayError: 200,
     resolver: zodResolver(ResgisterSchema),
   });
 

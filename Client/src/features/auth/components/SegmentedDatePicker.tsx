@@ -1,6 +1,9 @@
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
+
 import { Selector } from "./Selector";
+import FormHelperText from "@mui/material/FormHelperText";
+import { useTheme } from "@mui/material/styles";
 
 const months: string[] = [
   "January",
@@ -20,52 +23,77 @@ const months: string[] = [
 type segmentedDatePickerProps = {
   value?: string;
   onChange: (value: string) => void;
+  errors?: string;
 };
 
-export function SegmentedDatePicker({ value, onChange }: segmentedDatePickerProps) {
-  const [day, month, year] = value ? value.split("/") : "".split("/");
+export function SegmentedDatePicker({ value, onChange, errors }: segmentedDatePickerProps) {
+  let [day, month, year] = value ? value.split("/") : "".split("/");
+  if (!day) day = "";
+  if (!month) month = "";
+  if (!year) year = "";
+
+  const theme = useTheme();
 
   const handleDayChange = (newDay: string) => {
-    onChange(`${newDay}/${month || ""}/${year || ""}`);
+    onChange(`${newDay}/${month}/${year}`);
   };
 
   const handleMonthChange = (newMonth: string) => {
-    onChange(`${day || ""}/${newMonth}/${year || ""}`);
+    onChange(`${day}/${newMonth}/${year}`);
   };
 
   const handleYearChange = (newYear: string) => {
-    onChange(`${day || ""}/${month || ""}/${newYear}`);
+    onChange(`${day}/${month}/${newYear}`);
   };
 
-  console.log(value);
-
   return (
-    <Stack direction="row" gap={3}>
-      <TextField
-        type="text"
-        variant="outlined"
-        label="Day"
-        value={day || ""}
-        onChange={(e) => handleDayChange(e.target.value)}
-        sx={{ flex: 1.5 }}
-      />
+    <Stack>
+      <Stack direction="row" gap={3}>
+        <TextField
+          type="text"
+          variant="outlined"
+          label="Day"
+          value={day}
+          onChange={(e) => handleDayChange(e.target.value)}
+          autoComplete="off"
+          sx={{ flex: 1.5 }}
+          slotProps={{
+            input: {
+              sx: {
+                gap: "0.75rem",
+                backgroundColor: theme.palette.background.paper,
+              },
+            },
+          }}
+        />
 
-      <Selector
-        label="Month"
-        value={month}
-        onChange={handleMonthChange}
-        menuItems={months}
-        flex={2}
-      />
+        <Selector
+          label="Month"
+          value={month}
+          onChange={handleMonthChange}
+          menuItems={months}
+          flex={2}
+        />
 
-      <TextField
-        type="text"
-        variant="outlined"
-        label="Year"
-        value={year || ""}
-        onChange={(e) => handleYearChange(e.target.value)}
-        sx={{ flex: 1.5 }}
-      />
+        <TextField
+          type="text"
+          variant="outlined"
+          label="Year"
+          value={year}
+          onChange={(e) => handleYearChange(e.target.value)}
+          sx={{ flex: 1.5 }}
+          autoComplete="off"
+          slotProps={{
+            input: {
+              sx: {
+                gap: "0.75rem",
+                backgroundColor: theme.palette.background.paper,
+              },
+            },
+          }}
+        />
+      </Stack>
+      {errors && <FormHelperText error>{errors}</FormHelperText>}
     </Stack>
   );
 }

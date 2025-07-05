@@ -1,4 +1,5 @@
 import { z } from "zod/v4";
+import { parse, isValid } from "date-fns";
 
 export const usernameSchema = z
   .string()
@@ -20,3 +21,14 @@ export const passwordSchema = z
   .regex(/[0-9]/, "Invalid password")
   .regex(/[#?!@$%^&\-.]/, "Invalid password")
   .regex(/^[A-Za-z0-9#?!@$%^&\-.]+$/, "Invalid password");
+
+export const dateSchema = z.string("Date is required").refine((val) => {
+  for (const part of val.split("/")) {
+    if (part === "") return true;
+  }
+  const formats = ["dd/MMMM/yyyy", "dd/MMM/yyyy", "dd/MM/yyyy"];
+  return formats.some((format) => {
+    const parsedDate = parse(val, format, new Date());
+    return isValid(parsedDate);
+  });
+}, "Invalid date");

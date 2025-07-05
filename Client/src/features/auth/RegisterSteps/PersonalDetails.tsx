@@ -1,4 +1,4 @@
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, get, useFormContext } from "react-hook-form";
 
 import { useTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
@@ -43,8 +43,12 @@ export function PersonalDetails({ isPending, serverError }: PersonalDetailsProps
       <Controller
         name="dateOfBirth"
         control={control}
-        render={({ field: { value, onChange } }) => (
-          <SegmentedDatePicker value={value} onChange={onChange} />
+        render={({ field: { value, onChange }, formState: { errors } }) => (
+          <SegmentedDatePicker
+            value={value}
+            onChange={onChange}
+            errors={get(errors, "dateOfBirth")?.message as string}
+          />
         )}
       />
 
