@@ -51,7 +51,7 @@ public class MailtrapEmailService(IConfiguration configuration) : IEmailService
         string to,
         string username,
         string verificationCode,
-        string codeLimit
+        string codeValidFor
     )
     {
         var templatePath = Path.Combine(
@@ -64,7 +64,7 @@ public class MailtrapEmailService(IConfiguration configuration) : IEmailService
         var htmlBody = htmlTemplate
             .Replace("{{Username}}", username)
             .Replace("{{VerificationCode}}", verificationCode)
-            .Replace("{{CodeLimit}}", codeLimit);
+            .Replace("{{CodeValidFor}}", codeValidFor);
 
         var emailResult = await SendEmailAsync(to, "Verify Your Email Address", htmlBody);
         return emailResult;

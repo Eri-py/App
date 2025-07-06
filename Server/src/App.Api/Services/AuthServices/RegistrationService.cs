@@ -12,10 +12,10 @@ public class RegistrationService(AppDbContext context, IEmailService emailServic
 {
     public async Task<Result<string>> StartRegistrationAsync(StartRegistrationRequest request)
     {
-        var email = request.Email.ToLower();
         var username = request.Username.ToLower();
-
+        var email = request.Email.ToLower();
         var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
         string otp = (Random.NextInt() % 1000000).ToString("000000");
         var otpExpiresAt = DateTime.UtcNow.AddMinutes(5);
 
@@ -50,7 +50,7 @@ public class RegistrationService(AppDbContext context, IEmailService emailServic
             to: email,
             username: username,
             verificationToken: otp,
-            codeLimit: "5 minutes"
+            codeValidFor: "5 minutes"
         );
         if (!emailResult.IsSuccess)
             return emailResult;
@@ -80,16 +80,12 @@ public class RegistrationService(AppDbContext context, IEmailService emailServic
     )
     {
         var email = request.Email.ToLower();
-        var username = request.Username.ToLower();
-
-        var user = await context.Users.FirstOrDefaultAsync(u =>
-            u.Username == username || u.Email == email
-        );
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
         if (user is null)
             return Result.BadRequest("User not found");
 
-        user.Username = username;
+        user.Username = request.Username.ToLower();
         user.Email = email;
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
         user.Firstname = request.Firstname;
@@ -134,7 +130,7 @@ public class RegistrationService(AppDbContext context, IEmailService emailServic
             to: user.Email!,
             username: user.Username!,
             verificationToken: otp,
-            codeLimit: "5 minutes"
+            codeValidFor: "5 minutes"
         );
         if (!emailResult.IsSuccess)
             return emailResult;
