@@ -68,7 +68,7 @@ public class RegistrationService(AppDbContext context, IEmailService emailServic
         if (user is null || user.OtpExpiresAt < DateTime.UtcNow)
             return Result.BadRequest("Invalid or expired verification code");
 
-        user.Otp = string.Empty;
+        user.Otp = null;
         user.OtpExpiresAt = null;
         await context.SaveChangesAsync();
 
@@ -104,7 +104,7 @@ public class RegistrationService(AppDbContext context, IEmailService emailServic
             Email = user.Email,
             Firstname = user.Firstname,
             Lastname = user.Lastname,
-            Jwt = null,
+            Jwt = "This is a token",
         };
 
         return Result<UserResponse>.Success(response, "Registration completed successfully");
