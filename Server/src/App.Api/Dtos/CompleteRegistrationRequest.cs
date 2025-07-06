@@ -5,13 +5,13 @@ namespace App.Api.Dtos;
 public record class CompleteRegistrationRequest
 {
     [Required]
-    public string Username { get; set; } = string.Empty;
+    public required string Username { get; set; }
 
     [Required]
     [EmailAddress]
-    public string Email { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string Firstname { get; set; } = string.Empty;
-    public string Lastname { get; set; } = string.Empty;
-    public string DateOfBirth { get; set; } = string.Empty;
+    public required string Email { get; set; }
+    public required string Password { get; set; }
+    public required string Firstname { get; set; }
+    public required string Lastname { get; set; }
+    public required string DateOfBirth { get; set; }
 }

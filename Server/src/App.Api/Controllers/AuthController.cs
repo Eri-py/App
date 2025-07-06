@@ -43,6 +43,4 @@ namespace App.Api.Controllers
             return ResultMapper.Map(result);
         }
     }
-
-    // Updated UserResponse DTO (removed Role property)
 }

@@ -5,9 +5,9 @@ namespace App.Api.Dtos;
 public record class StartRegistrationRequest
 {
     [Required]
-    public string Username { get; set; } = string.Empty;
+    public required string Username { get; set; }
 
     [Required]
     [EmailAddress]
-    public string Email { get; set; } = string.Empty;
+    public required string Email { get; set; }
 }
