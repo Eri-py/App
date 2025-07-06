@@ -9,6 +9,6 @@ public interface IEmailService
         string to,
         string username,
         string verificationToken,
-        string codeLimit
+        string codeValidFor
     );
 }
