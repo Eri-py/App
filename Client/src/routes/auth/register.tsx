@@ -65,14 +65,13 @@ const registrationStepLabels: string[] = [
 
 export function Register() {
   const queryClient = useQueryClient();
-  const [step, setStep] = useState<number>(1);
+  const [step, setStep] = useState<number>(0);
   const [serverError, setServerError] = useState<string | null>(null);
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
 
   const methods = useForm<registrationFormSchema>({
     mode: "onChange",
-    delayError: 200,
     resolver: zodResolver(RegistrationFormSchema),
   });
 
@@ -119,10 +118,9 @@ export function Register() {
           break;
         }
         case 1: {
-          const username = methods.getValues("username");
           const email = methods.getValues("email");
           const otp = methods.getValues("otp");
-          await verifyOtpMutation.mutateAsync({ username, email, otp });
+          await verifyOtpMutation.mutateAsync({ email, otp });
           break;
         }
         case 2: {
@@ -140,8 +138,7 @@ export function Register() {
   };
 
   const onSubmit = async (formData: registrationFormSchema) => {
-    console.log(formData);
-    // await completeRegistrationMutation.mutateAsync(formData);
+    await completeRegistrationMutation.mutateAsync(formData);
   };
 
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;

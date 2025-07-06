@@ -1,5 +1,5 @@
 import { z } from "zod/v4";
-import { parse, isValid } from "date-fns";
+import { parseISO, isValid } from "date-fns";
 
 export const usernameSchema = z
   .string()
@@ -26,15 +26,25 @@ export const nameSchema = (nameType: string) => {
   return z.string(`Invalid ${nameType}`).trim().nonempty(`${nameType} is required`).max(64);
 };
 
-export const dateSchema = z.string("Date is required").refine((val) => {
-  for (const part of val.split("/")) {
-    if (part === "") return true;
-  }
-  const formats = ["dd/MMMM/yyyy", "dd/MMM/yyyy", "dd/MM/yyyy"];
-  return formats.some((format) => {
-    const parsedDate = parse(val, format, new Date());
+export const padDate = (date: string) => {
+  const [year, month, day] = date.split("-");
+
+  const paddedMonth = month.padStart(2, "0");
+  const paddedDay = day.padStart(2, "0");
+
+  return `${year}-${paddedMonth}-${paddedDay}`;
+};
+
+export const dateSchema = z
+  .string("Date is required")
+  .refine((val) => {
+    const normalizedDate = padDate(val);
+
+    const parsedDate = parseISO(normalizedDate);
     if (isValid(parsedDate)) {
       return new Date().getFullYear() - parsedDate.getFullYear() <= 150;
     }
-  });
-}, "Invalid date");
+
+    return false;
+  }, "Invalid date")
+  .transform((val) => padDate(val));
