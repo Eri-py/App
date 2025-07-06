@@ -14,23 +14,14 @@ namespace App.Api.Controllers
             [FromBody] StartRegistrationRequest request
         )
         {
-            var result = await registrationService.StartRegistrationAsync(
-                username: request.Username!.ToLower(),
-                email: request.Email!.ToLower()
-            );
-
+            var result = await registrationService.StartRegistrationAsync(request);
             return ResultMapper.Map(result);
         }
 
         [HttpPost("register/verify-otp")]
         public async Task<ActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
         {
-            var result = await registrationService.VerifyOtpAsync(
-                username: request.Username!.ToLower(),
-                email: request.Email!.ToLower(),
-                otp: request.Otp!
-            );
-
+            var result = await registrationService.VerifyOtpAsync(request);
             return ResultMapper.Map(result);
         }
 
@@ -39,11 +30,19 @@ namespace App.Api.Controllers
             [FromBody] ResendVerificationCodeRequest request
         )
         {
-            var result = await registrationService.ResendVerificationCodeAsync(
-                identifier: request.Identifier!.ToLower()
-            );
+            var result = await registrationService.ResendVerificationCodeAsync(request);
+            return ResultMapper.Map(result);
+        }
 
+        [HttpPost("register/complete")]
+        public async Task<ActionResult<UserResponse>> CompleteRegistration(
+            [FromBody] CompleteRegistrationRequest request
+        )
+        {
+            var result = await registrationService.CompleteRegistrationAsync(request);
             return ResultMapper.Map(result);
         }
     }
+
+    // Updated UserResponse DTO (removed Role property)
 }
