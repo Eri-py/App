@@ -20,9 +20,14 @@ export function PersonalDetails({ isPending, serverError }: PersonalDetailsProps
 
   return (
     <Stack gap={3} paddingInline={1.5}>
-      <Typography fontWeight={400} fontSize={25} color={theme.palette.text.primary}>
-        Personal Information
-      </Typography>
+      <Stack>
+        <Typography fontWeight={400} fontSize={25} color={theme.palette.text.primary}>
+          Personal details
+        </Typography>
+        <Typography fontWeight={200} fontSize={15} color={theme.palette.text.secondary}>
+          {"Let's get to know a bit more about you :)"}
+        </Typography>
+      </Stack>
 
       <CustomTextField
         type="text"
@@ -47,7 +52,7 @@ export function PersonalDetails({ isPending, serverError }: PersonalDetailsProps
           <SegmentedDatePicker
             value={value}
             onChange={onChange}
-            errors={get(errors, "dateOfBirth")?.message}
+            error={get(errors, "dateOfBirth")?.message}
           />
         )}
       />

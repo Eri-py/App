@@ -17,14 +17,15 @@ import {
   emailSchema,
   passwordSchema,
   dateSchema,
+  nameSchema,
 } from "../../features/auth/Schemas";
 import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndEmail";
-import { HorizontalLinearStepper } from "../../features/auth/components/HorizontalLinearStepper";
-import { verifyOtp, startRegistration, completeRegistration } from "../../api/Auth";
-import { formThemeDesktop } from "../../themes/FormThemeDesktop";
 import { Otp } from "../../features/auth/RegisterSteps/Otp";
 import { Password } from "../../features/auth/RegisterSteps/Password";
 import { PersonalDetails } from "../../features/auth/RegisterSteps/PersonalDetails";
+import { HorizontalLinearStepper } from "../../features/auth/components/HorizontalLinearStepper";
+import { formThemeDesktop } from "../../themes/FormThemeDesktop";
+import { verifyOtp, startRegistration, completeRegistration } from "../../api/Auth";
 import type {
   completeRegistrationRequest,
   startRegistrationRequest,
@@ -35,27 +36,27 @@ export const Route = createFileRoute("/auth/register")({
   component: Register,
 });
 
-const ResgisterSchema = z.object({
+const RegistrationFormSchema = z.object({
   username: usernameSchema,
   email: emailSchema,
-  otp: z.string("Invalid otp").length(6, "Invalid code"),
+  otp: z.string("Invalid otp").trim().length(6, "Invalid code"),
   password: passwordSchema,
   confirmPassword: string("Invalid password").nonempty("Please enter password again"),
-  firstname: string("Invalid firstname").nonempty("Firstname is required").max(64),
-  lastname: string("Invalid lastname").nonempty("Lastname is required").max(64),
+  firstname: nameSchema("Firstname"),
+  lastname: nameSchema("Lastname"),
   dateOfBirth: dateSchema,
 });
 
-export type registerSchema = z.infer<typeof ResgisterSchema>;
+export type registrationFormSchema = z.infer<typeof RegistrationFormSchema>;
 
-const registrationSteps: Record<number, (keyof registerSchema)[]> = {
+const registrationSteps: Record<number, (keyof registrationFormSchema)[]> = {
   0: ["username", "email"],
   1: ["otp"],
   2: ["password", "confirmPassword"],
   3: ["firstname", "lastname", "dateOfBirth"],
 };
 
-const registrationStepsLabels: string[] = [
+const registrationStepLabels: string[] = [
   "Username and Email",
   "Verifiction Code",
   "Password",
@@ -69,10 +70,9 @@ export function Register() {
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
 
-  const methods = useForm<registerSchema>({
+  const methods = useForm<registrationFormSchema>({
     mode: "onChange",
-    delayError: 200,
-    resolver: zodResolver(ResgisterSchema),
+    resolver: zodResolver(RegistrationFormSchema),
   });
 
   const handleServerError = (error: AxiosError) => {
@@ -118,10 +118,9 @@ export function Register() {
           break;
         }
         case 1: {
-          const username = methods.getValues("username");
           const email = methods.getValues("email");
           const otp = methods.getValues("otp");
-          await verifyOtpMutation.mutateAsync({ username, email, otp });
+          await verifyOtpMutation.mutateAsync({ email, otp });
           break;
         }
         case 2: {
@@ -138,9 +137,8 @@ export function Register() {
     }
   };
 
-  const onSubmit = async (formData: registerSchema) => {
-    console.log(formData);
-    // await completeRegistrationMutation.mutateAsync(formData);
+  const onSubmit = async (formData: registrationFormSchema) => {
+    await completeRegistrationMutation.mutateAsync(formData);
   };
 
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
@@ -157,7 +155,7 @@ export function Register() {
       }}
     >
       <HorizontalLinearStepper
-        steps={registrationStepsLabels}
+        steps={registrationStepLabels}
         activeStep={step}
         setActiveStep={(value) => setStep(value)}
       />

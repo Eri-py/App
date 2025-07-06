@@ -59,7 +59,7 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
           sx={{ textWrap: "nowrap" }}
         >
           Enter the <b>6 digit code</b> sent to the email address below
-          <br /> <b>{email.toLowerCase()}</b>
+          <br /> <b>{email?.toLowerCase()}.</b>
         </Typography>
       </Stack>
 
@@ -79,7 +79,7 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
               }}
             />
             {get(errors, "otp")?.message && (
-              <FormHelperText error>{get(errors, "otp").message ?? ""}</FormHelperText>
+              <FormHelperText error>{get(errors, "otp").message}</FormHelperText>
             )}
           </Stack>
         )}
@@ -122,13 +122,14 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
           <Button
             type="button"
             variant="text"
+            size="small"
             disableRipple
             disableTouchRipple
             disableFocusRipple
             disabled={resendVerifcationMutation.isPending}
             onClick={handleResend}
             sx={{
-              padding: "0 0 .1rem 0",
+              padding: "0",
               width: "fit-content",
               textDecoration: "underline !important",
               "&:hover": {
@@ -149,7 +150,7 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
         loading={isPending}
         disabled={serverError !== null}
       >
-        {serverError !== null ? serverError : "Continue"}
+        {serverError ?? "Continue"}
       </Button>
 
       <Button variant="outlined" type="button" size="large" onClick={handleBack}>

@@ -31,7 +31,7 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: usernam
           Sign up
         </Typography>
         <Typography fontWeight={200} fontSize={15} color={theme.palette.text.secondary}>
-          join thousands of users already on our platform
+          join thousands of users already on our platform.
         </Typography>
       </Stack>
 
@@ -59,7 +59,7 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: usernam
         loading={isPending}
         disabled={serverError !== null}
       >
-        {serverError !== null ? serverError : "Continue"}
+        {serverError ?? "Continue"}
       </Button>
 
       <OAuthButtonGroup />

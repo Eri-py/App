@@ -1,33 +1,34 @@
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-
-import { Selector } from "./Selector";
 import FormHelperText from "@mui/material/FormHelperText";
 import { useTheme } from "@mui/material/styles";
 
-const months: string[] = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+import { Selector } from "./Selector";
+
+const months = [
+  { id: "01", label: "January" },
+  { id: "02", label: "February" },
+  { id: "03", label: "March" },
+  { id: "04", label: "April" },
+  { id: "05", label: "May" },
+  { id: "06", label: "June" },
+  { id: "07", label: "July" },
+  { id: "08", label: "August" },
+  { id: "09", label: "September" },
+  { id: "10", label: "October" },
+  { id: "11", label: "November" },
+  { id: "12", label: "December" },
 ];
 
 type segmentedDatePickerProps = {
   value?: string;
   onChange: (value: string) => void;
-  errors?: string;
+  error?: string;
 };
 
-export function SegmentedDatePicker({ value, onChange, errors }: segmentedDatePickerProps) {
-  let [day, month, year] = value ? value.split("/") : "".split("/");
+export function SegmentedDatePicker({ value, onChange, error }: segmentedDatePickerProps) {
+  // Parse ISO date format (YYYY-MM-DD)
+  let [year, month, day] = value ? value.split("-") : "".split("-");
   if (!day) day = "";
   if (!month) month = "";
   if (!year) year = "";
@@ -35,15 +36,15 @@ export function SegmentedDatePicker({ value, onChange, errors }: segmentedDatePi
   const theme = useTheme();
 
   const handleDayChange = (newDay: string) => {
-    onChange(`${newDay}/${month}/${year}`);
+    onChange(`${year}-${month}-${newDay}`);
   };
 
   const handleMonthChange = (newMonth: string) => {
-    onChange(`${day}/${newMonth}/${year}`);
+    onChange(`${year}-${newMonth}-${day}`);
   };
 
   const handleYearChange = (newYear: string) => {
-    onChange(`${day}/${month}/${newYear}`);
+    onChange(`${newYear}-${month}-${day}`);
   };
 
   return (
@@ -93,7 +94,7 @@ export function SegmentedDatePicker({ value, onChange, errors }: segmentedDatePi
           }}
         />
       </Stack>
-      {errors && <FormHelperText error>{errors}</FormHelperText>}
+      {error && <FormHelperText error>{error}</FormHelperText>}
     </Stack>
   );
 }
