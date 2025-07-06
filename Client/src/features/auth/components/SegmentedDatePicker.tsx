@@ -23,10 +23,10 @@ const months: string[] = [
 type segmentedDatePickerProps = {
   value?: string;
   onChange: (value: string) => void;
-  errors?: string;
+  error?: string;
 };
 
-export function SegmentedDatePicker({ value, onChange, errors }: segmentedDatePickerProps) {
+export function SegmentedDatePicker({ value, onChange, error }: segmentedDatePickerProps) {
   let [day, month, year] = value ? value.split("/") : "".split("/");
   if (!day) day = "";
   if (!month) month = "";
@@ -93,7 +93,7 @@ export function SegmentedDatePicker({ value, onChange, errors }: segmentedDatePi
           }}
         />
       </Stack>
-      {errors && <FormHelperText error>{errors}</FormHelperText>}
+      {error && <FormHelperText error>{error}</FormHelperText>}
     </Stack>
   );
 }

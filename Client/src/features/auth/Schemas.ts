@@ -22,6 +22,10 @@ export const passwordSchema = z
   .regex(/[#?!@$%^&\-.]/, "Invalid password")
   .regex(/^[A-Za-z0-9#?!@$%^&\-.]+$/, "Invalid password");
 
+export const nameSchema = (nameType: string) => {
+  return z.string(`Invalid ${nameType}`).trim().nonempty(`${nameType} is required`).max(64);
+};
+
 export const dateSchema = z.string("Date is required").refine((val) => {
   for (const part of val.split("/")) {
     if (part === "") return true;
@@ -29,6 +33,8 @@ export const dateSchema = z.string("Date is required").refine((val) => {
   const formats = ["dd/MMMM/yyyy", "dd/MMM/yyyy", "dd/MM/yyyy"];
   return formats.some((format) => {
     const parsedDate = parse(val, format, new Date());
-    return isValid(parsedDate);
+    if (isValid(parsedDate)) {
+      return new Date().getFullYear() - parsedDate.getFullYear() <= 150;
+    }
   });
 }, "Invalid date");

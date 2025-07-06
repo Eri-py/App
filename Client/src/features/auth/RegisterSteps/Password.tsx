@@ -16,9 +16,14 @@ export function Password({ handleNext }: PasswordProps) {
 
   return (
     <Stack gap={3} paddingInline={1.5}>
-      <Typography fontWeight={400} fontSize={25} color={theme.palette.text.primary}>
-        Create a strong password
-      </Typography>
+      <Stack>
+        <Typography fontWeight={400} fontSize={25} color={theme.palette.text.primary}>
+          Create a strong password
+        </Typography>
+        <Typography fontWeight={200} fontSize={15} color={theme.palette.text.secondary}>
+          We will never ask you for your password.
+        </Typography>
+      </Stack>
 
       <Stack gap={1}>
         <CustomTextField

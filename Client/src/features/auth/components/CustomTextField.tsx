@@ -8,9 +8,9 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import type { registerSchema } from "../../../routes/auth/register";
+import type { registrationFormSchema } from "../../../routes/auth/register";
 
-type validSchema = registerSchema;
+type validSchema = registrationFormSchema;
 
 type CustomTextFieldProps = {
   type: string;
