@@ -1,6 +1,5 @@
 using App.Api.Dtos;
-using App.Api.Services;
-using App.Api.Services.AuthServices;
+using App.Api.Services.AuthServices.Registration;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Api.Controllers
@@ -35,7 +34,7 @@ namespace App.Api.Controllers
         }
 
         [HttpPost("register/complete")]
-        public async Task<ActionResult<UserResponse>> CompleteRegistration(
+        public async Task<ActionResult<string>> CompleteRegistration(
             [FromBody] CompleteRegistrationRequest request
         )
         {

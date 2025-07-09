@@ -1,5 +1,5 @@
 using App.Api.Data;
-using App.Api.Services.AuthServices;
+using App.Api.Services.AuthServices.Registration;
 using App.Api.Services.EmailServices;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
