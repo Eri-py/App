@@ -48,6 +48,15 @@ export const mainTheme = (isDarkMode: boolean) =>
           },
         },
       },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            "& input:-webkit-autofill": {
+              transition: "background-color 600000s 0s, color 600000s 0s",
+            },
+          },
+        },
+      },
     },
     typography: {
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
