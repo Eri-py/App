@@ -53,6 +53,11 @@ Open `server/src/app.api/appsettings.Development.json` and update the following 
     "Port": "2525",
     "Username": "MAILTRAP USERNAME",
     "Password": "MAILTRAP PASSWORD"
+  },
+  "Jwt": {
+    "Secret": "Your 64 BYTE SECRET",
+    "Issuer": "app.com",
+    "Audience": "app-client"
   }
 }
 ```
@@ -65,15 +70,13 @@ Open `server/src/app.api/appsettings.Development.json` and update the following 
 - Google the right connection string based on server type.
 - Update the connection string to match your local database setup
 
-**Email Configuration (MailKit):**
-
-- **Mailtrap:** Use Mailtrap SMTP for email testing
-  - Go to Mailtrap → Email Testing → Inboxes → Your Inbox → SMTP Settings
-  - Copy the Username and Password from the SMTP settings
-
-#### Install Dependencies and Run
+**Database Setup:**
+After configuring your connection string, set up the database:
 
 ```bash
+# Install EF Core tools globally (if not already installed)
+dotnet tool install --global dotnet-ef
+
 # Navigate to the backend project directory
 cd server/src/app.api
 
@@ -85,8 +88,29 @@ dotnet ef migrations add InitialCreate
 
 # Update database
 dotnet ef database update
+```
 
-# Run the application
+**Email Configuration (MailKit):**
+
+- **Mailtrap:** Use Mailtrap SMTP for email testing
+  - Go to Mailtrap -> Email Testing -> Inboxes -> Your Inbox -> SMTP Settings
+  - Copy the Username and Password from the SMTP settings
+
+**JWT Configuration:**
+
+- **Secret:** Generate a secure 64-byte secret using one of these commands:
+  - **Windows PowerShell:** `[Convert]::ToBase64String([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(64))`
+  - **Linux (WSL or Git bash) / MacOS:** `openssl rand -base64 64`
+- **Issuer:** Keep as "app.com" or change
+- **Audience:** Keep as "app-client" or change
+
+#### Run the Server
+
+```bash
+# Navigate to the backend project directory (if not already there)
+cd server/src/app.api
+
+# Run the server
 dotnet run
 ```
 
@@ -98,8 +122,6 @@ cd client
 
 # Install dependencies
 npm install
-# or
-yarn install
 
 # Start the development server
 npm run dev
