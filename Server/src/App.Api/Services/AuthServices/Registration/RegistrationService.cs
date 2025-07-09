@@ -5,25 +5,34 @@ using App.Api.Services.EmailServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Api.Services.AuthServices;
+namespace App.Api.Services.AuthServices.Registration;
 
-public class RegistrationService(AppDbContext context, IEmailService emailService)
-    : IRegistrationService
+public class RegistrationService(
+    AppDbContext context,
+    IEmailService emailService,
+    IConfiguration configuration
+) : IRegistrationService
 {
+    private readonly int OtpValidFor = 5;
+
     public async Task<Result<string>> StartRegistrationAsync(StartRegistrationRequest request)
     {
         var username = request.Username.ToLower();
         var email = request.Email.ToLower();
-        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        var user = await context.Users.FirstOrDefaultAsync(u =>
+            u.Username == username || u.Email == email
+        );
 
-        string otp = (Random.NextInt() % 1000000).ToString("000000");
-        var otpExpiresAt = DateTime.UtcNow.AddMinutes(5);
+        string otp = (Shared.Random.NextInt() % 1000000).ToString("000000");
+        var otpExpiresAt = DateTime.UtcNow.AddMinutes(OtpValidFor);
 
         if (user is not null)
         {
             if (user.CreatedAt.HasValue)
             {
-                return Result.Conflict("User with these credentials already exists");
+                return user.Username == username
+                    ? Result.Conflict("Username taken")
+                    : Result.Conflict("Email taken");
             }
 
             user.Username = username;
@@ -39,7 +48,6 @@ public class RegistrationService(AppDbContext context, IEmailService emailServic
                 Email = email,
                 Otp = otp,
                 OtpExpiresAt = otpExpiresAt,
-                CreatedAt = null,
             };
             context.Users.Add(newUser);
         }
@@ -75,35 +83,27 @@ public class RegistrationService(AppDbContext context, IEmailService emailServic
         return Result.NoContent();
     }
 
-    public async Task<Result<UserResponse>> CompleteRegistrationAsync(
-        CompleteRegistrationRequest request
-    )
+    public async Task<Result<string>> CompleteRegistrationAsync(CompleteRegistrationRequest request)
     {
         var email = request.Email.ToLower();
-        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        var username = request.Username.ToLower();
+        var user = await context.Users.FirstOrDefaultAsync(u =>
+            u.Email == email && u.Username == username
+        );
 
         if (user is null)
             return Result.BadRequest("User not found");
 
-        user.Username = request.Username.ToLower();
-        user.Email = email;
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
         user.Firstname = request.Firstname;
         user.Lastname = request.Lastname;
         user.DateOfBirth = DateTime.Parse(request.DateOfBirth);
         user.CreatedAt = DateTime.UtcNow;
+
         await context.SaveChangesAsync();
 
-        var response = new UserResponse
-        {
-            Username = user.Username,
-            Email = user.Email,
-            Firstname = user.Firstname,
-            Lastname = user.Lastname,
-            Jwt = "This is a token",
-        };
-
-        return Result<UserResponse>.Success(response, "Registration completed successfully");
+        var token = Shared.CreateToken(user, configuration);
+        return Result<string>.Success(token, "Registration completed successfully");
     }
 
     public async Task<Result<string>> ResendVerificationCodeAsync(
@@ -119,11 +119,12 @@ public class RegistrationService(AppDbContext context, IEmailService emailServic
         if (user is null)
             return Result.BadRequest("User not found");
 
-        string otp = (Random.NextInt() % 1000000).ToString("000000");
-        var otpExpiresAt = DateTime.UtcNow.AddMinutes(5);
+        string otp = (Shared.Random.NextInt() % 1000000).ToString("000000");
+        var otpExpiresAt = DateTime.UtcNow.AddMinutes(OtpValidFor);
 
         user.Otp = otp;
         user.OtpExpiresAt = otpExpiresAt;
+
         await context.SaveChangesAsync();
 
         var emailResult = await emailService.SendEmailVerificationAsync(
@@ -136,18 +137,5 @@ public class RegistrationService(AppDbContext context, IEmailService emailServic
             return emailResult;
 
         return Result<string>.Success(otpExpiresAt.ToString("o"), "Verification code resent");
-    }
-}
-
-public static class Random
-{
-    private static readonly ThreadLocal<System.Security.Cryptography.RandomNumberGenerator> crng =
-        new(System.Security.Cryptography.RandomNumberGenerator.Create);
-    private static readonly ThreadLocal<byte[]> bytes = new(() => new byte[sizeof(int)]);
-
-    public static int NextInt()
-    {
-        crng.Value!.GetBytes(bytes.Value!);
-        return BitConverter.ToInt32(bytes.Value!, 0) & int.MaxValue;
     }
 }
