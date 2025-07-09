@@ -19,6 +19,7 @@ public class RegistrationService(
     {
         var username = request.Username.ToLower();
         var email = request.Email.ToLower();
+
         var user = await context.Users.FirstOrDefaultAsync(u =>
             u.Username == username || u.Email == email
         );
@@ -26,44 +27,58 @@ public class RegistrationService(
         string otp = (Shared.Random.NextInt() % 1000000).ToString("000000");
         var otpExpiresAt = DateTime.UtcNow.AddMinutes(OtpValidFor);
 
-        if (user is not null)
+        using var transaction = await context.Database.BeginTransactionAsync();
+        try
         {
-            if (user.CreatedAt.HasValue)
+            if (user is not null)
             {
-                return user.Username == username
-                    ? Result.Conflict("Username taken")
-                    : Result.Conflict("Email taken");
+                if (user.CreatedAt.HasValue)
+                {
+                    return user.Username == username
+                        ? Result.Conflict("Username taken")
+                        : Result.Conflict("Email taken");
+                }
+
+                user.Username = username;
+                user.Email = email;
+                user.Otp = otp;
+                user.OtpExpiresAt = otpExpiresAt;
+            }
+            else
+            {
+                var newUser = new User
+                {
+                    Username = username,
+                    Email = email,
+                    Otp = otp,
+                    OtpExpiresAt = otpExpiresAt,
+                };
+                context.Users.Add(newUser);
             }
 
-            user.Username = username;
-            user.Email = email;
-            user.Otp = otp;
-            user.OtpExpiresAt = otpExpiresAt;
-        }
-        else
-        {
-            var newUser = new User
+            await context.SaveChangesAsync();
+
+            var emailResult = await emailService.SendEmailVerificationAsync(
+                to: email,
+                username: username,
+                verificationToken: otp,
+                codeValidFor: "5 minutes"
+            );
+
+            if (!emailResult.IsSuccess)
             {
-                Username = username,
-                Email = email,
-                Otp = otp,
-                OtpExpiresAt = otpExpiresAt,
-            };
-            context.Users.Add(newUser);
+                await transaction.RollbackAsync();
+                return emailResult;
+            }
+
+            await transaction.CommitAsync();
+            return Result<string>.Success(otpExpiresAt.ToString("o"), "Verification code sent");
         }
-
-        await context.SaveChangesAsync();
-
-        var emailResult = await emailService.SendEmailVerificationAsync(
-            to: email,
-            username: username,
-            verificationToken: otp,
-            codeValidFor: "5 minutes"
-        );
-        if (!emailResult.IsSuccess)
-            return emailResult;
-
-        return Result<string>.Success(otpExpiresAt.ToString("o"), "Verification code sent");
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<Result> VerifyOtpAsync(VerifyOtpRequest request)
@@ -122,20 +137,33 @@ public class RegistrationService(
         string otp = (Shared.Random.NextInt() % 1000000).ToString("000000");
         var otpExpiresAt = DateTime.UtcNow.AddMinutes(OtpValidFor);
 
-        user.Otp = otp;
-        user.OtpExpiresAt = otpExpiresAt;
+        using var transaction = await context.Database.BeginTransactionAsync();
+        try
+        {
+            user.Otp = otp;
+            user.OtpExpiresAt = otpExpiresAt;
 
-        await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
-        var emailResult = await emailService.SendEmailVerificationAsync(
-            to: user.Email!,
-            username: user.Username!,
-            verificationToken: otp,
-            codeValidFor: "5 minutes"
-        );
-        if (!emailResult.IsSuccess)
-            return emailResult;
+            var emailResult = await emailService.SendEmailVerificationAsync(
+                to: user.Email!,
+                username: user.Username!,
+                verificationToken: otp,
+                codeValidFor: "5 minutes"
+            );
+            if (!emailResult.IsSuccess)
+            {
+                await transaction.RollbackAsync();
+                return emailResult;
+            }
 
-        return Result<string>.Success(otpExpiresAt.ToString("o"), "Verification code resent");
+            await transaction.CommitAsync();
+            return Result<string>.Success(otpExpiresAt.ToString("o"), "Verification code resent");
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 }
