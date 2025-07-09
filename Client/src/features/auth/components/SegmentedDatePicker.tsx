@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";
+import TextField from "@mui/material/TextField";
 import { useTheme } from "@mui/material/styles";
 
 import { Selector } from "./Selector";
@@ -27,7 +27,6 @@ type segmentedDatePickerProps = {
 };
 
 export function SegmentedDatePicker({ value, onChange, error }: segmentedDatePickerProps) {
-  // Parse ISO date format (YYYY-MM-DD)
   let [year, month, day] = value ? value.split("-") : "".split("-");
   if (!day) day = "";
   if (!month) month = "";
@@ -36,7 +35,8 @@ export function SegmentedDatePicker({ value, onChange, error }: segmentedDatePic
   const theme = useTheme();
 
   const handleDayChange = (newDay: string) => {
-    onChange(`${year}-${month}-${newDay}`);
+    if (newDay === "") onChange(`${year}-${month}-${""}`);
+    else if (newDay.match("^[0-9]+$")) onChange(`${year}-${month}-${newDay}`);
   };
 
   const handleMonthChange = (newMonth: string) => {
@@ -44,7 +44,8 @@ export function SegmentedDatePicker({ value, onChange, error }: segmentedDatePic
   };
 
   const handleYearChange = (newYear: string) => {
-    onChange(`${newYear}-${month}-${day}`);
+    if (newYear === "") onChange(`${""}-${month}-${day}`);
+    else if (newYear.match("^[0-9]+$")) onChange(`${newYear}-${month}-${day}`);
   };
 
   return (
@@ -65,6 +66,7 @@ export function SegmentedDatePicker({ value, onChange, error }: segmentedDatePic
                 backgroundColor: theme.palette.background.paper,
               },
             },
+            htmlInput: { inputMode: "numeric", pattern: "[0-9]*" },
           }}
         />
 
@@ -91,6 +93,7 @@ export function SegmentedDatePicker({ value, onChange, error }: segmentedDatePic
                 backgroundColor: theme.palette.background.paper,
               },
             },
+            htmlInput: { inputMode: "numeric", pattern: "[0-9]*" },
           }}
         />
       </Stack>

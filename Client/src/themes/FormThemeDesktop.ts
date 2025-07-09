@@ -44,6 +44,15 @@ export const formThemeDesktop = createTheme({
         },
       },
     },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          "& input:-webkit-autofill": {
+            transition: "background-color 6000000s 0s, color 6000000s 0s",
+          },
+        },
+      },
+    },
   },
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
