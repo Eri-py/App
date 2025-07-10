@@ -13,14 +13,14 @@ export const usernameSchema = z
 export const emailSchema = z.email("Invalid email address").max(100, "Maximum 100 characters");
 
 export const passwordSchema = z
-  .string("Invalid password")
-  .min(8, "Invalid password")
-  .max(64, "Invalid password")
-  .regex(/[A-Z]/, "Invalid password")
-  .regex(/[a-z]/, "Invalid password")
-  .regex(/[0-9]/, "Invalid password")
-  .regex(/[#?!@$%^&\-.]/, "Invalid password")
-  .regex(/^[A-Za-z0-9#?!@$%^&\-.]+$/, "Invalid password");
+  .string("Password is required")
+  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+  .regex(/[0-9]/, "Password must contain at least one number")
+  .regex(/[#?!@$%^&\-._]/, "Password must contain at least one special character (#?!@$%^&-._)")
+  .regex(/^[A-Za-z0-9#?!@$%^&\-._]+$/, "Password contains invalid characters")
+  .min(8, "Password must be at least 8 characters long")
+  .max(64, "Password must be no more than 64 characters long");
 
 export const nameSchema = (nameType: string) => {
   return z
@@ -28,7 +28,10 @@ export const nameSchema = (nameType: string) => {
     .trim()
     .nonempty(`${nameType} is required`)
     .max(64)
-    .transform((val) => val[0].toUpperCase() + val.slice(1).toLowerCase());
+    .transform((val) => {
+      if (val) return val[0].toUpperCase() + val.slice(1).toLowerCase();
+      return val;
+    });
 };
 
 export const padDate = (date: string) => {
@@ -44,10 +47,10 @@ export const dateSchema = z
   .string("Date is required")
   .refine((val) => {
     const normalizedDate = padDate(val);
-
-    const parsedDate = parseISO(normalizedDate);
-    if (isValid(parsedDate)) {
-      return new Date().getFullYear() - parsedDate.getFullYear() <= 150;
+    const parsedDate = parseISO(normalizedDate).getFullYear();
+    const currentDate = new Date().getFullYear();
+    if (isValid(parsedDate) && currentDate >= parsedDate) {
+      return currentDate - parsedDate <= 150;
     }
 
     return false;
