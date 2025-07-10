@@ -14,18 +14,29 @@ public static class ResultMapper
             ResultTypes.NoContent => new NoContentResult(),
             ResultTypes.Created => new CreatedResult(string.Empty, result.Message),
 
-            ResultTypes.BadRequest => new BadRequestObjectResult(result.Message),
-            ResultTypes.Unauthorized => new UnauthorizedObjectResult(result.Message),
-            ResultTypes.Forbidden => new ObjectResult(result.Message) { StatusCode = 403 },
-            ResultTypes.NotFound => new NotFoundObjectResult(result.Message),
-            ResultTypes.Conflict => new ConflictObjectResult(result.Message),
-            ResultTypes.TooManyRequests => new ObjectResult(result.Message) { StatusCode = 429 },
-            ResultTypes.InternalServerError => new ObjectResult(result.Message)
+            ResultTypes.BadRequest => new BadRequestObjectResult(new { message = result.Message }),
+            ResultTypes.Unauthorized => new UnauthorizedObjectResult(
+                new { message = result.Message }
+            ),
+            ResultTypes.Forbidden => new ObjectResult(new { message = result.Message })
+            {
+                StatusCode = 403,
+            },
+            ResultTypes.NotFound => new NotFoundObjectResult(new { message = result.Message }),
+            ResultTypes.Conflict => new ConflictObjectResult(new { message = result.Message }),
+            ResultTypes.TooManyRequests => new ObjectResult(new { message = result.Message })
+            {
+                StatusCode = 429,
+            },
+            ResultTypes.InternalServerError => new ObjectResult(new { message = result.Message })
             {
                 StatusCode = 500,
             },
 
-            _ => new ObjectResult("An unexpected error occurred") { StatusCode = 500 },
+            _ => new ObjectResult(new { message = "An unexpected error occurred" })
+            {
+                StatusCode = 500,
+            },
         };
     }
 
@@ -37,18 +48,29 @@ public static class ResultMapper
             ResultTypes.NoContent => new NoContentResult(),
             ResultTypes.Created => new CreatedResult(string.Empty, result.Content),
 
-            ResultTypes.BadRequest => new BadRequestObjectResult(result.Message),
-            ResultTypes.Unauthorized => new UnauthorizedObjectResult(result.Message),
-            ResultTypes.Forbidden => new ObjectResult(result.Message) { StatusCode = 403 },
-            ResultTypes.NotFound => new NotFoundObjectResult(result.Message),
-            ResultTypes.Conflict => new ConflictObjectResult(result.Message),
-            ResultTypes.TooManyRequests => new ObjectResult(result.Message) { StatusCode = 429 },
-            ResultTypes.InternalServerError => new ObjectResult(result.Message)
+            ResultTypes.BadRequest => new BadRequestObjectResult(new { message = result.Message }),
+            ResultTypes.Unauthorized => new UnauthorizedObjectResult(
+                new { message = result.Message }
+            ),
+            ResultTypes.Forbidden => new ObjectResult(new { message = result.Message })
+            {
+                StatusCode = 403,
+            },
+            ResultTypes.NotFound => new NotFoundObjectResult(new { message = result.Message }),
+            ResultTypes.Conflict => new ConflictObjectResult(new { message = result.Message }),
+            ResultTypes.TooManyRequests => new ObjectResult(new { message = result.Message })
+            {
+                StatusCode = 429,
+            },
+            ResultTypes.InternalServerError => new ObjectResult(new { message = result.Message })
             {
                 StatusCode = 500,
             },
 
-            _ => new ObjectResult("An unexpected error occurred") { StatusCode = 500 },
+            _ => new ObjectResult(new { message = "An unexpected error occurred" })
+            {
+                StatusCode = 500,
+            },
         };
     }
 }
