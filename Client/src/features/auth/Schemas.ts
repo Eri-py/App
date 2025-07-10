@@ -23,7 +23,12 @@ export const passwordSchema = z
   .regex(/^[A-Za-z0-9#?!@$%^&\-.]+$/, "Invalid password");
 
 export const nameSchema = (nameType: string) => {
-  return z.string(`Invalid ${nameType}`).trim().nonempty(`${nameType} is required`).max(64);
+  return z
+    .string(`Invalid ${nameType}`)
+    .trim()
+    .nonempty(`${nameType} is required`)
+    .max(64)
+    .transform((val) => val[0].toUpperCase() + val.slice(1).toLowerCase());
 };
 
 export const padDate = (date: string) => {
