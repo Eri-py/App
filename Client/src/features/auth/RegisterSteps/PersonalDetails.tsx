@@ -11,10 +11,10 @@ import { SegmentedDatePicker } from "../components/SegmentedDatePicker";
 
 type PersonalDetailsProps = {
   isPending: boolean;
-  serverError: string | null;
+  isContinueDisabled: boolean;
 };
 
-export function PersonalDetails({ isPending, serverError }: PersonalDetailsProps) {
+export function PersonalDetails({ isPending, isContinueDisabled }: PersonalDetailsProps) {
   const theme = useTheme();
   const { control } = useFormContext();
 
@@ -62,7 +62,7 @@ export function PersonalDetails({ isPending, serverError }: PersonalDetailsProps
         variant="contained"
         size="large"
         loading={isPending}
-        disabled={serverError !== null}
+        disabled={isContinueDisabled}
       >
         Submit
       </Button>
