@@ -17,13 +17,13 @@ import { resendVerifcationCode } from "../../../api/Auth";
 
 type otpProps = {
   email: string;
-  serverError: string | null;
+  isContinueDisabled: boolean;
   handleBack: () => void;
   handleNext: () => void;
   isPending: boolean;
 };
 
-export function Otp({ email, serverError, handleBack, handleNext, isPending }: otpProps) {
+export function Otp({ email, isContinueDisabled, handleBack, handleNext, isPending }: otpProps) {
   const theme = useTheme();
   const { control } = useFormContext();
 
@@ -148,7 +148,7 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
         variant="contained"
         onClick={handleNext}
         loading={isPending}
-        disabled={serverError !== null}
+        disabled={isContinueDisabled}
       >
         Continue
       </Button>

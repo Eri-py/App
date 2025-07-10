@@ -11,6 +11,7 @@ import { useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import Alert from "@mui/material/Alert";
 
 import {
   usernameSchema,
@@ -67,6 +68,7 @@ export function Register() {
   const queryClient = useQueryClient();
   const [step, setStep] = useState<number>(0);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [continueDisabled, setContinueDisabled] = useState(false);
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
 
@@ -87,10 +89,15 @@ export function Register() {
       errorMessage = error.message;
     }
     setServerError(errorMessage);
+    setContinueDisabled(true);
 
     setTimeout(() => {
       setServerError(null);
-    }, 2000);
+    }, 10000);
+
+    setTimeout(() => {
+      setContinueDisabled(false);
+    }, 3000);
   };
 
   const startRegistrationMutation = useMutation({
@@ -168,6 +175,11 @@ export function Register() {
         activeStep={step}
         setActiveStep={(value) => setStep(value)}
       />
+      {serverError !== null && (
+        <Alert severity="error" sx={{ color: theme.palette.text.primary }}>
+          {serverError}
+        </Alert>
+      )}
 
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
@@ -175,7 +187,7 @@ export function Register() {
             <UsernameAndEmail
               handleNext={handleNext}
               isPending={startRegistrationMutation.isPending}
-              serverError={serverError}
+              isContinueDisabled={continueDisabled}
             />
           )}
           {step === 1 && (
@@ -184,14 +196,14 @@ export function Register() {
               handleNext={handleNext}
               handleBack={() => setStep(0)}
               isPending={verifyOtpMutation.isPending}
-              serverError={serverError}
+              isContinueDisabled={continueDisabled}
             />
           )}
           {step === 2 && <Password handleNext={handleNext} />}
           {step === 3 && (
             <PersonalDetails
               isPending={completeRegistrationMutation.isPending}
-              serverError={serverError}
+              isContinueDisabled={continueDisabled}
             />
           )}
         </form>
