@@ -150,7 +150,7 @@ export function Otp({ email, serverError, handleBack, handleNext, isPending }: o
         loading={isPending}
         disabled={serverError !== null}
       >
-        {serverError ?? "Continue"}
+        Continue
       </Button>
 
       <Button variant="outlined" type="button" size="large" onClick={handleBack}>

@@ -64,7 +64,7 @@ export function PersonalDetails({ isPending, serverError }: PersonalDetailsProps
         loading={isPending}
         disabled={serverError !== null}
       >
-        {serverError !== null ? serverError : "Submit"}
+        Submit
       </Button>
     </Stack>
   );

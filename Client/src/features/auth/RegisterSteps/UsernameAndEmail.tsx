@@ -59,7 +59,7 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: usernam
         loading={isPending}
         disabled={serverError !== null}
       >
-        {serverError ?? "Continue"}
+        Continue
       </Button>
 
       <OAuthButtonGroup />

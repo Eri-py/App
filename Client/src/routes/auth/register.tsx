@@ -76,7 +76,16 @@ export function Register() {
   });
 
   const handleServerError = (error: AxiosError) => {
-    const errorMessage = error.request.response || error.message;
+    let errorMessage;
+    if (error.response) {
+      if (typeof error.response.data === "string") {
+        errorMessage = error.response.data;
+      } else {
+        errorMessage = "An unknown error has occurred";
+      }
+    } else {
+      errorMessage = error.message;
+    }
     setServerError(errorMessage);
 
     setTimeout(() => {
