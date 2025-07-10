@@ -18,10 +18,14 @@ const CustomLink = styled(Link)(({ theme }) => ({
 type usernameAndEmailProps = {
   handleNext: () => void;
   isPending: boolean;
-  serverError: string | null;
+  isContinueDisabled: boolean;
 };
 
-export function UsernameAndEmail({ handleNext, isPending, serverError }: usernameAndEmailProps) {
+export function UsernameAndEmail({
+  handleNext,
+  isPending,
+  isContinueDisabled,
+}: usernameAndEmailProps) {
   const theme = useTheme();
 
   return (
@@ -57,9 +61,9 @@ export function UsernameAndEmail({ handleNext, isPending, serverError }: usernam
         type="button"
         onClick={handleNext}
         loading={isPending}
-        disabled={serverError !== null}
+        disabled={isContinueDisabled}
       >
-        {serverError ?? "Continue"}
+        Continue
       </Button>
 
       <OAuthButtonGroup />
