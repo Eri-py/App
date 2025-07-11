@@ -1,5 +1,5 @@
 import { z } from "zod/v4";
-import { parseISO, isValid } from "date-fns";
+import { parseISO, isValid, differenceInYears } from "date-fns";
 
 export const usernameSchema = z
   .string()
@@ -13,14 +13,14 @@ export const usernameSchema = z
 export const emailSchema = z.email("Invalid email address").max(100, "Maximum 100 characters");
 
 export const passwordSchema = z
-  .string("Invalid password")
-  .min(8, "Invalid password")
-  .max(64, "Invalid password")
-  .regex(/[A-Z]/, "Invalid password")
-  .regex(/[a-z]/, "Invalid password")
-  .regex(/[0-9]/, "Invalid password")
-  .regex(/[#?!@$%^&\-.]/, "Invalid password")
-  .regex(/^[A-Za-z0-9#?!@$%^&\-.]+$/, "Invalid password");
+  .string("Password is required")
+  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+  .regex(/[0-9]/, "Password must contain at least one number")
+  .regex(/[#?!@$%^&\-._]/, "Password must contain at least one special character (#?!@$%^&-._)")
+  .regex(/^[A-Za-z0-9#?!@$%^&\-._]+$/, "Password contains invalid characters")
+  .min(8, "Password must be at least 8 characters long")
+  .max(64, "Password must be no more than 64 characters long");
 
 export const nameSchema = (nameType: string) => {
   return z
@@ -28,28 +28,37 @@ export const nameSchema = (nameType: string) => {
     .trim()
     .nonempty(`${nameType} is required`)
     .max(64)
-    .transform((val) => val[0].toUpperCase() + val.slice(1).toLowerCase());
+    .transform((val) => {
+      if (val) return val[0].toUpperCase() + val.slice(1).toLowerCase();
+      return val;
+    });
 };
 
-export const padDate = (date: string) => {
-  const [year, month, day] = date.split("-");
+const padDate = (date: string) => {
+  const [year, month = "", day = ""] = date.split("-");
 
   const paddedMonth = month.padStart(2, "0");
   const paddedDay = day.padStart(2, "0");
 
   return `${year}-${paddedMonth}-${paddedDay}`;
 };
-
-export const dateSchema = z
+export const dateOfBirthSchema = z
   .string("Date is required")
   .refine((val) => {
-    const normalizedDate = padDate(val);
-
-    const parsedDate = parseISO(normalizedDate);
-    if (isValid(parsedDate)) {
-      return new Date().getFullYear() - parsedDate.getFullYear() <= 150;
-    }
-
-    return false;
+    return /^\d{4}-\d{2}-\d{2}$/.test(padDate(val));
   }, "Invalid date")
+  .refine((val) => {
+    const normalized = padDate(val);
+    const parsed = parseISO(normalized);
+    const today = new Date();
+    return isValid(parsed) && parsed <= today;
+  }, "Invalid date")
+  .refine((val) => {
+    const normalized = padDate(val);
+    const parsed = parseISO(normalized);
+    const today = new Date();
+    const age = differenceInYears(today, parsed);
+
+    return age >= 13;
+  }, "User must be older than 13")
   .transform((val) => padDate(val));

@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { type AxiosError } from "axios";
 
 import { ThemeProvider } from "@emotion/react";
 import { useTheme } from "@mui/material/styles";
@@ -17,8 +16,8 @@ import {
   usernameSchema,
   emailSchema,
   passwordSchema,
-  dateSchema,
   nameSchema,
+  dateOfBirthSchema,
 } from "../../features/auth/Schemas";
 import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndEmail";
 import { Otp } from "../../features/auth/RegisterSteps/Otp";
@@ -32,6 +31,7 @@ import type {
   startRegistrationRequest,
   verifyOtpRequest,
 } from "../../api/Dtos";
+import { getErrorMessage, type ServerError } from "../../api/Client";
 
 export const Route = createFileRoute("/auth/register")({
   component: Register,
@@ -45,7 +45,7 @@ const RegistrationFormSchema = z.object({
   confirmPassword: string("Invalid password").nonempty("Please enter password again"),
   firstname: nameSchema("Firstname"),
   lastname: nameSchema("Lastname"),
-  dateOfBirth: dateSchema,
+  dateOfBirth: dateOfBirthSchema,
 });
 
 export type registrationFormSchema = z.infer<typeof RegistrationFormSchema>;
@@ -66,7 +66,7 @@ const registrationStepLabels: string[] = [
 
 export function Register() {
   const queryClient = useQueryClient();
-  const [step, setStep] = useState<number>(0);
+  const [step, setStep] = useState<number>(3);
   const [serverError, setServerError] = useState<string | null>(null);
   const [continueDisabled, setContinueDisabled] = useState(false);
   const defaultTheme = useTheme();
@@ -77,17 +77,8 @@ export function Register() {
     resolver: zodResolver(RegistrationFormSchema),
   });
 
-  const handleServerError = (error: AxiosError) => {
-    let errorMessage;
-    if (error.response) {
-      if (typeof error.response.data === "string") {
-        errorMessage = error.response.data;
-      } else {
-        errorMessage = "An unknown error has occurred";
-      }
-    } else {
-      errorMessage = error.message;
-    }
+  const handleServerError = (error: ServerError) => {
+    const errorMessage = getErrorMessage(error);
     setServerError(errorMessage);
     setContinueDisabled(true);
 
@@ -106,19 +97,19 @@ export function Register() {
       queryClient.setQueryData(["otpExpiresAt"], response.data);
       setStep(1);
     },
-    onError: (error: AxiosError) => handleServerError(error),
+    onError: (error: ServerError) => handleServerError(error),
   });
 
   const verifyOtpMutation = useMutation({
     mutationFn: (data: verifyOtpRequest) => verifyOtp(data),
     onSuccess: () => setStep(2),
-    onError: (error: AxiosError) => handleServerError(error),
+    onError: (error: ServerError) => handleServerError(error),
   });
 
   const completeRegistrationMutation = useMutation({
     mutationFn: (data: completeRegistrationRequest) => completeRegistration(data),
     onSuccess: (data) => console.log(data),
-    onError: (error: AxiosError) => handleServerError(error),
+    onError: (error: ServerError) => handleServerError(error),
   });
 
   const handleNext = async () => {
@@ -126,6 +117,7 @@ export function Register() {
     const isValid = await methods.trigger(currentStep);
 
     if (isValid) {
+      setServerError(null);
       switch (step) {
         case 0: {
           const username = methods.getValues("username");
@@ -154,6 +146,7 @@ export function Register() {
   };
 
   const onSubmit = async (formData: registrationFormSchema) => {
+    setServerError(null);
     await completeRegistrationMutation.mutateAsync(formData);
   };
 
@@ -166,7 +159,7 @@ export function Register() {
         maxWidth: { xs: "100%", sm: "480px" },
         height: "fit-content",
         backgroundColor: theme.palette.background.default,
-        boxShadow: { sm: "0 0 5px rgba(225, 225, 225, .5)" },
+        boxShadow: { sm: "0 0 2px rgba(225, 225, 225, .5)" },
         borderRadius: { sm: "1rem" },
       }}
     >
