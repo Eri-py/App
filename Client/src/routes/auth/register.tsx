@@ -17,7 +17,7 @@ import {
   emailSchema,
   passwordSchema,
   nameSchema,
-  dateSchema,
+  dateOfBirthSchema,
 } from "../../features/auth/Schemas";
 import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndEmail";
 import { Otp } from "../../features/auth/RegisterSteps/Otp";
@@ -45,7 +45,7 @@ const RegistrationFormSchema = z.object({
   confirmPassword: string("Invalid password").nonempty("Please enter password again"),
   firstname: nameSchema("Firstname"),
   lastname: nameSchema("Lastname"),
-  dateOfBirth: dateSchema,
+  dateOfBirth: dateOfBirthSchema,
 });
 
 export type registrationFormSchema = z.infer<typeof RegistrationFormSchema>;
@@ -66,7 +66,7 @@ const registrationStepLabels: string[] = [
 
 export function Register() {
   const queryClient = useQueryClient();
-  const [step, setStep] = useState<number>(0);
+  const [step, setStep] = useState<number>(3);
   const [serverError, setServerError] = useState<string | null>(null);
   const [continueDisabled, setContinueDisabled] = useState(false);
   const defaultTheme = useTheme();

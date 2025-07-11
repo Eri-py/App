@@ -1,5 +1,5 @@
 import { z } from "zod/v4";
-import { parseISO, isValid } from "date-fns";
+import { parseISO, isValid, differenceInYears } from "date-fns";
 
 export const usernameSchema = z
   .string()
@@ -34,25 +34,31 @@ export const nameSchema = (nameType: string) => {
     });
 };
 
-export const padDate = (date: string) => {
-  const [year, month, day] = date.split("-");
+const padDate = (date: string) => {
+  const [year, month = "", day = ""] = date.split("-");
 
   const paddedMonth = month.padStart(2, "0");
   const paddedDay = day.padStart(2, "0");
 
   return `${year}-${paddedMonth}-${paddedDay}`;
 };
-
-export const dateSchema = z
+export const dateOfBirthSchema = z
   .string("Date is required")
   .refine((val) => {
-    const normalizedDate = padDate(val);
-    const parsedDate = parseISO(normalizedDate).getFullYear();
-    const currentDate = new Date().getFullYear();
-    if (isValid(parsedDate) && currentDate >= parsedDate) {
-      return currentDate - parsedDate <= 150;
-    }
-
-    return false;
+    return /^\d{4}-\d{2}-\d{2}$/.test(padDate(val));
   }, "Invalid date")
+  .refine((val) => {
+    const normalized = padDate(val);
+    const parsed = parseISO(normalized);
+    const today = new Date();
+    return isValid(parsed) && parsed <= today;
+  }, "Invalid date")
+  .refine((val) => {
+    const normalized = padDate(val);
+    const parsed = parseISO(normalized);
+    const today = new Date();
+    const age = differenceInYears(today, parsed);
+
+    return age >= 13;
+  }, "User must be older than 13")
   .transform((val) => padDate(val));
