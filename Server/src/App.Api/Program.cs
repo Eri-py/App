@@ -1,7 +1,10 @@
+using System.Text;
 using App.Api.Data;
 using App.Api.Services.AuthServices.Registration;
 using App.Api.Services.EmailServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,6 +48,24 @@ if (builder.Environment.IsDevelopment())
 // Authentication Services
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 
+builder
+    .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!)
+            ),
+        };
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -53,10 +74,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+app.UseCors(builder.Configuration["ClientOrigin:Name"]!);
 
 app.UseHttpsRedirection();
-
-app.UseCors(builder.Configuration["ClientOrigin:Name"]!);
 
 app.UseAuthorization();
 
