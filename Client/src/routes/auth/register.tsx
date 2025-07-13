@@ -64,9 +64,9 @@ const registrationStepLabels: string[] = [
   "Personal Details",
 ];
 
-export function Register() {
+function Register() {
   const queryClient = useQueryClient();
-  const [step, setStep] = useState<number>(3);
+  const [step, setStep] = useState<number>(0);
   const [serverError, setServerError] = useState<string | null>(null);
   const [continueDisabled, setContinueDisabled] = useState(false);
   const defaultTheme = useTheme();
