@@ -114,7 +114,7 @@ public class RegistrationService(
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
         user.Firstname = request.Firstname;
         user.Lastname = request.Lastname;
-        user.DateOfBirth = DateTime.Parse(request.DateOfBirth);
+        user.DateOfBirth = DateOnly.Parse(request.DateOfBirth);
         user.CreatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
