@@ -12,8 +12,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import type { resendVerifcationCodeRequest } from "../../../api/Dtos";
-import { resendVerifcationCode } from "../../../api/Auth";
+import { resendVerifcationCode, type resendVerifcationCodeRequest } from "../../../api/AuthApi";
 
 type otpProps = {
   email: string;
