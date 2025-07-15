@@ -12,8 +12,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import type { resendVerifcationCodeRequest } from "../../../api/Dtos";
-import { resendVerifcationCode } from "../../../api/Auth";
+import { resendVerifcationCode, type resendVerifcationCodeRequest } from "../../../api/AuthApi";
 
 type otpProps = {
   email: string;
@@ -93,7 +92,7 @@ export function Otp({ email, isContinueDisabled, handleBack, handleNext, isPendi
             () => {
               setIsResendDisabled(false);
             },
-            (endTime - Date.now()) / 2
+            (endTime - Date.now()) / 5
           );
         }}
         renderer={({ minutes, seconds, completed }) => {

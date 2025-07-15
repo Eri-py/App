@@ -2,10 +2,11 @@ using App.Api.Data;
 using App.Api.Data.Entities;
 using App.Api.Dtos;
 using App.Api.Services.EmailServices;
+using App.Api.Services.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Api.Services.AuthServices.Registration;
+namespace App.Api.Services.RegistrationServices;
 
 public class RegistrationService(
     AppDbContext context,
@@ -24,7 +25,7 @@ public class RegistrationService(
             u.Username == username || u.Email == email
         );
 
-        string otp = (Shared.Random.NextInt() % 1000000).ToString("000000");
+        string otp = (CryptoRandom.NextInt() % 1000000).ToString("000000");
         var otpExpiresAt = DateTime.UtcNow.AddMinutes(OtpValidFor);
 
         using var transaction = await context.Database.BeginTransactionAsync();
@@ -112,12 +113,12 @@ public class RegistrationService(
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
         user.Firstname = request.Firstname;
         user.Lastname = request.Lastname;
-        user.DateOfBirth = DateTime.Parse(request.DateOfBirth);
+        user.DateOfBirth = DateOnly.Parse(request.DateOfBirth);
         user.CreatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
 
-        var token = Shared.CreateToken(user, configuration);
+        var token = TokenHelper.CreateToken(user, configuration);
         return Result<string>.Success(token, "Registration completed successfully");
     }
 
@@ -134,7 +135,7 @@ public class RegistrationService(
         if (user is null)
             return Result.BadRequest("User not found");
 
-        string otp = (Shared.Random.NextInt() % 1000000).ToString("000000");
+        string otp = (CryptoRandom.NextInt() % 1000000).ToString("000000");
         var otpExpiresAt = DateTime.UtcNow.AddMinutes(OtpValidFor);
 
         using var transaction = await context.Database.BeginTransactionAsync();

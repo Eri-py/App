@@ -1,8 +1,9 @@
 using System;
 using App.Api.Services;
+using App.Api.Services.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
-namespace App.Api.Controllers;
+namespace App.Api.Controllers.Helpers;
 
 public static class ResultMapper
 {

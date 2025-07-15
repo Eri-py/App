@@ -76,7 +76,7 @@ export function UsernameAndEmail({
             fontSize: "0.875rem",
           }}
         >
-          Already have an account? <CustomLink to="/auth/sign-in">Log in here</CustomLink>
+          Already have an account? <CustomLink to="/auth/login">Log in here</CustomLink>
         </Typography>
         <Typography
           sx={{

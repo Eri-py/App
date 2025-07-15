@@ -3,7 +3,7 @@ import { string, z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { ThemeProvider } from "@emotion/react";
 import { useTheme } from "@mui/material/styles";
@@ -25,12 +25,14 @@ import { Password } from "../../features/auth/RegisterSteps/Password";
 import { PersonalDetails } from "../../features/auth/RegisterSteps/PersonalDetails";
 import { HorizontalLinearStepper } from "../../features/auth/components/HorizontalLinearStepper";
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
-import { verifyOtp, startRegistration, completeRegistration } from "../../api/Auth";
-import type {
-  completeRegistrationRequest,
-  startRegistrationRequest,
-  verifyOtpRequest,
-} from "../../api/Dtos";
+import {
+  verifyOtp,
+  startRegistration,
+  completeRegistration,
+  type completeRegistrationRequest,
+  type startRegistrationRequest,
+  type verifyOtpRequest,
+} from "../../api/AuthApi";
 import { getErrorMessage, type ServerError } from "../../api/Client";
 
 export const Route = createFileRoute("/auth/register")({
@@ -64,13 +66,14 @@ const registrationStepLabels: string[] = [
   "Personal Details",
 ];
 
-export function Register() {
+function Register() {
   const queryClient = useQueryClient();
-  const [step, setStep] = useState<number>(3);
+  const [step, setStep] = useState<number>(0);
   const [serverError, setServerError] = useState<string | null>(null);
   const [continueDisabled, setContinueDisabled] = useState(false);
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
+  const navigate = useNavigate();
 
   const methods = useForm<registrationFormSchema>({
     mode: "onChange",
@@ -108,7 +111,7 @@ export function Register() {
 
   const completeRegistrationMutation = useMutation({
     mutationFn: (data: completeRegistrationRequest) => completeRegistration(data),
-    onSuccess: (data) => console.log(data),
+    onSuccess: () => navigate({ to: "/home" }),
     onError: (error: ServerError) => handleServerError(error),
   });
 
