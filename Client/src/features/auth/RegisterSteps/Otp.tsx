@@ -92,7 +92,7 @@ export function Otp({ email, isContinueDisabled, handleBack, handleNext, isPendi
             () => {
               setIsResendDisabled(false);
             },
-            (endTime - Date.now()) / 2
+            (endTime - Date.now()) / 5
           );
         }}
         renderer={({ minutes, seconds, completed }) => {
