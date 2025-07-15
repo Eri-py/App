@@ -25,12 +25,14 @@ import { Password } from "../../features/auth/RegisterSteps/Password";
 import { PersonalDetails } from "../../features/auth/RegisterSteps/PersonalDetails";
 import { HorizontalLinearStepper } from "../../features/auth/components/HorizontalLinearStepper";
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
-import { verifyOtp, startRegistration, completeRegistration } from "../../api/Auth";
-import type {
-  completeRegistrationRequest,
-  startRegistrationRequest,
-  verifyOtpRequest,
-} from "../../api/Dtos";
+import {
+  verifyOtp,
+  startRegistration,
+  completeRegistration,
+  type completeRegistrationRequest,
+  type startRegistrationRequest,
+  type verifyOtpRequest,
+} from "../../api/AuthApi";
 import { getErrorMessage, type ServerError } from "../../api/Client";
 
 export const Route = createFileRoute("/auth/register")({

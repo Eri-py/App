@@ -1,12 +1,22 @@
 import { apiClient } from "./Client";
-import type {
-  completeRegistrationRequest,
-  resendVerifcationCodeRequest,
-  startRegistrationRequest,
-  verifyOtpRequest,
-} from "./Dtos";
 
-// Registration
+// Registration Dtos
+export type startRegistrationRequest = { username: string; email: string };
+
+export type verifyOtpRequest = { email: string; otp: string };
+
+export type completeRegistrationRequest = {
+  username: string;
+  email: string;
+  password: string;
+  firstname: string;
+  lastname: string;
+  dateOfBirth: string;
+};
+
+export type resendVerifcationCodeRequest = { identifier: string };
+
+// Registration Api calls
 export const startRegistration = (data: startRegistrationRequest) => {
   return apiClient.post("auth/register/start", data);
 };
