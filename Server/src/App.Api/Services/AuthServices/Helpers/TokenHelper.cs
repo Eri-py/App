@@ -5,9 +5,9 @@ using System.Text;
 using App.Api.Data.Entities;
 using Microsoft.IdentityModel.Tokens;
 
-namespace App.Api.Services.AuthServices;
+namespace App.Api.Services.AuthServices.Helpers;
 
-public abstract class Shared
+public static class TokenHelper
 {
     public static string CreateToken(User user, IConfiguration configuration)
     {
@@ -30,18 +30,5 @@ public abstract class Shared
         );
 
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
-    }
-
-    public static class Random
-    {
-        private static readonly ThreadLocal<System.Security.Cryptography.RandomNumberGenerator> crng =
-            new(System.Security.Cryptography.RandomNumberGenerator.Create);
-        private static readonly ThreadLocal<byte[]> bytes = new(() => new byte[sizeof(int)]);
-
-        public static int NextInt()
-        {
-            crng.Value!.GetBytes(bytes.Value!);
-            return BitConverter.ToInt32(bytes.Value!, 0) & int.MaxValue;
-        }
     }
 }

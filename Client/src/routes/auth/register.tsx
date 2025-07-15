@@ -3,7 +3,7 @@ import { string, z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { ThemeProvider } from "@emotion/react";
 import { useTheme } from "@mui/material/styles";
@@ -71,6 +71,7 @@ function Register() {
   const [continueDisabled, setContinueDisabled] = useState(false);
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
+  const navigate = useNavigate();
 
   const methods = useForm<registrationFormSchema>({
     mode: "onChange",
@@ -108,7 +109,7 @@ function Register() {
 
   const completeRegistrationMutation = useMutation({
     mutationFn: (data: completeRegistrationRequest) => completeRegistration(data),
-    onSuccess: (data) => console.log(data),
+    onSuccess: () => navigate({ to: "/home" }),
     onError: (error: ServerError) => handleServerError(error),
   });
 

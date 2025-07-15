@@ -1,4 +1,4 @@
-namespace App.Api.Services;
+namespace App.Api.Services.Helpers;
 
 public enum ResultTypes
 {

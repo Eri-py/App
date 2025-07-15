@@ -1,4 +1,5 @@
 using App.Api.Dtos;
+using App.Api.Services.Helpers;
 
 namespace App.Api.Services.AuthServices.Registration;
 
