@@ -1,7 +1,7 @@
 using System.Text;
 using App.Api.Data;
-using App.Api.Services.AuthServices.Registration;
 using App.Api.Services.EmailServices;
+using App.Api.Services.RegistrationServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

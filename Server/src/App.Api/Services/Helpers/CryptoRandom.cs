@@ -1,6 +1,6 @@
 using System;
 
-namespace App.Api.Services.AuthServices.Helpers;
+namespace App.Api.Services.Helpers;
 
 public static class CryptoRandom
 {
