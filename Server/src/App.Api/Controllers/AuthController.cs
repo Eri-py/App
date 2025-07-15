@@ -1,3 +1,4 @@
+using App.Api.Controllers.Helpers;
 using App.Api.Dtos;
 using App.Api.Services.AuthServices.Registration;
 using Microsoft.AspNetCore.Mvc;
