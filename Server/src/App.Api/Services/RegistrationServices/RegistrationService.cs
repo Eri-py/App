@@ -1,13 +1,12 @@
 using App.Api.Data;
 using App.Api.Data.Entities;
 using App.Api.Dtos;
-using App.Api.Services.AuthServices.Helpers;
 using App.Api.Services.EmailServices;
 using App.Api.Services.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Api.Services.AuthServices.Registration;
+namespace App.Api.Services.RegistrationServices;
 
 public class RegistrationService(
     AppDbContext context,

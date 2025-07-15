@@ -1,6 +1,6 @@
 using App.Api.Controllers.Helpers;
 using App.Api.Dtos;
-using App.Api.Services.AuthServices.Registration;
+using App.Api.Services.RegistrationServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Api.Controllers

@@ -5,7 +5,7 @@ using System.Text;
 using App.Api.Data.Entities;
 using Microsoft.IdentityModel.Tokens;
 
-namespace App.Api.Services.AuthServices.Helpers;
+namespace App.Api.Services.Helpers;
 
 public static class TokenHelper
 {
