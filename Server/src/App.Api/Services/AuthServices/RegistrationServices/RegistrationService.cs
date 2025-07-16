@@ -114,22 +114,31 @@ public class RegistrationService(
         if (user is null)
             return Result.BadRequest("User not found");
 
+        // Update user
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
         user.Firstname = request.Firstname;
         user.Lastname = request.Lastname;
         user.DateOfBirth = DateOnly.Parse(request.DateOfBirth);
         user.CreatedAt = DateTime.UtcNow;
 
+        // Add refresh token
+        var refreshToken = jwtService.CreateRefreshToken();
+        var refreshTokenEntry = new RefreshToken
+        {
+            TokenHash = jwtService.HashToken(refreshToken),
+            TokenExpiresAt = DateTime.Now.AddDays(7),
+            UserId = user.Id,
+        };
+        user.RefreshTokens.Add(refreshTokenEntry);
+
         await context.SaveChangesAsync();
 
-        var AccessToken = jwtService.CreateAccessToken(user, configuration);
-        var RefreshToken = jwtService.CreateRefreshToken();
-
+        var accessToken = jwtService.CreateAccessToken(user, configuration);
         return Result<CompleteRegistrationResponse>.Success(
             new CompleteRegistrationResponse
             {
-                AccessToken = AccessToken,
-                RefreshToken = RefreshToken,
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
             }
         );
     }

@@ -27,7 +27,7 @@ public class JwtService : IJwtService
             issuer: configuration["Jwt:Issuer"],
             audience: configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddDays(1),
+            expires: DateTime.UtcNow.AddMinutes(15),
             signingCredentials: creds
         );
 
@@ -41,5 +41,10 @@ public class JwtService : IJwtService
         rng.GetBytes(randomNumber);
 
         return Convert.ToBase64String(randomNumber);
+    }
+
+    public string HashToken(string token)
+    {
+        return Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
     }
 }

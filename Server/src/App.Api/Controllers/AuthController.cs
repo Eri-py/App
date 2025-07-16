@@ -40,7 +40,12 @@ namespace App.Api.Controllers
         )
         {
             var result = await registrationService.CompleteRegistrationAsync(request);
-            return ResultMapper.Map(result);
+            if (!result.IsSuccess)
+            {
+                return ResultMapper.Map<string>(result.ResultType, result.Message, null);
+            }
+
+            return NoContent();
         }
     }
 }

@@ -12,4 +12,5 @@ public class User
     public string? Lastname { get; set; }
     public DateOnly? DateOfBirth { get; set; }
     public DateTime? CreatedAt { get; set; }
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
 }
