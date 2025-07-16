@@ -1,7 +1,7 @@
 using App.Api.Dtos;
 using App.Api.Services.Helpers;
 
-namespace App.Api.Services.RegistrationServices;
+namespace App.Api.Services.AuthServices.RegistrationServices;
 
 public interface IRegistrationService
 {
