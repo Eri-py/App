@@ -5,11 +5,11 @@ using System.Text;
 using App.Api.Data.Entities;
 using Microsoft.IdentityModel.Tokens;
 
-namespace App.Api.Services.Helpers;
+namespace App.Api.Services.AuthServices.TokenServices;
 
-public static class TokenHelper
+public class JwtService : IJwtService
 {
-    public static string CreateToken(User user, IConfiguration configuration)
+    public string CreateAuthToken(User user, IConfiguration configuration)
     {
         var claims = new List<Claim>
         {
@@ -30,5 +30,10 @@ public static class TokenHelper
         );
 
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+    }
+
+    public string CreateAccessToken()
+    {
+        throw new NotImplementedException();
     }
 }

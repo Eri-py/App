@@ -1,6 +1,7 @@
 using System.Text;
 using App.Api.Data;
 using App.Api.Services.AuthServices.RegistrationServices;
+using App.Api.Services.AuthServices.TokenServices;
 using App.Api.Services.EmailServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,7 @@ if (builder.Environment.IsDevelopment())
 
 // Authentication Services
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 
 builder
     .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

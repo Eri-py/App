@@ -1,6 +1,7 @@
 using App.Api.Data;
 using App.Api.Data.Entities;
 using App.Api.Dtos;
+using App.Api.Services.AuthServices.TokenServices;
 using App.Api.Services.EmailServices;
 using App.Api.Services.Helpers;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +12,7 @@ namespace App.Api.Services.AuthServices.RegistrationServices;
 public class RegistrationService(
     AppDbContext context,
     IEmailService emailService,
+    IJwtService jwtService,
     IConfiguration configuration
 ) : IRegistrationService
 {
@@ -118,7 +120,7 @@ public class RegistrationService(
 
         await context.SaveChangesAsync();
 
-        var token = TokenHelper.CreateToken(user, configuration);
+        var token = jwtService.CreateAuthToken(user, configuration);
         return Result<string>.Success(token, "Registration completed successfully");
     }
 
