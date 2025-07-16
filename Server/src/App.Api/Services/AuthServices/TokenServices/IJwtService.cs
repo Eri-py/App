@@ -7,4 +7,5 @@ public interface IJwtService
 {
     public string CreateAccessToken(User user, IConfiguration configuration);
     public string CreateRefreshToken();
+    public string HashToken(string token);
 }
