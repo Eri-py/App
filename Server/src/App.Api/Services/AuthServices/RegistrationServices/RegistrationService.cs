@@ -6,7 +6,7 @@ using App.Api.Services.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Api.Services.RegistrationServices;
+namespace App.Api.Services.AuthServices.RegistrationServices;
 
 public class RegistrationService(
     AppDbContext context,
