@@ -5,6 +5,6 @@ namespace App.Api.Services.AuthServices.TokenServices;
 
 public interface IJwtService
 {
-    public string CreateAuthToken(User user, IConfiguration configuration);
-    public string CreateAccessToken();
+    public string CreateAccessToken(User user, IConfiguration configuration);
+    public string CreateRefreshToken();
 }

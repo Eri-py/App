@@ -75,7 +75,7 @@ public class RegistrationService(
             }
 
             await transaction.CommitAsync();
-            return Result<string>.Success(otpExpiresAt.ToString("o"), "Verification code sent");
+            return Result<string>.Success(otpExpiresAt.ToString("o"));
         }
         catch (Exception)
         {
@@ -101,7 +101,9 @@ public class RegistrationService(
         return Result.NoContent();
     }
 
-    public async Task<Result<string>> CompleteRegistrationAsync(CompleteRegistrationRequest request)
+    public async Task<Result<CompleteRegistrationResponse>> CompleteRegistrationAsync(
+        CompleteRegistrationRequest request
+    )
     {
         var email = request.Email.ToLower();
         var username = request.Username.ToLower();
@@ -120,8 +122,16 @@ public class RegistrationService(
 
         await context.SaveChangesAsync();
 
-        var token = jwtService.CreateAuthToken(user, configuration);
-        return Result<string>.Success(token, "Registration completed successfully");
+        var AccessToken = jwtService.CreateAccessToken(user, configuration);
+        var RefreshToken = jwtService.CreateRefreshToken();
+
+        return Result<CompleteRegistrationResponse>.Success(
+            new CompleteRegistrationResponse
+            {
+                AccessToken = AccessToken,
+                RefreshToken = RefreshToken,
+            }
+        );
     }
 
     public async Task<Result<string>> ResendVerificationCodeAsync(
@@ -161,7 +171,7 @@ public class RegistrationService(
             }
 
             await transaction.CommitAsync();
-            return Result<string>.Success(otpExpiresAt.ToString("o"), "Verification code resent");
+            return Result<string>.Success(otpExpiresAt.ToString("o"));
         }
         catch (Exception)
         {
