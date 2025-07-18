@@ -41,8 +41,9 @@ public class MailtrapEmailService(IConfiguration configuration) : IEmailService
 
             return Result.NoContent();
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Console.WriteLine(e);
             return Result.InternalServerError("Error sending email");
         }
     }

@@ -1,8 +1,7 @@
 using System.Text;
 using App.Api.Data;
-using App.Api.Services.AuthServices.RegistrationServices;
-using App.Api.Services.AuthServices.TokenServices;
 using App.Api.Services.EmailServices;
+using App.Api.Services.RegistrationServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -32,8 +31,7 @@ if (builder.Environment.IsDevelopment())
                         builder.Configuration["ClientOrigin:Local"]!,
                         builder.Configuration["ClientOrigin:Network"]!
                     )
-                    .AllowAnyHeader()
-                    .AllowCredentials();
+                    .AllowAnyHeader();
             }
         );
     });
@@ -49,7 +47,6 @@ if (builder.Environment.IsDevelopment())
 
 // Authentication Services
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
-builder.Services.AddScoped<IJwtService, JwtService>();
 
 builder
     .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
