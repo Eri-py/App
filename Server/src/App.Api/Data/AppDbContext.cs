@@ -1,3 +1,4 @@
+using System;
 using App.Api.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 

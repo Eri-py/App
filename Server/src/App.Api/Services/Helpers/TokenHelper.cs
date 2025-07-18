@@ -1,15 +1,15 @@
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using App.Api.Data.Entities;
 using Microsoft.IdentityModel.Tokens;
 
-namespace App.Api.Services.AuthServices.TokenServices;
+namespace App.Api.Services.Helpers;
 
-public class JwtService : IJwtService
+public static class TokenHelper
 {
-    public string CreateAccessToken(User user, IConfiguration configuration, int tokenValidFor)
+    public static string CreateToken(User user, IConfiguration configuration)
     {
         var claims = new List<Claim>
         {
@@ -25,24 +25,10 @@ public class JwtService : IJwtService
             issuer: configuration["Jwt:Issuer"],
             audience: configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(tokenValidFor),
+            expires: DateTime.UtcNow.AddDays(1),
             signingCredentials: creds
         );
 
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
-    }
-
-    public string CreateRefreshToken()
-    {
-        var randomNumber = new byte[64];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-
-        return Convert.ToBase64String(randomNumber);
-    }
-
-    public string HashToken(string token)
-    {
-        return Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
     }
 }

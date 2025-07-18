@@ -1,3 +1,5 @@
+using System;
+
 namespace App.Api.Services.Helpers;
 
 public static class CryptoRandom
