@@ -12,11 +12,10 @@ namespace App.Api.Services.AuthServices.RegistrationServices;
 public class RegistrationService(
     AppDbContext context,
     IEmailService emailService,
-    IJwtService jwtService,
-    IConfiguration configuration
+    IJwtService jwtService
 ) : IRegistrationService
 {
-    private const int OtpValidFor = 5;
+    private const int c_OtpValidFor = 5;
     private const int c_AccessTokenValidFor = 15;
     private const int c_RefreshTokenValidFor = 7;
 
@@ -30,7 +29,7 @@ public class RegistrationService(
         );
 
         string otp = (CryptoRandom.NextInt() % 1000000).ToString("000000");
-        var otpExpiresAt = DateTime.UtcNow.AddMinutes(OtpValidFor);
+        var otpExpiresAt = DateTime.UtcNow.AddMinutes(c_OtpValidFor);
 
         using var transaction = await context.Database.BeginTransactionAsync();
         try
@@ -67,7 +66,7 @@ public class RegistrationService(
                 to: email,
                 username: username,
                 verificationToken: otp,
-                codeValidFor: "5 minutes"
+                codeValidFor: $"{c_OtpValidFor} minutes"
             );
 
             if (!emailResult.IsSuccess)
@@ -114,7 +113,7 @@ public class RegistrationService(
         );
 
         if (user is null)
-            return Result.BadRequest("User not found");
+            return Result.NotFound("User not found");
 
         // Update user
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
@@ -139,7 +138,7 @@ public class RegistrationService(
 
         await context.SaveChangesAsync();
 
-        var accessToken = jwtService.CreateAccessToken(user, configuration, c_AccessTokenValidFor);
+        var accessToken = jwtService.CreateAccessToken(user, c_AccessTokenValidFor);
 
         return Result<CompleteRegistrationResult>.Success(
             new CompleteRegistrationResult
@@ -163,10 +162,10 @@ public class RegistrationService(
         );
 
         if (user is null)
-            return Result.BadRequest("User not found");
+            return Result.NotFound("User not found");
 
         string otp = (CryptoRandom.NextInt() % 1000000).ToString("000000");
-        var otpExpiresAt = DateTime.UtcNow.AddMinutes(OtpValidFor);
+        var otpExpiresAt = DateTime.UtcNow.AddMinutes(c_OtpValidFor);
 
         using var transaction = await context.Database.BeginTransactionAsync();
         try

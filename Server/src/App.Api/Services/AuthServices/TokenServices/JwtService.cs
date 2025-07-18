@@ -7,9 +7,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace App.Api.Services.AuthServices.TokenServices;
 
-public class JwtService : IJwtService
+public class JwtService(IConfiguration configuration) : IJwtService
 {
-    public string CreateAccessToken(User user, IConfiguration configuration, int tokenValidFor)
+    public string CreateAccessToken(User user, int tokenValidFor)
     {
         var claims = new List<Claim>
         {
