@@ -28,20 +28,13 @@ public static class ResultMapper
     {
         return resultType switch
         {
-            ResultTypes.Success => content != null
-                ? new OkObjectResult(content)
-                : new OkObjectResult(message),
+            ResultTypes.Success => new OkObjectResult(content),
             ResultTypes.NoContent => new NoContentResult(),
-            ResultTypes.Created => content != null
-                ? new CreatedResult(string.Empty, content)
-                : new CreatedResult(string.Empty, message),
 
             ResultTypes.BadRequest => new BadRequestObjectResult(new { message }),
             ResultTypes.Unauthorized => new UnauthorizedObjectResult(new { message }),
-            ResultTypes.Forbidden => new ObjectResult(new { message }) { StatusCode = 403 },
             ResultTypes.NotFound => new NotFoundObjectResult(new { message }),
             ResultTypes.Conflict => new ConflictObjectResult(new { message }),
-            ResultTypes.TooManyRequests => new ObjectResult(new { message }) { StatusCode = 429 },
             ResultTypes.InternalServerError => new ObjectResult(new { message })
             {
                 StatusCode = 500,

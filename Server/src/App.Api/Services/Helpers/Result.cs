@@ -4,14 +4,11 @@ public enum ResultTypes
 {
     Success,
     NoContent,
-    Created,
 
     BadRequest,
     Unauthorized,
-    Forbidden,
     NotFound,
     Conflict,
-    TooManyRequests,
     InternalServerError,
 }
 
@@ -25,14 +22,9 @@ public record Result(string? Message, ResultTypes ResultType)
 
     public static Result Unauthorized(string message) => new(message, ResultTypes.Unauthorized);
 
-    public static Result Forbidden(string message) => new(message, ResultTypes.Forbidden);
-
     public static Result NotFound(string message) => new(message, ResultTypes.NotFound);
 
     public static Result Conflict(string message) => new(message, ResultTypes.Conflict);
-
-    public static Result TooManyRequests(string message) =>
-        new(message, ResultTypes.TooManyRequests);
 
     public static Result InternalServerError(string message) =>
         new(message, ResultTypes.InternalServerError);
@@ -40,13 +32,19 @@ public record Result(string? Message, ResultTypes ResultType)
 
 public record Result<T>(string? Message, ResultTypes ResultType, T? Content = default)
 {
-    public bool IsSuccess =>
-        ResultType is ResultTypes.Success or ResultTypes.NoContent or ResultTypes.Created;
+    public bool IsSuccess => ResultType is ResultTypes.Success;
 
     public static Result<T> Success(T content) => new(null, ResultTypes.Success, content);
 
-    public static Result<T> Created(T content) => new(null, ResultTypes.Created, content);
+    // Map all the non-generic negative result types to generic type
+    public static implicit operator Result<T>(Result result)
+    {
+        // Cannot return NoContent with generic type.
+        if (result.ResultType == ResultTypes.NoContent)
+            throw new InvalidOperationException(
+                "Cannot convert NoContent to Result<T>; use non-generic Result instead."
+            );
 
-    public static implicit operator Result<T>(Result result) =>
-        new(result.Message, result.ResultType, default);
+        return new Result<T>(result.Message, result.ResultType, default);
+    }
 }
