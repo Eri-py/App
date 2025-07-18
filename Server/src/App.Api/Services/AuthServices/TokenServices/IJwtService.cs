@@ -1,4 +1,3 @@
-using System;
 using App.Api.Data.Entities;
 
 namespace App.Api.Services.AuthServices.TokenServices;
