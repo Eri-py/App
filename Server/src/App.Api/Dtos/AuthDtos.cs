@@ -50,9 +50,3 @@ public record class CompleteRegistrationRequest
     [Required]
     public required string DateOfBirth { get; set; }
 }
-
-public record class CompleteRegistrationResponse
-{
-    public required string AccessToken { get; set; }
-    public required string RefreshToken { get; set; }
-}

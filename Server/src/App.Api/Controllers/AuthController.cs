@@ -44,6 +44,30 @@ namespace App.Api.Controllers
             {
                 return ResultMapper.Map<string>(result.ResultType, result.Message, null);
             }
+            else
+            {
+                var accessToken = result.Content!.AccessToken;
+                var accessTokenOptions = new CookieOptions
+                {
+                    HttpOnly = false,
+                    Secure = Request.IsHttps,
+                    SameSite = SameSiteMode.Lax,
+                    Expires = result.Content.AccessTokenExpiresAt,
+                };
+
+                var refreshToken = result.Content!.RefreshToken;
+                var refreshTokenOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = Request.IsHttps,
+                    SameSite = SameSiteMode.Lax,
+                    Path = "/api/auth/refresh-token",
+                    Expires = result.Content.RefreshTokenExpiresAt,
+                };
+
+                Response.Cookies.Append("accessToken", accessToken, accessTokenOptions);
+                Response.Cookies.Append("refreshToken", refreshToken, refreshTokenOptions);
+            }
 
             return NoContent();
         }

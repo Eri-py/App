@@ -5,6 +5,7 @@ const API_BASE_URL = "https://localhost:7000/api"; //Remember to change this bac
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
 });
 
 // Define accepted shapes for response.data
