@@ -9,7 +9,7 @@ namespace App.Api.Services.AuthServices.TokenServices;
 
 public class JwtService : IJwtService
 {
-    public string CreateAccessToken(User user, IConfiguration configuration)
+    public string CreateAccessToken(User user, IConfiguration configuration, int tokenValidFor)
     {
         var claims = new List<Claim>
         {
@@ -25,7 +25,7 @@ public class JwtService : IJwtService
             issuer: configuration["Jwt:Issuer"],
             audience: configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(15),
+            expires: DateTime.UtcNow.AddMinutes(tokenValidFor),
             signingCredentials: creds
         );
 

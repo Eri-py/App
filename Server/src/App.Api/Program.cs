@@ -32,7 +32,8 @@ if (builder.Environment.IsDevelopment())
                         builder.Configuration["ClientOrigin:Local"]!,
                         builder.Configuration["ClientOrigin:Network"]!
                     )
-                    .AllowAnyHeader();
+                    .AllowAnyHeader()
+                    .AllowCredentials();
             }
         );
     });

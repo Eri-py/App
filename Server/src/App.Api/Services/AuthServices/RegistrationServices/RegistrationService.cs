@@ -16,7 +16,9 @@ public class RegistrationService(
     IConfiguration configuration
 ) : IRegistrationService
 {
-    private readonly int OtpValidFor = 5;
+    private const int OtpValidFor = 5;
+    private const int c_AccessTokenValidFor = 15;
+    private const int c_RefreshTokenValidFor = 7;
 
     public async Task<Result<string>> StartRegistrationAsync(StartRegistrationRequest request)
     {
@@ -101,7 +103,7 @@ public class RegistrationService(
         return Result.NoContent();
     }
 
-    public async Task<Result<CompleteRegistrationResponse>> CompleteRegistrationAsync(
+    public async Task<Result<CompleteRegistrationResult>> CompleteRegistrationAsync(
         CompleteRegistrationRequest request
     )
     {
@@ -121,24 +123,31 @@ public class RegistrationService(
         user.DateOfBirth = DateOnly.Parse(request.DateOfBirth);
         user.CreatedAt = DateTime.UtcNow;
 
+        // Calculate expiration dates
+        var accessTokenExpiresAt = DateTime.UtcNow.AddMinutes(c_AccessTokenValidFor);
+        var refreshTokenExpiresAt = DateTime.UtcNow.AddDays(c_RefreshTokenValidFor);
+
         // Add refresh token
         var refreshToken = jwtService.CreateRefreshToken();
         var refreshTokenEntry = new RefreshToken
         {
             TokenHash = jwtService.HashToken(refreshToken),
-            TokenExpiresAt = DateTime.Now.AddDays(7),
+            TokenExpiresAt = refreshTokenExpiresAt,
             UserId = user.Id,
         };
         user.RefreshTokens.Add(refreshTokenEntry);
 
         await context.SaveChangesAsync();
 
-        var accessToken = jwtService.CreateAccessToken(user, configuration);
-        return Result<CompleteRegistrationResponse>.Success(
-            new CompleteRegistrationResponse
+        var accessToken = jwtService.CreateAccessToken(user, configuration, c_AccessTokenValidFor);
+
+        return Result<CompleteRegistrationResult>.Success(
+            new CompleteRegistrationResult
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
+                AccessTokenExpiresAt = accessTokenExpiresAt,
+                RefreshTokenExpiresAt = refreshTokenExpiresAt,
             }
         );
     }
