@@ -17,14 +17,9 @@ public enum ResultTypes
 
 public record Result(string? Message, ResultTypes ResultType)
 {
-    public bool IsSuccess =>
-        ResultType is ResultTypes.Success or ResultTypes.NoContent or ResultTypes.Created;
-
-    public static Result Success(string message) => new(message, ResultTypes.Success);
+    public bool IsSuccess => ResultType is ResultTypes.NoContent;
 
     public static Result NoContent() => new(null, ResultTypes.NoContent);
-
-    public static Result Created(string message) => new(message, ResultTypes.Created);
 
     public static Result BadRequest(string message) => new(message, ResultTypes.BadRequest);
 
@@ -45,15 +40,13 @@ public record Result(string? Message, ResultTypes ResultType)
 
 public record Result<T>(string? Message, ResultTypes ResultType, T? Content = default)
 {
-    public static Result<T> Success(T content, string message) =>
-        new(message, ResultTypes.Success, content);
+    public bool IsSuccess =>
+        ResultType is ResultTypes.Success or ResultTypes.NoContent or ResultTypes.Created;
 
-    public static Result<T> Created(T content, string message) =>
-        new(message, ResultTypes.Created, content);
+    public static Result<T> Success(T content) => new(null, ResultTypes.Success, content);
+
+    public static Result<T> Created(T content) => new(null, ResultTypes.Created, content);
 
     public static implicit operator Result<T>(Result result) =>
-        new(result.Message, result.ResultType);
-
-    public static implicit operator Result(Result<T> result) =>
-        new(result.Message, result.ResultType);
+        new(result.Message, result.ResultType, default);
 }
