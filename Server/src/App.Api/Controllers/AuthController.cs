@@ -51,6 +51,7 @@ namespace App.Api.Controllers
                 HttpOnly = true,
                 Secure = Request.IsHttps,
                 SameSite = SameSiteMode.Lax,
+                Path = "/api",
                 Expires = result.Content.AccessTokenExpiresAt,
             };
 

@@ -20,7 +20,6 @@ Console.WriteLine(builder.Configuration["ClientOrigin"]);
 
 if (builder.Environment.IsDevelopment())
 {
-    // Allow frontend to ping Backend
     builder.Services.AddCors(options =>
     {
         options.AddPolicy(
@@ -51,6 +50,7 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 
+// JWT Configuration
 builder
     .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -66,6 +66,15 @@ builder
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!)
             ),
+        };
+        //  Check Cookie for acccess token rather than header
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["accessToken"];
+                return Task.CompletedTask;
+            },
         };
     });
 
