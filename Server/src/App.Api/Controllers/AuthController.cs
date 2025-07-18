@@ -1,6 +1,6 @@
 using App.Api.Controllers.Helpers;
 using App.Api.Dtos;
-using App.Api.Services.AuthServices.RegistrationServices;
+using App.Api.Services.RegistrationServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Api.Controllers
@@ -40,36 +40,7 @@ namespace App.Api.Controllers
         )
         {
             var result = await registrationService.CompleteRegistrationAsync(request);
-            if (!result.IsSuccess)
-            {
-                return ResultMapper.Map<string>(result.ResultType, result.Message, null);
-            }
-            else
-            {
-                var accessToken = result.Content!.AccessToken;
-                var accessTokenOptions = new CookieOptions
-                {
-                    HttpOnly = false,
-                    Secure = Request.IsHttps,
-                    SameSite = SameSiteMode.Lax,
-                    Expires = result.Content.AccessTokenExpiresAt,
-                };
-
-                var refreshToken = result.Content!.RefreshToken;
-                var refreshTokenOptions = new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = Request.IsHttps,
-                    SameSite = SameSiteMode.Lax,
-                    Path = "/api/auth/refresh-token",
-                    Expires = result.Content.RefreshTokenExpiresAt,
-                };
-
-                Response.Cookies.Append("accessToken", accessToken, accessTokenOptions);
-                Response.Cookies.Append("refreshToken", refreshToken, refreshTokenOptions);
-            }
-
-            return NoContent();
+            return ResultMapper.Map(result);
         }
     }
 }
