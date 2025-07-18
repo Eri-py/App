@@ -1,20 +1,24 @@
 using App.Api.Data;
 using App.Api.Data.Entities;
 using App.Api.Dtos;
+using App.Api.Services.AuthServices.TokenServices;
 using App.Api.Services.EmailServices;
 using App.Api.Services.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Api.Services.RegistrationServices;
+namespace App.Api.Services.AuthServices.RegistrationServices;
 
 public class RegistrationService(
     AppDbContext context,
     IEmailService emailService,
+    IJwtService jwtService,
     IConfiguration configuration
 ) : IRegistrationService
 {
-    private readonly int OtpValidFor = 5;
+    private const int OtpValidFor = 5;
+    private const int c_AccessTokenValidFor = 15;
+    private const int c_RefreshTokenValidFor = 7;
 
     public async Task<Result<string>> StartRegistrationAsync(StartRegistrationRequest request)
     {
@@ -73,7 +77,7 @@ public class RegistrationService(
             }
 
             await transaction.CommitAsync();
-            return Result<string>.Success(otpExpiresAt.ToString("o"), "Verification code sent");
+            return Result<string>.Success(otpExpiresAt.ToString("o"));
         }
         catch (Exception)
         {
@@ -99,7 +103,9 @@ public class RegistrationService(
         return Result.NoContent();
     }
 
-    public async Task<Result<string>> CompleteRegistrationAsync(CompleteRegistrationRequest request)
+    public async Task<Result<CompleteRegistrationResult>> CompleteRegistrationAsync(
+        CompleteRegistrationRequest request
+    )
     {
         var email = request.Email.ToLower();
         var username = request.Username.ToLower();
@@ -110,16 +116,40 @@ public class RegistrationService(
         if (user is null)
             return Result.BadRequest("User not found");
 
+        // Update user
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
         user.Firstname = request.Firstname;
         user.Lastname = request.Lastname;
         user.DateOfBirth = DateOnly.Parse(request.DateOfBirth);
         user.CreatedAt = DateTime.UtcNow;
 
+        // Calculate expiration dates
+        var accessTokenExpiresAt = DateTime.UtcNow.AddMinutes(c_AccessTokenValidFor);
+        var refreshTokenExpiresAt = DateTime.UtcNow.AddDays(c_RefreshTokenValidFor);
+
+        // Add refresh token
+        var refreshToken = jwtService.CreateRefreshToken();
+        var refreshTokenEntry = new RefreshToken
+        {
+            TokenHash = jwtService.HashToken(refreshToken),
+            TokenExpiresAt = refreshTokenExpiresAt,
+            UserId = user.Id,
+        };
+        user.RefreshTokens.Add(refreshTokenEntry);
+
         await context.SaveChangesAsync();
 
-        var token = TokenHelper.CreateToken(user, configuration);
-        return Result<string>.Success(token, "Registration completed successfully");
+        var accessToken = jwtService.CreateAccessToken(user, configuration, c_AccessTokenValidFor);
+
+        return Result<CompleteRegistrationResult>.Success(
+            new CompleteRegistrationResult
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                AccessTokenExpiresAt = accessTokenExpiresAt,
+                RefreshTokenExpiresAt = refreshTokenExpiresAt,
+            }
+        );
     }
 
     public async Task<Result<string>> ResendVerificationCodeAsync(
@@ -159,7 +189,7 @@ public class RegistrationService(
             }
 
             await transaction.CommitAsync();
-            return Result<string>.Success(otpExpiresAt.ToString("o"), "Verification code resent");
+            return Result<string>.Success(otpExpiresAt.ToString("o"));
         }
         catch (Exception)
         {
