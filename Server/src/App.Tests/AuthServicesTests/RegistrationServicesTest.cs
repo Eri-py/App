@@ -21,14 +21,12 @@ public class RegistrationServicesTest
     [SetUp]
     public void Setup()
     {
-        var connectionString =
-            $"Server=localhost\\SQLEXPRESS;Database=Appdb_{Guid.NewGuid()};Trusted_Connection=true;TrustServerCertificate=true;";
-
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseSqlServer(connectionString)
+            .UseSqlite("Data Source=:memory:")
             .Options;
 
         _context = new AppDbContext(options);
+        _context.Database.OpenConnection();
         _context.Database.EnsureCreated();
 
         _emailService = new Mock<IEmailService>();
@@ -46,7 +44,7 @@ public class RegistrationServicesTest
     {
         if (_context != null)
         {
-            await _context.Database.EnsureDeletedAsync();
+            await _context.Database.CloseConnectionAsync();
             await _context.DisposeAsync();
         }
     }
