@@ -15,9 +15,9 @@ public class RegistrationService(
     IJwtService jwtService
 ) : IRegistrationService
 {
-    private const int c_OtpValidFor = 5;
-    private const int c_AccessTokenValidFor = 15;
-    private const int c_RefreshTokenValidFor = 7;
+    private const int c_OtpValidFor = 5; // Time in minutes Otp is valid for.
+    private const int c_AccessTokenValidFor = 15; // Time in minutes Access Token is valid for.
+    private const int c_RefreshTokenValidFor = 7; // Time in days Refresh Token is valid for.
 
     public async Task<Result<string>> StartRegistrationAsync(StartRegistrationRequest request)
     {
@@ -28,8 +28,7 @@ public class RegistrationService(
             u.Username == username || u.Email == email
         );
 
-        string otp = (CryptoRandom.NextInt() % 1000000).ToString("000000");
-        var otpExpiresAt = DateTime.UtcNow.AddMinutes(c_OtpValidFor);
+        var (otp, otpExpiresAt) = jwtService.CreateOtp(c_OtpValidFor);
 
         using var transaction = await context.Database.BeginTransactionAsync();
         try
@@ -43,6 +42,7 @@ public class RegistrationService(
                         : Result.Conflict("Email taken");
                 }
 
+                // Update user details rather than create new user
                 user.Username = username;
                 user.Email = email;
                 user.Otp = otp;
@@ -122,12 +122,11 @@ public class RegistrationService(
         user.DateOfBirth = DateOnly.Parse(request.DateOfBirth);
         user.CreatedAt = DateTime.UtcNow;
 
-        // Calculate expiration dates
-        var accessTokenExpiresAt = DateTime.UtcNow.AddMinutes(c_AccessTokenValidFor);
-        var refreshTokenExpiresAt = DateTime.UtcNow.AddDays(c_RefreshTokenValidFor);
+        var (refreshToken, refreshTokenExpiresAt) = jwtService.CreateRefreshToken(
+            c_RefreshTokenValidFor
+        );
 
-        // Add refresh token
-        var refreshToken = jwtService.CreateRefreshToken();
+        // Add token to database
         var refreshTokenEntry = new RefreshToken
         {
             TokenHash = jwtService.HashToken(refreshToken),
@@ -136,9 +135,12 @@ public class RegistrationService(
         };
         user.RefreshTokens.Add(refreshTokenEntry);
 
-        await context.SaveChangesAsync();
+        var (accessToken, accessTokenExpiresAt) = jwtService.CreateAccessToken(
+            user,
+            c_AccessTokenValidFor
+        );
 
-        var accessToken = jwtService.CreateAccessToken(user, c_AccessTokenValidFor);
+        await context.SaveChangesAsync();
 
         return Result<CompleteRegistrationResult>.Success(
             new CompleteRegistrationResult
@@ -164,8 +166,7 @@ public class RegistrationService(
         if (user is null)
             return Result.NotFound("User not found");
 
-        string otp = (CryptoRandom.NextInt() % 1000000).ToString("000000");
-        var otpExpiresAt = DateTime.UtcNow.AddMinutes(c_OtpValidFor);
+        var (otp, otpExpiresAt) = jwtService.CreateOtp(c_OtpValidFor);
 
         using var transaction = await context.Database.BeginTransactionAsync();
         try
@@ -179,7 +180,7 @@ public class RegistrationService(
                 to: user.Email!,
                 username: user.Username!,
                 verificationToken: otp,
-                codeValidFor: "5 minutes"
+                codeValidFor: $"{c_OtpValidFor} minutes"
             );
             if (!emailResult.IsSuccess)
             {
