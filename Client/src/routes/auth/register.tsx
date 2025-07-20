@@ -33,10 +33,11 @@ import {
   type startRegistrationRequest,
   type verifyOtpRequest,
 } from "../../api/AuthApi";
-import { getErrorMessage, type ServerError } from "../../api/Client";
+import { useServerError, type ServerError } from "../../api/Client";
 
 export const Route = createFileRoute("/auth/register")({
   component: Register,
+  loader: () => {},
 });
 
 const RegistrationFormSchema = z.object({
@@ -69,8 +70,7 @@ const registrationStepLabels: string[] = [
 function Register() {
   const queryClient = useQueryClient();
   const [step, setStep] = useState<number>(0);
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [continueDisabled, setContinueDisabled] = useState(false);
+  const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
   const navigate = useNavigate();
@@ -79,20 +79,6 @@ function Register() {
     mode: "onChange",
     resolver: zodResolver(RegistrationFormSchema),
   });
-
-  const handleServerError = (error: ServerError) => {
-    const errorMessage = getErrorMessage(error);
-    setServerError(errorMessage);
-    setContinueDisabled(true);
-
-    setTimeout(() => {
-      setServerError(null);
-    }, 10000);
-
-    setTimeout(() => {
-      setContinueDisabled(false);
-    }, 3000);
-  };
 
   const startRegistrationMutation = useMutation({
     mutationFn: (data: startRegistrationRequest) => startRegistration(data),
@@ -120,7 +106,7 @@ function Register() {
     const isValid = await methods.trigger(currentStep);
 
     if (isValid) {
-      setServerError(null);
+      clearServerError();
       switch (step) {
         case 0: {
           const username = methods.getValues("username");
@@ -149,7 +135,7 @@ function Register() {
   };
 
   const onSubmit = async (formData: registrationFormSchema) => {
-    setServerError(null);
+    clearServerError();
     await completeRegistrationMutation.mutateAsync(formData);
   };
 

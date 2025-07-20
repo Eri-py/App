@@ -16,6 +16,9 @@ export type completeRegistrationRequest = {
 
 export type resendVerifcationCodeRequest = { identifier: string };
 
+// Login Dtos
+export type loginRequest = { identifier: string; password: string };
+
 // Registration Api calls
 export const startRegistration = (data: startRegistrationRequest) => {
   return apiClient.post("auth/register/start", data);
@@ -31,4 +34,9 @@ export const completeRegistration = (data: completeRegistrationRequest) => {
 
 export const resendVerifcationCode = (data: resendVerifcationCodeRequest) => {
   return apiClient.post("auth/resend-verification-code", data);
+};
+
+// Login Api calls
+export const login = (data: loginRequest) => {
+  return apiClient.post("auth/login", data);
 };

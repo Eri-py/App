@@ -1,21 +1,17 @@
 import { useFormContext, get } from "react-hook-form";
 import { useState } from "react";
 import type { ReactNode } from "@tanstack/react-router";
-import { type FieldPath } from "react-hook-form";
 
 import { useTheme } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import type { registrationFormSchema } from "../../../routes/auth/register";
-
-type validSchema = registrationFormSchema;
 
 type CustomTextFieldProps = {
   type: string;
   label: string;
-  fieldValue: FieldPath<validSchema>;
+  fieldValue: string;
   startIcon?: ReactNode;
   flex?: number;
   autoComplete?: string;
