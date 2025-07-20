@@ -44,7 +44,7 @@ public class RegistrationServicesTest
     {
         if (_context != null)
         {
-            await _context.Database.CloseConnectionAsync();
+            await _context.Database.GetDbConnection().DisposeAsync();
             await _context.DisposeAsync();
         }
     }
