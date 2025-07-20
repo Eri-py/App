@@ -22,10 +22,10 @@ jobs:
         dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore
-      working-directory: server/src
+      working-directory: Server/src
     - name: Build
       run: dotnet build --no-restore
-      working-directory: server/src
+      working-directory: Server/src
     - name: Test
-      run: dotnet test --no-build --verbosity normal
-      working-directory: server/src/App.Tests
+      run: dotnet test --no-build --verbosity normal  App.Tests/App.Tests.csproj
+      working-directory: Server/src
