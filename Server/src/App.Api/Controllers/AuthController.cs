@@ -1,5 +1,6 @@
-using App.Api.Controllers.Helpers;
 using App.Api.Dtos;
+using App.Api.Results;
+using App.Api.Services.AuthServices.LoginServices;
 using App.Api.Services.AuthServices.RegistrationServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,7 +8,10 @@ namespace App.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(IRegistrationService registrationService) : ControllerBase
+    public class AuthController(
+        IRegistrationService registrationService,
+        ILoginService loginService
+    ) : ControllerBase
     {
         [HttpPost("register/start")]
         public async Task<ActionResult<string>> StartRegistration(
@@ -69,6 +73,13 @@ namespace App.Api.Controllers
             Response.Cookies.Append("refreshToken", refreshToken, refreshTokenOptions);
 
             return NoContent();
+        }
+
+        [HttpPost("login/start")]
+        public async Task<ActionResult<string>> Login([FromBody] LoginRequest request)
+        {
+            var result = await loginService.StartLoginAsync(request);
+            return ResultMapper.Map(result);
         }
     }
 }

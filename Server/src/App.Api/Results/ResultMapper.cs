@@ -1,7 +1,6 @@
-using App.Api.Services.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
-namespace App.Api.Controllers.Helpers;
+namespace App.Api.Results;
 
 public static class ResultMapper
 {

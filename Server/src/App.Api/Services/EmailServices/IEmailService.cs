@@ -1,4 +1,4 @@
-using App.Api.Services.Helpers;
+using App.Api.Results;
 
 namespace App.Api.Services.EmailServices;
 

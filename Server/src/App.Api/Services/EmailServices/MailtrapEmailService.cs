@@ -1,4 +1,4 @@
-using App.Api.Services.Helpers;
+using App.Api.Results;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
