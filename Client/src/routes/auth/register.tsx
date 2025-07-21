@@ -25,12 +25,12 @@ import { Password } from "../../features/auth/RegisterSteps/Password";
 import { PersonalDetails } from "../../features/auth/RegisterSteps/PersonalDetails";
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
 import {
-  verifyOtp,
+  verifyOtpRegistration,
   startRegistration,
   completeRegistration,
   type completeRegistrationRequest,
   type startRegistrationRequest,
-  type verifyOtpRequest,
+  type verifyOtpRegistrationRequest,
 } from "../../api/AuthApi";
 import { useServerError, type ServerError } from "../../api/Client";
 import { LogoWithName } from "../../components/Logo";
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/auth/register")({
 const RegistrationFormSchema = z.object({
   username: usernameSchema,
   email: emailSchema,
-  otp: z.string("Invalid otp").trim().length(6, "Invalid code"),
+  otp: z.string("Invalid otp").trim().length(6, "Invalid otp"),
   password: passwordSchema,
   confirmPassword: string("Invalid password").nonempty("Please enter password again"),
   firstname: nameSchema("Firstname"),
@@ -82,7 +82,7 @@ function Register() {
   });
 
   const verifyOtpMutation = useMutation({
-    mutationFn: (data: verifyOtpRequest) => verifyOtp(data),
+    mutationFn: (data: verifyOtpRegistrationRequest) => verifyOtpRegistration(data),
     onSuccess: () => setStep(2),
     onError: (error: ServerError) => handleServerError(error),
   });

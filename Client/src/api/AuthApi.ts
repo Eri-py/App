@@ -3,7 +3,7 @@ import { apiClient } from "./Client";
 // Registration Dtos
 export type startRegistrationRequest = { username: string; email: string };
 
-export type verifyOtpRequest = { email: string; otp: string };
+export type verifyOtpRegistrationRequest = { email: string; otp: string };
 
 export type completeRegistrationRequest = {
   username: string;
@@ -17,14 +17,16 @@ export type completeRegistrationRequest = {
 export type resendVerifcationCodeRequest = { identifier: string };
 
 // Login Dtos
-export type loginRequest = { identifier: string; password: string };
+export type startLoginRequest = { identifier: string; password: string };
+
+export type startLoginResponse = { otpExpiresAt: string; email: string };
 
 // Registration Api calls
 export const startRegistration = (data: startRegistrationRequest) => {
   return apiClient.post("auth/register/start", data);
 };
 
-export const verifyOtp = (data: verifyOtpRequest) => {
+export const verifyOtpRegistration = (data: verifyOtpRegistrationRequest) => {
   return apiClient.post("auth/register/verify-otp", data);
 };
 
@@ -32,11 +34,18 @@ export const completeRegistration = (data: completeRegistrationRequest) => {
   return apiClient.post("auth/register/complete", data);
 };
 
-export const resendVerifcationCode = (data: resendVerifcationCodeRequest) => {
-  return apiClient.post("auth/resend-verification-code", data);
+export const resendVerifcationCode = (
+  data: resendVerifcationCodeRequest,
+  context: "login" | "register"
+) => {
+  return apiClient.post(`auth/${context}/resend-verification-code`, data);
 };
 
 // Login Api calls
-export const startLogin = (data: loginRequest) => {
+export const startLogin = (data: startLoginRequest) => {
   return apiClient.post("auth/login/start", data);
+};
+
+export const completeLogin = (data: verifyOtpRegistrationRequest) => {
+  return apiClient.post("auth/register/verify-otp", data);
 };

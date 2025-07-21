@@ -29,8 +29,8 @@ namespace App.Api.Controllers
             return ResultMapper.Map(result);
         }
 
-        [HttpPost("resend-verification-code")]
-        public async Task<ActionResult<string>> ResendVerificationCode(
+        [HttpPost("register/resend-verification-code")]
+        public async Task<ActionResult<string>> ResendVerificationCodeRegister(
             [FromBody] ResendVerificationCodeRequest request
         )
         {
@@ -82,6 +82,15 @@ namespace App.Api.Controllers
         {
             var result = await loginService.StartLoginAsync(request);
             Console.WriteLine(result);
+            return ResultMapper.Map(result);
+        }
+
+        [HttpPost("login/resend-verification-code")]
+        public async Task<ActionResult<string>> ResendVerificationCodeLogin(
+            [FromBody] ResendVerificationCodeRequest request
+        )
+        {
+            var result = await loginService.ResendVerificationCodeAsync(request);
             return ResultMapper.Map(result);
         }
 

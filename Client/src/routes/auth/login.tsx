@@ -3,7 +3,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { ThemeProvider, useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
@@ -14,17 +14,24 @@ import Alert from "@mui/material/Alert";
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
 import { useServerError, type ServerError } from "../../api/Client";
 import { UsernameAndPassword } from "../../features/auth/LoginSteps/UsernameAndPassword";
-import { startLogin, type loginRequest } from "../../api/AuthApi";
+import {
+  startLogin,
+  verifyOtpRegistration,
+  type startLoginRequest,
+  type startLoginResponse,
+  type verifyOtpRegistrationRequest,
+} from "../../api/AuthApi";
 import { LogoWithName } from "../../components/Logo";
+import { Otp } from "../../features/auth/LoginSteps/Otp";
 
 export const Route = createFileRoute("/auth/login")({
   component: Login,
 });
 
 const LoginFormSchema = z.object({
-  identifier: z.string(),
-  password: z.string(),
-  otp: z.string(),
+  identifier: z.string("Invalid username or email").nonempty("Please enter username or email"),
+  password: z.string("Invalid password").nonempty("Please enter password"),
+  otp: z.string("Invalid otp").trim().length(6, "Invalid otp"),
 });
 
 export type loginFormSchema = z.infer<typeof LoginFormSchema>;
@@ -34,15 +41,27 @@ function Login() {
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
+  const queryClient = useQueryClient();
 
   const methods = useForm<loginFormSchema>({
     mode: "onChange",
     resolver: zodResolver(LoginFormSchema),
   });
 
-  const StartLoginMutation = useMutation({
-    mutationFn: (data: loginRequest) => startLogin(data),
-    onSuccess: () => setStep(1),
+  const startLoginMutation = useMutation({
+    mutationFn: (data: startLoginRequest) => startLogin(data),
+    onSuccess: (response) => {
+      const data: startLoginResponse = response.data;
+      queryClient.setQueryData(["otpExpiresAt"], data.otpExpiresAt);
+      queryClient.setQueryData(["email"], data.email);
+      setStep(1);
+    },
+    onError: (error: ServerError) => handleServerError(error),
+  });
+
+  const completeLoginMutation = useMutation({
+    mutationFn: (data: verifyOtpRegistrationRequest) => verifyOtpRegistration(data),
+    onSuccess: () => setStep(2),
     onError: (error: ServerError) => handleServerError(error),
   });
 
@@ -57,7 +76,7 @@ function Login() {
       clearServerError();
       const identifier = methods.getValues("identifier");
       const password = methods.getValues("password");
-      await StartLoginMutation.mutateAsync({ identifier, password });
+      await startLoginMutation.mutateAsync({ identifier, password });
     }
   };
 
@@ -88,7 +107,15 @@ function Login() {
           {step === 0 && (
             <UsernameAndPassword
               handleNext={handleNext}
-              isPending={StartLoginMutation.isPending}
+              isPending={startLoginMutation.isPending}
+              isContinueDisabled={continueDisabled}
+            />
+          )}
+          {step === 1 && (
+            <Otp
+              email={"olajorinerioluwa@gmail.com"}
+              handleBack={() => setStep(0)}
+              isPending={completeLoginMutation.isPending}
               isContinueDisabled={continueDisabled}
             />
           )}

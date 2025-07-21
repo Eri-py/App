@@ -19,11 +19,10 @@ type otpProps = {
   email: string;
   isContinueDisabled: boolean;
   handleBack: () => void;
-  handleNext: () => void;
   isPending: boolean;
 };
 
-export function Otp({ email, isContinueDisabled, handleBack, handleNext, isPending }: otpProps) {
+export function Otp({ email, isContinueDisabled, handleBack, isPending }: otpProps) {
   const theme = useTheme();
   const { control } = useFormContext();
 
@@ -34,7 +33,7 @@ export function Otp({ email, isContinueDisabled, handleBack, handleNext, isPendi
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
 
   const resendVerifcationMutation = useMutation({
-    mutationFn: (data: resendVerifcationCodeRequest) => resendVerifcationCode(data),
+    mutationFn: (data: resendVerifcationCodeRequest) => resendVerifcationCode(data, "login"),
     onSuccess: (response: AxiosResponse) => {
       otpExpiresAt = parseISO(response.data).getTime();
       setEndTime(otpExpiresAt);
@@ -51,14 +50,13 @@ export function Otp({ email, isContinueDisabled, handleBack, handleNext, isPendi
       <CustomFormHeader
         header="Verify email"
         subtext={
-          <>
-            Enter the <b>6 digit code</b> sent to
-            <br /> <b>{email?.toLowerCase()}.</b>
-          </>
+          <span>
+            Enter the <b>6 digit code</b> sent to the email below <br />
+            <b>{email?.toLowerCase()}.</b>
+          </span>
         }
         align="flex-start"
       />
-
       <Controller
         name="otp"
         control={control}
@@ -139,14 +137,13 @@ export function Otp({ email, isContinueDisabled, handleBack, handleNext, isPendi
       )}
 
       <Button
-        type="button"
+        type="submit"
         size="large"
         variant="contained"
-        onClick={handleNext}
         loading={isPending}
         disabled={isContinueDisabled}
       >
-        Continue
+        Submit
       </Button>
 
       <Button variant="outlined" type="button" size="large" onClick={handleBack}>

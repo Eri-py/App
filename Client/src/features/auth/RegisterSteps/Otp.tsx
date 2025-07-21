@@ -34,7 +34,7 @@ export function Otp({ email, isContinueDisabled, handleBack, handleNext, isPendi
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
 
   const resendVerifcationMutation = useMutation({
-    mutationFn: (data: resendVerifcationCodeRequest) => resendVerifcationCode(data),
+    mutationFn: (data: resendVerifcationCodeRequest) => resendVerifcationCode(data, "register"),
     onSuccess: (response: AxiosResponse) => {
       otpExpiresAt = parseISO(response.data).getTime();
       setEndTime(otpExpiresAt);

@@ -140,4 +140,49 @@ public class LoginService(AppDbContext context, IEmailService emailService, IJwt
             }
         );
     }
+
+    public async Task<Result<string>> ResendVerificationCodeAsync(
+        ResendVerificationCodeRequest request
+    )
+    {
+        var identifier = request.Identifier.ToLower();
+
+        var user = await context.Users.FirstOrDefaultAsync(u =>
+            u.Username == identifier || u.Email == identifier
+        );
+
+        if (user is null)
+            return Result.NotFound("User not found");
+
+        var (otp, otpExpiresAt) = jwtService.CreateOtp(c_OtpValidFor);
+
+        using var transaction = await context.Database.BeginTransactionAsync();
+        try
+        {
+            user.Otp = otp;
+            user.OtpExpiresAt = otpExpiresAt;
+
+            await context.SaveChangesAsync();
+
+            var emailResult = await emailService.SendEmailVerificationAsync(
+                to: user.Email!,
+                username: user.Username!,
+                verificationToken: otp,
+                codeValidFor: $"{c_OtpValidFor} minutes"
+            );
+            if (!emailResult.IsSuccess)
+            {
+                await transaction.RollbackAsync();
+                return emailResult;
+            }
+
+            await transaction.CommitAsync();
+            return Result<string>.Success(otpExpiresAt.ToString("o"));
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
 }
