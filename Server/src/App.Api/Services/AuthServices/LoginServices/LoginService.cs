@@ -60,18 +60,18 @@ public class LoginService(AppDbContext context, IEmailService emailService, IJwt
 
             await context.SaveChangesAsync();
 
-            // var emailResult = await emailService.SendEmailVerificationAsync(
-            //     to: user.Email!,
-            //     username: user.Username!,
-            //     verificationToken: otp,
-            //     codeValidFor: $"{c_OtpValidFor} minutes"
-            // );
+            var emailResult = await emailService.SendEmailVerificationAsync(
+                to: user.Email!,
+                username: user.Username!,
+                verificationToken: otp,
+                codeValidFor: $"{c_OtpValidFor} minutes"
+            );
 
-            // if (!emailResult.IsSuccess)
-            // {
-            //     await transaction.RollbackAsync();
-            //     return emailResult;
-            // }
+            if (!emailResult.IsSuccess)
+            {
+                await transaction.RollbackAsync();
+                return emailResult;
+            }
 
             await transaction.CommitAsync();
             var response = new StartLoginResponse

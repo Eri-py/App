@@ -3,7 +3,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 import { ThemeProvider, useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
@@ -22,7 +22,7 @@ import {
   type verifyOtpRegistrationRequest,
 } from "../../api/AuthApi";
 import { LogoWithName } from "../../components/Logo";
-import { Otp } from "../../features/auth/LoginSteps/Otp";
+import { OtpPage } from "../../features/auth/components/OtpPage";
 
 export const Route = createFileRoute("/auth/login")({
   component: Login,
@@ -38,10 +38,14 @@ export type loginFormSchema = z.infer<typeof LoginFormSchema>;
 
 function Login() {
   const [step, setStep] = useState<number>(0);
+  const [otpData, setOtpData] = useState<{
+    email: string;
+    otpExpiresAt: string;
+  } | null>(null);
+
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
-  const queryClient = useQueryClient();
 
   const methods = useForm<loginFormSchema>({
     mode: "onChange",
@@ -52,8 +56,10 @@ function Login() {
     mutationFn: (data: startLoginRequest) => startLogin(data),
     onSuccess: (response) => {
       const data: startLoginResponse = response.data;
-      queryClient.setQueryData(["otpExpiresAt"], data.otpExpiresAt);
-      queryClient.setQueryData(["email"], data.email);
+      setOtpData({
+        email: data.email,
+        otpExpiresAt: data.otpExpiresAt,
+      });
       setStep(1);
     },
     onError: (error: ServerError) => handleServerError(error),
@@ -61,12 +67,13 @@ function Login() {
 
   const completeLoginMutation = useMutation({
     mutationFn: (data: verifyOtpRegistrationRequest) => verifyOtpRegistration(data),
-    onSuccess: () => setStep(2),
+    onSuccess: (data) => console.log(data),
     onError: (error: ServerError) => handleServerError(error),
   });
 
-  const onSubmit = (formData: loginFormSchema) => {
+  const onSubmit = async (formData: loginFormSchema) => {
     console.log(formData);
+    //await completeLoginMutation.mutateAsync(formData);
   };
 
   const handleNext = async () => {
@@ -80,11 +87,19 @@ function Login() {
     }
   };
 
+  const handleOtpExpiresAtUpdate = (newExpiresAt: string) => {
+    if (otpData) {
+      setOtpData({
+        ...otpData,
+        otpExpiresAt: newExpiresAt,
+      });
+    }
+  };
+
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
   const form = (
     <Stack
       padding={1}
-      gap={1}
       onSubmit={methods.handleSubmit(onSubmit)}
       sx={{
         maxWidth: { xs: "100%", sm: "480px" },
@@ -111,12 +126,15 @@ function Login() {
               isContinueDisabled={continueDisabled}
             />
           )}
-          {step === 1 && (
-            <Otp
-              email={"olajorinerioluwa@gmail.com"}
+          {step === 1 && otpData && (
+            <OtpPage
+              email={otpData.email}
+              otpExpiresAt={otpData.otpExpiresAt}
               handleBack={() => setStep(0)}
               isPending={completeLoginMutation.isPending}
               isContinueDisabled={continueDisabled}
+              onOtpExpiresAtUpdate={handleOtpExpiresAtUpdate}
+              mode="login"
             />
           )}
         </form>

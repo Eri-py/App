@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Controller, get, useFormContext } from "react-hook-form";
 import Countdown, { zeroPad } from "react-countdown";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import { parseISO } from "date-fns";
 
@@ -12,33 +12,44 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import { resendVerifcationCode, type resendVerifcationCodeRequest } from "../../../api/AuthApi";
-import { CustomFormHeader } from "../components/CustomInputs";
+import { type resendVerifcationCodeRequest, resendVerifcationCode } from "../../../api/AuthApi";
+import { CustomFormHeader } from "./CustomInputs";
 
-type otpProps = {
+type OtpPageProps = {
   email: string;
+  otpExpiresAt: string;
   isContinueDisabled: boolean;
   handleBack: () => void;
-  handleNext: () => void;
   isPending: boolean;
+  onOtpExpiresAtUpdate: (newExpiresAt: string) => void;
+  mode: "login" | "register";
+  handleNext?: () => void;
 };
 
-export function Otp({ email, isContinueDisabled, handleBack, handleNext, isPending }: otpProps) {
+export function OtpPage({
+  email,
+  otpExpiresAt,
+  isContinueDisabled,
+  handleBack,
+  isPending,
+  onOtpExpiresAtUpdate,
+  mode,
+  handleNext,
+}: OtpPageProps) {
   const theme = useTheme();
   const { control } = useFormContext();
 
-  const queryClient = useQueryClient();
-  let otpExpiresAt = parseISO(queryClient.getQueryData(["otpExpiresAt"]) ?? "").getTime();
-  const [endTime, setEndTime] = useState(otpExpiresAt);
-
+  const [endTime, setEndTime] = useState(parseISO(otpExpiresAt).getTime());
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
 
   const resendVerifcationMutation = useMutation({
-    mutationFn: (data: resendVerifcationCodeRequest) => resendVerifcationCode(data, "register"),
+    mutationFn: (data: resendVerifcationCodeRequest) => resendVerifcationCode(data, mode),
     onSuccess: (response: AxiosResponse) => {
-      otpExpiresAt = parseISO(response.data).getTime();
-      setEndTime(otpExpiresAt);
+      const newExpiresAt = response.data;
+      const newEndTime = parseISO(newExpiresAt).getTime();
+      setEndTime(newEndTime);
       setIsResendDisabled(true);
+      onOtpExpiresAtUpdate(newExpiresAt);
     },
   });
 
@@ -139,14 +150,14 @@ export function Otp({ email, isContinueDisabled, handleBack, handleNext, isPendi
       )}
 
       <Button
-        type="button"
+        type={mode === "login" ? "submit" : "button"}
         size="large"
         variant="contained"
-        onClick={handleNext}
+        onClick={mode === "register" ? handleNext : undefined}
         loading={isPending}
         disabled={isContinueDisabled}
       >
-        Continue
+        {mode === "login" ? "Submit" : "Continue"}
       </Button>
 
       <Button variant="outlined" type="button" size="large" onClick={handleBack}>
