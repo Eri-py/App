@@ -107,7 +107,7 @@ public class LoginServiceTest
         await _context.SaveChangesAsync();
         _context.ChangeTracker.Clear();
 
-        var request = new LoginRequest { Identifier = "testuser", Password = password };
+        var request = new StartLoginRequest { Identifier = "testuser", Password = password };
 
         var otp = "123456";
         var expiresAt = DateTime.UtcNow.AddMinutes(5);
@@ -158,7 +158,7 @@ public class LoginServiceTest
         await _context.SaveChangesAsync();
         _context.ChangeTracker.Clear();
 
-        var request = new LoginRequest { Identifier = "TEST@TEST.COM", Password = password };
+        var request = new StartLoginRequest { Identifier = "TEST@TEST.COM", Password = password };
 
         var otp = "123456";
         var expiresAt = DateTime.UtcNow.AddMinutes(5);
@@ -200,7 +200,7 @@ public class LoginServiceTest
     public async Task StartLoginAsync_UserNotFound_ReturnsNotFound()
     {
         // Arrange
-        var request = new LoginRequest
+        var request = new StartLoginRequest
         {
             Identifier = "nonexistent@test.com",
             Password = "Test@123",
@@ -231,7 +231,7 @@ public class LoginServiceTest
         await _context.SaveChangesAsync();
         _context.ChangeTracker.Clear();
 
-        var request = new LoginRequest { Identifier = "testuser", Password = "Test@123" };
+        var request = new StartLoginRequest { Identifier = "testuser", Password = "Test@123" };
 
         // Assert
         // Should throw null because password hash should be empty for incomplete registration
@@ -253,7 +253,11 @@ public class LoginServiceTest
         await _context.SaveChangesAsync();
         _context.ChangeTracker.Clear();
 
-        var request = new LoginRequest { Identifier = "testuser", Password = "WrongPassword@123" };
+        var request = new StartLoginRequest
+        {
+            Identifier = "testuser",
+            Password = "WrongPassword@123",
+        };
 
         // Act
         var result = await _loginService.StartLoginAsync(request);
@@ -288,7 +292,7 @@ public class LoginServiceTest
         await _context.SaveChangesAsync();
         _context.ChangeTracker.Clear();
 
-        var request = new LoginRequest { Identifier = "testuser", Password = password };
+        var request = new StartLoginRequest { Identifier = "testuser", Password = password };
 
         var otp = "123456";
         var expiresAt = DateTime.UtcNow.AddMinutes(5);

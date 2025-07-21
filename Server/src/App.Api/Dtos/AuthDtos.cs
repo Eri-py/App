@@ -51,11 +51,20 @@ public record class CompleteRegistrationRequest
     public required string DateOfBirth { get; set; }
 }
 
-public record class LoginRequest
+public record class StartLoginRequest
 {
     [Required]
     public required string Identifier { get; set; }
 
     [Required]
     public required string Password { get; set; }
+}
+
+public record class StartLoginResponse
+{
+    [Required]
+    public required string OtpExpiresAt { get; set; }
+
+    [Required]
+    public required string Email { get; set; }
 }

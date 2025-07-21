@@ -76,9 +76,12 @@ namespace App.Api.Controllers
         }
 
         [HttpPost("login/start")]
-        public async Task<ActionResult<string>> Login([FromBody] LoginRequest request)
+        public async Task<ActionResult<StartLoginResponse>> Login(
+            [FromBody] StartLoginRequest request
+        )
         {
             var result = await loginService.StartLoginAsync(request);
+            Console.WriteLine(result);
             return ResultMapper.Map(result);
         }
 
