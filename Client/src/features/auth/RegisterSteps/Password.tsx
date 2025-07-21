@@ -14,7 +14,7 @@ export function Password({ handleNext }: PasswordProps) {
   const theme = useTheme();
 
   return (
-    <Stack gap={2} paddingInline={1.5}>
+    <Stack gap={1.5} paddingInline={1.5}>
       <CustomFormHeader
         header="Create a strong password"
         subtext="We will never ask you for your password."

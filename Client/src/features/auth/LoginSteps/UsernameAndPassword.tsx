@@ -28,7 +28,7 @@ export function UsernameAndPassword({
 }: UsernameAndPasswordProps) {
   const theme = useTheme();
   return (
-    <Stack gap={2} paddingInline={1.5}>
+    <Stack gap={1.5} paddingInline={1.5}>
       <CustomFormHeader header="Log in" subtext="Glad to have you back!" align="center" />
 
       <CustomTextField

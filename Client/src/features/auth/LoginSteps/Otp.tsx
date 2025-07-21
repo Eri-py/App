@@ -47,7 +47,7 @@ export function Otp({ email, isContinueDisabled, handleBack, handleNext, isPendi
   };
 
   return (
-    <Stack gap={3} padding={2}>
+    <Stack gap={1.5} padding={2}>
       <CustomFormHeader
         header="Verify email"
         subtext={

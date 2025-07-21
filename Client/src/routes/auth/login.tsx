@@ -19,7 +19,6 @@ import { LogoWithName } from "../../components/Logo";
 
 export const Route = createFileRoute("/auth/login")({
   component: Login,
-  loader: () => {},
 });
 
 const LoginFormSchema = z.object({
@@ -66,7 +65,7 @@ function Login() {
   const form = (
     <Stack
       padding={1}
-      gap={2}
+      gap={1}
       onSubmit={methods.handleSubmit(onSubmit)}
       sx={{
         maxWidth: { xs: "100%", sm: "480px" },
@@ -76,9 +75,7 @@ function Login() {
         borderRadius: { sm: "1rem" },
       }}
     >
-      <Box alignSelf="center">
-        <LogoWithName width="27px" />
-      </Box>
+      <LogoWithName size={isSmOrLarger ? "large" : "medium"} align="center" />
 
       {serverError !== null && (
         <Alert severity="error" sx={{ color: theme.palette.text.primary, fontSize: "1rem" }}>
