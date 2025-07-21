@@ -29,7 +29,7 @@ export function UsernameAndPassword({
   const theme = useTheme();
   return (
     <Stack gap={2} paddingInline={1.5}>
-      <CustomFormHeader header="Login in" subtext="Glad to have you back!" align="center" />
+      <CustomFormHeader header="Log in" subtext="Glad to have you back!" align="center" />
 
       <CustomTextField
         type="text"
