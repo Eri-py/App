@@ -47,9 +47,7 @@ public class LoginService(AppDbContext context, IEmailService emailService, IJwt
 
         if (verificationResult == PasswordVerificationResult.Failed)
         {
-            return Result.Unauthorized(
-                "Your login credentials don't match an account in our system."
-            );
+            return Result.NotFound("Your login credentials don't match an account in our system.");
         }
 
         var (otp, otpExpiresAt) = jwtService.CreateOtp(c_OtpValidFor);
@@ -88,9 +86,9 @@ public class LoginService(AppDbContext context, IEmailService emailService, IJwt
     public async Task<Result<AuthResult>> CompleteLoginAsync(VerifyOtpRequest request)
     {
         var email = request.Email.ToLower();
-        var user = await context
-            .Users.Include(u => u.RefreshTokens)
-            .FirstOrDefaultAsync(u => u.Email == email && u.Otp == request.Otp);
+        var user = await context.Users.FirstOrDefaultAsync(u =>
+            u.Email == email && u.Otp == request.Otp
+        );
 
         if (user is null || user.OtpExpiresAt < DateTime.UtcNow)
         {

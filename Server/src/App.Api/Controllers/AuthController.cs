@@ -112,7 +112,7 @@ namespace App.Api.Controllers
             };
 
             Response.Cookies.Append("accessToken", accessToken, accessTokenOptions);
-            Response.Cookies.Append("refreshToken", refreshToken, refreshTokenOptions);
+            Response.Cookies.Append("__Secure-refreshToken", refreshToken, refreshTokenOptions);
 
             return NoContent();
         }
