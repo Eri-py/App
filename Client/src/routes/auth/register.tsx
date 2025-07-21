@@ -23,7 +23,6 @@ import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndE
 import { Otp } from "../../features/auth/RegisterSteps/Otp";
 import { Password } from "../../features/auth/RegisterSteps/Password";
 import { PersonalDetails } from "../../features/auth/RegisterSteps/PersonalDetails";
-import { HorizontalLinearStepper } from "../../features/auth/components/HorizontalLinearStepper";
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
 import {
   verifyOtp,
@@ -33,7 +32,8 @@ import {
   type startRegistrationRequest,
   type verifyOtpRequest,
 } from "../../api/AuthApi";
-import { getErrorMessage, type ServerError } from "../../api/Client";
+import { useServerError, type ServerError } from "../../api/Client";
+import { LogoWithName } from "../../components/Logo";
 
 export const Route = createFileRoute("/auth/register")({
   component: Register,
@@ -59,18 +59,10 @@ const registrationSteps: Record<number, (keyof registrationFormSchema)[]> = {
   3: ["firstname", "lastname", "dateOfBirth"],
 };
 
-const registrationStepLabels: string[] = [
-  "Username and Email",
-  "Verifiction Code",
-  "Password",
-  "Personal Details",
-];
-
 function Register() {
-  const queryClient = useQueryClient();
   const [step, setStep] = useState<number>(0);
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [continueDisabled, setContinueDisabled] = useState(false);
+  const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
+  const queryClient = useQueryClient();
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
   const navigate = useNavigate();
@@ -79,20 +71,6 @@ function Register() {
     mode: "onChange",
     resolver: zodResolver(RegistrationFormSchema),
   });
-
-  const handleServerError = (error: ServerError) => {
-    const errorMessage = getErrorMessage(error);
-    setServerError(errorMessage);
-    setContinueDisabled(true);
-
-    setTimeout(() => {
-      setServerError(null);
-    }, 10000);
-
-    setTimeout(() => {
-      setContinueDisabled(false);
-    }, 3000);
-  };
 
   const startRegistrationMutation = useMutation({
     mutationFn: (data: startRegistrationRequest) => startRegistration(data),
@@ -120,7 +98,7 @@ function Register() {
     const isValid = await methods.trigger(currentStep);
 
     if (isValid) {
-      setServerError(null);
+      clearServerError();
       switch (step) {
         case 0: {
           const username = methods.getValues("username");
@@ -149,30 +127,29 @@ function Register() {
   };
 
   const onSubmit = async (formData: registrationFormSchema) => {
-    setServerError(null);
+    clearServerError();
     await completeRegistrationMutation.mutateAsync(formData);
   };
 
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
   const form = (
     <Stack
-      padding={2}
+      padding={1}
       gap={2}
       sx={{
-        maxWidth: { xs: "100%", sm: "480px" },
+        width: { xs: "100%", sm: "480px" },
         height: "fit-content",
         backgroundColor: theme.palette.background.default,
         boxShadow: { sm: "0 0 2px rgba(225, 225, 225, .5)" },
         borderRadius: { sm: "1rem" },
       }}
     >
-      <HorizontalLinearStepper
-        steps={registrationStepLabels}
-        activeStep={step}
-        setActiveStep={(value) => setStep(value)}
-      />
+      <Box alignSelf="center">
+        <LogoWithName width="27px" />
+      </Box>
+
       {serverError !== null && (
-        <Alert severity="error" sx={{ color: theme.palette.text.primary }}>
+        <Alert severity="error" sx={{ color: theme.palette.text.primary, fontSize: "1rem" }}>
           {serverError}
         </Alert>
       )}

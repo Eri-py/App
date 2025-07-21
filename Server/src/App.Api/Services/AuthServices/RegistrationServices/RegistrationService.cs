@@ -1,9 +1,9 @@
 using App.Api.Data;
 using App.Api.Data.Entities;
 using App.Api.Dtos;
+using App.Api.Results;
 using App.Api.Services.AuthServices.TokenServices;
 using App.Api.Services.EmailServices;
-using App.Api.Services.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -102,7 +102,7 @@ public class RegistrationService(
         return Result.NoContent();
     }
 
-    public async Task<Result<CompleteRegistrationResult>> CompleteRegistrationAsync(
+    public async Task<Result<AuthResult>> CompleteRegistrationAsync(
         CompleteRegistrationRequest request
     )
     {
@@ -142,8 +142,8 @@ public class RegistrationService(
 
         await context.SaveChangesAsync();
 
-        return Result<CompleteRegistrationResult>.Success(
-            new CompleteRegistrationResult
+        return Result<AuthResult>.Success(
+            new AuthResult
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,

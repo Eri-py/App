@@ -50,3 +50,12 @@ public record class CompleteRegistrationRequest
     [Required]
     public required string DateOfBirth { get; set; }
 }
+
+public record class LoginRequest
+{
+    [Required]
+    public required string Identifier { get; set; }
+
+    [Required]
+    public required string Password { get; set; }
+}

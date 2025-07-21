@@ -1,5 +1,6 @@
 import axios from "axios";
 import { AxiosError } from "axios";
+import { useState } from "react";
 
 const API_BASE_URL = "https://localhost:7000/api"; //Remember to change this back to localhost before commits
 
@@ -12,18 +13,48 @@ export const apiClient = axios.create({
 type ServerErrorResponse = {
   message?: string;
 };
-
 export type ServerError = AxiosError<ServerErrorResponse>;
 
-export function getErrorMessage(error: ServerError): string {
-  if (error.response && error.response.data) {
-    const data = error.response.data;
+// Custom hook for handling server errors
+export function useServerError() {
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [continueDisabled, setContinueDisabled] = useState(false);
 
-    // shape returned from API controllers
-    if (data.message && typeof data.message === "string") {
-      return data.message;
+  const getErrorMessage = (error: ServerError) => {
+    if (error.response && error.response.data) {
+      const data = error.response.data;
+
+      // shape returned from API controllers
+      if (data.message && typeof data.message === "string") {
+        return data.message;
+      }
     }
-  }
 
-  return "An unexpected error occurred.";
+    return "An unexpected error occurred.";
+  };
+
+  const handleServerError = (error: ServerError) => {
+    const errorMessage = getErrorMessage(error);
+    setServerError(errorMessage);
+    setContinueDisabled(true);
+
+    setTimeout(() => {
+      setServerError(null);
+    }, 10000);
+
+    setTimeout(() => {
+      setContinueDisabled(false);
+    }, 3000);
+  };
+
+  const clearServerError = () => {
+    setServerError(null);
+  };
+
+  return {
+    serverError,
+    continueDisabled,
+    handleServerError,
+    clearServerError,
+  };
 }

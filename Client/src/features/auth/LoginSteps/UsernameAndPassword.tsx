@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 
-import { styled, useTheme } from "@mui/material/styles";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import LockIcon from "@mui/icons-material/Lock";
+import { styled, useTheme } from "@mui/material/styles";
 
 import { OAuthButtonGroup } from "../components/OAuthButtonGroup";
 import { CustomFormHeader, CustomTextField } from "../components/CustomInputs";
@@ -15,41 +15,36 @@ const CustomLink = styled(Link)(({ theme }) => ({
   fontWeight: 500,
 }));
 
-type usernameAndEmailProps = {
+type UsernameAndPasswordProps = {
   handleNext: () => void;
   isPending: boolean;
   isContinueDisabled: boolean;
 };
 
-export function UsernameAndEmail({
+export function UsernameAndPassword({
   handleNext,
   isPending,
   isContinueDisabled,
-}: usernameAndEmailProps) {
+}: UsernameAndPasswordProps) {
   const theme = useTheme();
-
   return (
     <Stack gap={2} paddingInline={1.5}>
-      <CustomFormHeader
-        header="Sign up"
-        subtext="join thousands of users already on our platform."
-        align="center"
-      />
+      <CustomFormHeader header="Log in" subtext="Glad to have you back!" align="center" />
 
       <CustomTextField
         type="text"
-        label="Username"
-        fieldValue="username"
+        label="Username or Email"
+        fieldValue="identifier"
         startIcon={<AccountCircleOutlinedIcon />}
-        autoComplete="off"
+        autoComplete="email"
       />
 
       <CustomTextField
-        type="email"
-        label="Email"
-        fieldValue="email"
-        startIcon={<EmailOutlinedIcon />}
-        autoComplete="email"
+        type="password"
+        label="Password"
+        fieldValue="password"
+        startIcon={<LockIcon />}
+        autoComplete="off"
       />
 
       <Button
@@ -73,7 +68,7 @@ export function UsernameAndEmail({
             fontSize: "0.875rem",
           }}
         >
-          Already have an account? <CustomLink to="/auth/login">Log in here</CustomLink>
+          Don't have an account? <CustomLink to="/auth/register">Sign up here</CustomLink>
         </Typography>
         <Typography
           sx={{

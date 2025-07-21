@@ -1,13 +1,10 @@
 import { Controller, get, useFormContext } from "react-hook-form";
 
-import { useTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 
-import { CustomTextField } from "../components/CustomTextField";
-import { SegmentedDatePicker } from "../components/SegmentedDatePicker";
+import { CustomFormHeader, CustomTextField, SegmentedDatePicker } from "../components/CustomInputs";
 
 type PersonalDetailsProps = {
   isPending: boolean;
@@ -15,19 +12,15 @@ type PersonalDetailsProps = {
 };
 
 export function PersonalDetails({ isPending, isContinueDisabled }: PersonalDetailsProps) {
-  const theme = useTheme();
   const { control } = useFormContext();
 
   return (
     <Stack gap={3} paddingInline={1.5}>
-      <Stack>
-        <Typography fontWeight={400} fontSize={25} color={theme.palette.text.primary}>
-          Personal details
-        </Typography>
-        <Typography fontWeight={200} fontSize={15} color={theme.palette.text.secondary}>
-          {"Let's get to know a bit more about you :)"}
-        </Typography>
-      </Stack>
+      <CustomFormHeader
+        header="Personal details"
+        subtext="Let's get to know a bit more about you :)"
+        align="flex-start"
+      />
 
       <CustomTextField
         type="text"

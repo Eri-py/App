@@ -47,14 +47,14 @@ export function Otp({ email, isContinueDisabled, handleBack, handleNext, isPendi
   };
 
   return (
-    <Stack gap={2} padding={2}>
+    <Stack gap={3} padding={2}>
       <CustomFormHeader
         header="Verify email"
         subtext={
-          <span>
-            Enter the <b>6 digit code</b> sent to the email below <br />
-            <b>{email?.toLowerCase()}.</b>
-          </span>
+          <>
+            Enter the <b>6 digit code</b> sent to
+            <br /> <b>{email?.toLowerCase()}.</b>
+          </>
         }
         align="flex-start"
       />
