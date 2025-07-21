@@ -1,5 +1,6 @@
 using System.Text;
 using App.Api.Data;
+using App.Api.Services.AuthServices.LoginServices;
 using App.Api.Services.AuthServices.RegistrationServices;
 using App.Api.Services.AuthServices.TokenServices;
 using App.Api.Services.EmailServices;
@@ -49,6 +50,7 @@ if (builder.Environment.IsDevelopment())
 // Authentication Services
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
 
 // JWT Configuration
 builder

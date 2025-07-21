@@ -14,7 +14,8 @@ import Alert from "@mui/material/Alert";
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
 import { useServerError, type ServerError } from "../../api/Client";
 import { UsernameAndPassword } from "../../features/auth/LoginSteps/UsernameAndPassword";
-import { login, type loginRequest } from "../../api/AuthApi";
+import { startLogin, type loginRequest } from "../../api/AuthApi";
+import { LogoWithName } from "../../components/Logo";
 
 export const Route = createFileRoute("/auth/login")({
   component: Login,
@@ -40,8 +41,8 @@ function Login() {
     resolver: zodResolver(LoginFormSchema),
   });
 
-  const loginMutation = useMutation({
-    mutationFn: (data: loginRequest) => login(data),
+  const StartLoginMutation = useMutation({
+    mutationFn: (data: loginRequest) => startLogin(data),
     onSuccess: () => setStep(1),
     onError: (error: ServerError) => handleServerError(error),
   });
@@ -57,7 +58,7 @@ function Login() {
       clearServerError();
       const identifier = methods.getValues("identifier");
       const password = methods.getValues("password");
-      await loginMutation.mutateAsync({ identifier, password });
+      await StartLoginMutation.mutateAsync({ identifier, password });
     }
   };
 
@@ -75,8 +76,11 @@ function Login() {
         borderRadius: { sm: "1rem" },
       }}
     >
+      <Box alignSelf="center">
+        <LogoWithName width="27px" />
+      </Box>
       {serverError !== null && (
-        <Alert severity="error" sx={{ color: theme.palette.text.primary }}>
+        <Alert severity="error" sx={{ color: theme.palette.text.primary, fontSize: "1rem" }}>
           {serverError}
         </Alert>
       )}
@@ -86,7 +90,7 @@ function Login() {
           {step === 0 && (
             <UsernameAndPassword
               handleNext={handleNext}
-              isPending={loginMutation.isPending}
+              isPending={StartLoginMutation.isPending}
               isContinueDisabled={continueDisabled}
             />
           )}

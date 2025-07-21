@@ -6,8 +6,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 
-import { CustomTextField } from "../components/CustomTextField";
-import { SegmentedDatePicker } from "../components/SegmentedDatePicker";
+import { CustomTextField, SegmentedDatePicker } from "../components/CustomInputs";
 
 type PersonalDetailsProps = {
   isPending: boolean;

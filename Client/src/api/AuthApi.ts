@@ -37,6 +37,6 @@ export const resendVerifcationCode = (data: resendVerifcationCodeRequest) => {
 };
 
 // Login Api calls
-export const login = (data: loginRequest) => {
-  return apiClient.post("auth/login", data);
+export const startLogin = (data: loginRequest) => {
+  return apiClient.post("auth/login/start", data);
 };

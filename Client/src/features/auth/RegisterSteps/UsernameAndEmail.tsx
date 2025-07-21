@@ -7,8 +7,8 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import { CustomTextField } from "../components/CustomTextField";
 import { OAuthButtonGroup } from "../components/OAuthButtonGroup";
+import { CustomTextField } from "../components/CustomInputs";
 
 const CustomLink = styled(Link)(({ theme }) => ({
   color: theme.palette.primary.main,
@@ -29,8 +29,8 @@ export function UsernameAndEmail({
   const theme = useTheme();
 
   return (
-    <Stack gap={3} paddingInline={1.5}>
-      <Stack>
+    <Stack gap={2} paddingInline={1.5}>
+      <Stack alignItems="center">
         <Typography fontWeight={400} fontSize={25} color={theme.palette.text.primary}>
           Sign up
         </Typography>

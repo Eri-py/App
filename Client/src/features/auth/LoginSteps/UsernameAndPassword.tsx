@@ -7,8 +7,8 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { styled, useTheme } from "@mui/material/styles";
 
-import { CustomTextField } from "../components/CustomTextField";
 import { OAuthButtonGroup } from "../components/OAuthButtonGroup";
+import { CustomTextField } from "../components/CustomInputs";
 
 const CustomLink = styled(Link)(({ theme }) => ({
   color: theme.palette.primary.main,
@@ -28,8 +28,8 @@ export function UsernameAndPassword({
 }: UsernameAndPasswordProps) {
   const theme = useTheme();
   return (
-    <Stack gap={3} paddingInline={1.5}>
-      <Stack>
+    <Stack gap={2} paddingInline={1.5}>
+      <Stack alignItems="center">
         <Typography fontWeight={400} fontSize={25} color={theme.palette.text.primary}>
           Login in
         </Typography>

@@ -23,7 +23,6 @@ import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndE
 import { Otp } from "../../features/auth/RegisterSteps/Otp";
 import { Password } from "../../features/auth/RegisterSteps/Password";
 import { PersonalDetails } from "../../features/auth/RegisterSteps/PersonalDetails";
-import { HorizontalLinearStepper } from "../../features/auth/components/HorizontalLinearStepper";
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
 import {
   verifyOtp,
@@ -34,10 +33,11 @@ import {
   type verifyOtpRequest,
 } from "../../api/AuthApi";
 import { useServerError, type ServerError } from "../../api/Client";
+import { LogoWithName } from "../../components/Logo";
+import { HorizontalLinearStepper } from "../../components/HorizontalLinearStepper";
 
 export const Route = createFileRoute("/auth/register")({
   component: Register,
-  loader: () => {},
 });
 
 const RegistrationFormSchema = z.object({
@@ -62,7 +62,7 @@ const registrationSteps: Record<number, (keyof registrationFormSchema)[]> = {
 
 const registrationStepLabels: string[] = [
   "Username and Email",
-  "Verifiction Code",
+  "Verification Code",
   "Password",
   "Personal Details",
 ];
@@ -152,13 +152,18 @@ function Register() {
         borderRadius: { sm: "1rem" },
       }}
     >
+      <Box alignSelf="center">
+        <LogoWithName width="27px" />
+      </Box>
+
       <HorizontalLinearStepper
         steps={registrationStepLabels}
         activeStep={step}
         setActiveStep={(value) => setStep(value)}
       />
+
       {serverError !== null && (
-        <Alert severity="error" sx={{ color: theme.palette.text.primary }}>
+        <Alert severity="error" sx={{ color: theme.palette.text.primary, fontSize: "1rem" }}>
           {serverError}
         </Alert>
       )}

@@ -1,11 +1,10 @@
 import { useTheme } from "@mui/material/styles";
-
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import LockIcon from "@mui/icons-material/Lock";
 
-import { CustomTextField } from "../components/CustomTextField";
+import { CustomTextField } from "../components/CustomInputs";
 
 type PasswordProps = {
   handleNext: () => void;
