@@ -1,9 +1,11 @@
 using System;
 using App.Api.Data;
+using App.Api.Data.Entities;
 using App.Api.Dtos;
 using App.Api.Results;
 using App.Api.Services.AuthServices.TokenServices;
 using App.Api.Services.EmailServices;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Api.Services.AuthServices.LoginServices;
@@ -28,11 +30,111 @@ public class LoginService(AppDbContext context, IEmailService emailService, IJwt
             return Result.NotFound($"Your login credentials don't match an account in our system.");
         }
 
-        return Result<string>.Success("Yayyyyy");
+        // Check if user has completed registration
+        if (!user.CreatedAt.HasValue)
+        {
+            return Result.BadRequest(
+                "Account registration is not complete. Please complete your registration first."
+            );
+        }
+
+        // Verify password
+        var verificationResult = new PasswordHasher<User>().VerifyHashedPassword(
+            user,
+            user.PasswordHash!,
+            password
+        );
+
+        if (verificationResult == PasswordVerificationResult.Failed)
+        {
+            return Result.Unauthorized(
+                "Your login credentials don't match an account in our system."
+            );
+        }
+
+        var (otp, otpExpiresAt) = jwtService.CreateOtp(c_OtpValidFor);
+        using var transaction = await context.Database.BeginTransactionAsync();
+        try
+        {
+            // Update user with new OTP
+            user.Otp = otp;
+            user.OtpExpiresAt = otpExpiresAt;
+
+            await context.SaveChangesAsync();
+
+            var emailResult = await emailService.SendEmailVerificationAsync(
+                to: user.Email!,
+                username: user.Username!,
+                verificationToken: otp,
+                codeValidFor: $"{c_OtpValidFor} minutes"
+            );
+
+            if (!emailResult.IsSuccess)
+            {
+                await transaction.RollbackAsync();
+                return emailResult;
+            }
+
+            await transaction.CommitAsync();
+            return Result<string>.Success(otpExpiresAt.ToString("o"));
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
-    public Task<Result<AuthResult>> CompleteLoginAsync(VerifyOtpRequest request)
+    public async Task<Result<AuthResult>> CompleteLoginAsync(VerifyOtpRequest request)
     {
-        throw new NotImplementedException();
+        var email = request.Email.ToLower();
+        var user = await context
+            .Users.Include(u => u.RefreshTokens)
+            .FirstOrDefaultAsync(u => u.Email == email && u.Otp == request.Otp);
+
+        if (user is null || user.OtpExpiresAt < DateTime.UtcNow)
+        {
+            return Result.BadRequest("Invalid or expired verification code");
+        }
+
+        // Check if user has completed registration
+        if (!user.CreatedAt.HasValue)
+        {
+            return Result.BadRequest(
+                "Account registration is not complete. Please complete your registration first."
+            );
+        }
+
+        // Clear the OTP
+        user.Otp = null;
+        user.OtpExpiresAt = null;
+
+        var (refreshToken, refreshTokenExpiresAt) = jwtService.CreateRefreshToken(
+            c_RefreshTokenValidFor
+        );
+        // Add token to database
+        var refreshTokenEntry = new RefreshToken
+        {
+            TokenHash = jwtService.HashToken(refreshToken),
+            TokenExpiresAt = refreshTokenExpiresAt,
+            UserId = user.Id,
+        };
+        user.RefreshTokens.Add(refreshTokenEntry);
+
+        await context.SaveChangesAsync();
+
+        var (accessToken, accessTokenExpiresAt) = jwtService.CreateAccessToken(
+            user,
+            c_AccessTokenValidFor
+        );
+        return Result<AuthResult>.Success(
+            new AuthResult
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                AccessTokenExpiresAt = accessTokenExpiresAt,
+                RefreshTokenExpiresAt = refreshTokenExpiresAt,
+            }
+        );
     }
 }
