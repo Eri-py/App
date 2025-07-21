@@ -43,7 +43,7 @@ export function LogoWithName({ size, align }: LogoWithNameProps) {
 
   switch (size) {
     case "small":
-      break;
+      return logoWithName("18px", 16);
     case "medium":
       return logoWithName("27px", 22);
     case "large":
