@@ -8,7 +8,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { OAuthButtonGroup } from "../components/OAuthButtonGroup";
-import { CustomTextField } from "../components/CustomInputs";
+import { CustomFormHeader, CustomTextField } from "../components/CustomInputs";
 
 const CustomLink = styled(Link)(({ theme }) => ({
   color: theme.palette.primary.main,
@@ -30,14 +30,11 @@ export function UsernameAndEmail({
 
   return (
     <Stack gap={2} paddingInline={1.5}>
-      <Stack alignItems="center">
-        <Typography fontWeight={400} fontSize={25} color={theme.palette.text.primary}>
-          Sign up
-        </Typography>
-        <Typography fontWeight={200} fontSize={15} color={theme.palette.text.secondary}>
-          join thousands of users already on our platform.
-        </Typography>
-      </Stack>
+      <CustomFormHeader
+        header="Sign up"
+        subtext="join thousands of users already on our platform."
+        align="center"
+      />
 
       <CustomTextField
         type="text"

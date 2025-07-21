@@ -13,6 +13,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import { resendVerifcationCode, type resendVerifcationCodeRequest } from "../../../api/AuthApi";
+import { CustomFormHeader } from "../components/CustomInputs";
 
 type otpProps = {
   email: string;
@@ -47,20 +48,16 @@ export function Otp({ email, isContinueDisabled, handleBack, handleNext, isPendi
 
   return (
     <Stack gap={3} padding={2}>
-      <Stack>
-        <Typography fontWeight={400} fontSize={25} color={theme.palette.text.primary}>
-          Verify email
-        </Typography>
-        <Typography
-          fontWeight={200}
-          fontSize={13.5}
-          color={theme.palette.text.secondary}
-          sx={{ textWrap: "nowrap" }}
-        >
-          Enter the <b>6 digit code</b> sent to the email address below
-          <br /> <b>{email?.toLowerCase()}.</b>
-        </Typography>
-      </Stack>
+      <CustomFormHeader
+        header="Verify email"
+        subtext={
+          <>
+            Enter the <b>6 digit code</b> sent to
+            <br /> <b>{email?.toLowerCase()}.</b>
+          </>
+        }
+        align="flex-start"
+      />
 
       <Controller
         name="otp"

@@ -4,11 +4,11 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import LockIcon from "@mui/icons-material/Lock";
 import { styled, useTheme } from "@mui/material/styles";
 
 import { OAuthButtonGroup } from "../components/OAuthButtonGroup";
-import { CustomTextField } from "../components/CustomInputs";
+import { CustomFormHeader, CustomTextField } from "../components/CustomInputs";
 
 const CustomLink = styled(Link)(({ theme }) => ({
   color: theme.palette.primary.main,
@@ -29,14 +29,7 @@ export function UsernameAndPassword({
   const theme = useTheme();
   return (
     <Stack gap={2} paddingInline={1.5}>
-      <Stack alignItems="center">
-        <Typography fontWeight={400} fontSize={25} color={theme.palette.text.primary}>
-          Login in
-        </Typography>
-        <Typography fontWeight={200} fontSize={15} color={theme.palette.text.secondary}>
-          Glad to have you back!
-        </Typography>
-      </Stack>
+      <CustomFormHeader header="Login in" subtext="Glad to have you back!" align="center" />
 
       <CustomTextField
         type="text"
@@ -50,7 +43,7 @@ export function UsernameAndPassword({
         type="password"
         label="Password"
         fieldValue="password"
-        startIcon={<EmailOutlinedIcon />}
+        startIcon={<LockIcon />}
         autoComplete="off"
       />
 

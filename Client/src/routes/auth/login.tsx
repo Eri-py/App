@@ -65,7 +65,7 @@ function Login() {
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
   const form = (
     <Stack
-      padding={2}
+      padding={1}
       gap={2}
       onSubmit={methods.handleSubmit(onSubmit)}
       sx={{
@@ -79,6 +79,7 @@ function Login() {
       <Box alignSelf="center">
         <LogoWithName width="27px" />
       </Box>
+
       {serverError !== null && (
         <Alert severity="error" sx={{ color: theme.palette.text.primary, fontSize: "1rem" }}>
           {serverError}

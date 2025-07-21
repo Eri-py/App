@@ -34,7 +34,6 @@ import {
 } from "../../api/AuthApi";
 import { useServerError, type ServerError } from "../../api/Client";
 import { LogoWithName } from "../../components/Logo";
-import { HorizontalLinearStepper } from "../../components/HorizontalLinearStepper";
 
 export const Route = createFileRoute("/auth/register")({
   component: Register,
@@ -60,17 +59,10 @@ const registrationSteps: Record<number, (keyof registrationFormSchema)[]> = {
   3: ["firstname", "lastname", "dateOfBirth"],
 };
 
-const registrationStepLabels: string[] = [
-  "Username and Email",
-  "Verification Code",
-  "Password",
-  "Personal Details",
-];
-
 function Register() {
-  const queryClient = useQueryClient();
   const [step, setStep] = useState<number>(0);
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
+  const queryClient = useQueryClient();
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
   const navigate = useNavigate();
@@ -142,10 +134,10 @@ function Register() {
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
   const form = (
     <Stack
-      padding={2}
+      padding={1}
       gap={2}
       sx={{
-        maxWidth: { xs: "100%", sm: "480px" },
+        width: { xs: "100%", sm: "480px" },
         height: "fit-content",
         backgroundColor: theme.palette.background.default,
         boxShadow: { sm: "0 0 2px rgba(225, 225, 225, .5)" },
@@ -155,12 +147,6 @@ function Register() {
       <Box alignSelf="center">
         <LogoWithName width="27px" />
       </Box>
-
-      <HorizontalLinearStepper
-        steps={registrationStepLabels}
-        activeStep={step}
-        setActiveStep={(value) => setStep(value)}
-      />
 
       {serverError !== null && (
         <Alert severity="error" sx={{ color: theme.palette.text.primary, fontSize: "1rem" }}>

@@ -4,7 +4,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import LockIcon from "@mui/icons-material/Lock";
 
-import { CustomTextField } from "../components/CustomInputs";
+import { CustomFormHeader, CustomTextField } from "../components/CustomInputs";
 
 type PasswordProps = {
   handleNext: () => void;
@@ -14,15 +14,12 @@ export function Password({ handleNext }: PasswordProps) {
   const theme = useTheme();
 
   return (
-    <Stack gap={3} paddingInline={1.5}>
-      <Stack>
-        <Typography fontWeight={400} fontSize={25} color={theme.palette.text.primary}>
-          Create a strong password
-        </Typography>
-        <Typography fontWeight={200} fontSize={15} color={theme.palette.text.secondary}>
-          We will never ask you for your password.
-        </Typography>
-      </Stack>
+    <Stack gap={2} paddingInline={1.5}>
+      <CustomFormHeader
+        header="Create a strong password"
+        subtext="We will never ask you for your password."
+        align="flex-start"
+      />
 
       <Stack gap={1}>
         <CustomTextField

@@ -9,6 +9,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Stack from "@mui/material/Stack";
 import FormHelperText from "@mui/material/FormHelperText";
+import Typography from "@mui/material/Typography";
 
 import { Selector } from "../../../components/Selector";
 
@@ -88,13 +89,13 @@ export function CustomTextField({
   );
 }
 
-type segmentedDatePickerProps = {
+type SegmentedDatePickerProps = {
   value?: string;
   onChange: (value: string) => void;
   error?: string;
 };
 
-export function SegmentedDatePicker({ value, onChange, error }: segmentedDatePickerProps) {
+export function SegmentedDatePicker({ value, onChange, error }: SegmentedDatePickerProps) {
   const months = [
     { id: "01", label: "January" },
     { id: "02", label: "February" },
@@ -181,6 +182,25 @@ export function SegmentedDatePicker({ value, onChange, error }: segmentedDatePic
         />
       </Stack>
       {error && <FormHelperText error>{error}</FormHelperText>}
+    </Stack>
+  );
+}
+
+type CustomFormHeaderProps = {
+  header: string;
+  subtext: string | ReactNode;
+  align: string;
+};
+
+export function CustomFormHeader({ header, subtext, align }: CustomFormHeaderProps) {
+  return (
+    <Stack alignItems={align}>
+      <Typography fontWeight={400} fontSize={25} color="textPrimary">
+        {header}
+      </Typography>
+      <Typography fontWeight={200} fontSize={15} color="textSecondary" sx={{ textWrap: "nowrap" }}>
+        {subtext}
+      </Typography>
     </Stack>
   );
 }
