@@ -81,5 +81,40 @@ namespace App.Api.Controllers
             var result = await loginService.StartLoginAsync(request);
             return ResultMapper.Map(result);
         }
+
+        [HttpPost("login/complete")]
+        public async Task<ActionResult<string>> CompleteLogin([FromBody] VerifyOtpRequest request)
+        {
+            var result = await loginService.CompleteLoginAsync(request);
+            if (!result.IsSuccess)
+            {
+                return ResultMapper.Map<string>(result.ResultType, result.Message, null);
+            }
+
+            var accessToken = result.Content!.AccessToken;
+            var accessTokenOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = Request.IsHttps,
+                SameSite = SameSiteMode.Lax,
+                Path = "/api",
+                Expires = result.Content.AccessTokenExpiresAt,
+            };
+
+            var refreshToken = result.Content!.RefreshToken;
+            var refreshTokenOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = Request.IsHttps,
+                SameSite = SameSiteMode.Strict,
+                Path = "/api/auth/refresh-token",
+                Expires = result.Content.RefreshTokenExpiresAt,
+            };
+
+            Response.Cookies.Append("accessToken", accessToken, accessTokenOptions);
+            Response.Cookies.Append("__Secure-refreshToken", refreshToken, refreshTokenOptions);
+
+            return NoContent();
+        }
     }
 }

@@ -195,7 +195,7 @@ type CustomFormHeaderProps = {
 export function CustomFormHeader({ header, subtext, align }: CustomFormHeaderProps) {
   return (
     <Stack alignItems={align}>
-      <Typography fontWeight={400} fontSize={25} color="textPrimary">
+      <Typography fontWeight={500} fontSize={25} color="textPrimary">
         {header}
       </Typography>
       <Typography fontWeight={200} fontSize={15} color="textSecondary" sx={{ textWrap: "nowrap" }}>

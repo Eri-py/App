@@ -29,7 +29,6 @@ public class RegistrationService(
         );
 
         var (otp, otpExpiresAt) = jwtService.CreateOtp(c_OtpValidFor);
-
         using var transaction = await context.Database.BeginTransactionAsync();
         try
         {
@@ -135,13 +134,12 @@ public class RegistrationService(
         };
         user.RefreshTokens.Add(refreshTokenEntry);
 
+        await context.SaveChangesAsync();
+
         var (accessToken, accessTokenExpiresAt) = jwtService.CreateAccessToken(
             user,
             c_AccessTokenValidFor
         );
-
-        await context.SaveChangesAsync();
-
         return Result<AuthResult>.Success(
             new AuthResult
             {

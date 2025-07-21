@@ -29,7 +29,7 @@ export function UsernameAndEmail({
   const theme = useTheme();
 
   return (
-    <Stack gap={2} paddingInline={1.5}>
+    <Stack gap={1.5} paddingInline={1.5}>
       <CustomFormHeader
         header="Sign up"
         subtext="join thousands of users already on our platform."

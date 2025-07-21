@@ -135,7 +135,7 @@ function Register() {
   const form = (
     <Stack
       padding={1}
-      gap={2}
+      gap={1}
       sx={{
         width: { xs: "100%", sm: "480px" },
         height: "fit-content",
@@ -144,9 +144,7 @@ function Register() {
         borderRadius: { sm: "1rem" },
       }}
     >
-      <Box alignSelf="center">
-        <LogoWithName width="27px" />
-      </Box>
+      <LogoWithName size={isSmOrLarger ? "large" : "medium"} align="center" />
 
       {serverError !== null && (
         <Alert severity="error" sx={{ color: theme.palette.text.primary, fontSize: "1rem" }}>
