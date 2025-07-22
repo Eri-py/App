@@ -23,6 +23,7 @@ import {
 } from "../../api/AuthApi";
 import { LogoWithName } from "../../components/Logo";
 import { OtpPage } from "../../features/auth/components/OtpPage";
+import type { AxiosResponse } from "axios";
 
 export const Route = createFileRoute("/auth/login")({
   component: Login,
@@ -55,8 +56,8 @@ function Login() {
 
   const startLoginMutation = useMutation({
     mutationFn: (data: startLoginRequest) => startLogin(data),
-    onSuccess: (response) => {
-      const data: startLoginResponse = response.data;
+    onSuccess: (response: AxiosResponse<startLoginResponse>) => {
+      const data = response.data;
       setOtpData({
         email: data.email,
         otpExpiresAt: data.otpExpiresAt,

@@ -34,6 +34,7 @@ import {
 } from "../../api/AuthApi";
 import { useServerError, type ServerError } from "../../api/Client";
 import { LogoWithName } from "../../components/Logo";
+import type { AxiosResponse } from "axios";
 
 export const Route = createFileRoute("/auth/register")({
   component: Register,
@@ -75,7 +76,7 @@ function Register() {
 
   const startRegistrationMutation = useMutation({
     mutationFn: (data: startRegistrationRequest) => startRegistration(data),
-    onSuccess: (response) => {
+    onSuccess: (response: AxiosResponse<string>) => {
       setOtpExpiresAt(response.data);
       setStep(1);
     },
