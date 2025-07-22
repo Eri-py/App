@@ -31,7 +31,16 @@ export const mainTheme = (isDarkMode: boolean) =>
           }),
     },
     components: {
+      MuiAppBar: {
+        defaultProps: {
+          color: "transparent",
+          position: "static",
+        },
+      },
       MuiButton: {
+        defaultProps: {
+          disableRipple: true,
+        },
         styleOverrides: {
           root: {
             textTransform: "none",

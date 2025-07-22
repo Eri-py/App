@@ -44,9 +44,6 @@ export function CustomTextField({
       <Button
         type="button"
         variant="text"
-        disableRipple
-        disableTouchRipple
-        disableFocusRipple
         onClick={() => {
           setPasswordVisible(!isPasswordVisible);
         }}

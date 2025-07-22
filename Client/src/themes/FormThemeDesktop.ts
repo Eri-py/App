@@ -22,6 +22,9 @@ export const formThemeDesktop = createTheme({
   },
   components: {
     MuiButton: {
+      defaultProps: {
+        disableRipple: true,
+      },
       styleOverrides: {
         root: {
           textTransform: "none",

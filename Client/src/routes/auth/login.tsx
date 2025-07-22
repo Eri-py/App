@@ -100,7 +100,8 @@ function Login() {
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
   const form = (
     <Stack
-      padding={1}
+      paddingBlock={2}
+      paddingInline={1}
       gap={2}
       onSubmit={methods.handleSubmit(onSubmit)}
       sx={{

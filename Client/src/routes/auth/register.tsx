@@ -148,7 +148,8 @@ function Register() {
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
   const form = (
     <Stack
-      padding={1}
+      paddingBlock={2}
+      paddingInline={1}
       gap={2}
       sx={{
         width: { xs: "100%", sm: "480px" },

@@ -130,9 +130,6 @@ export function OtpPage({
             type="button"
             variant="text"
             size="small"
-            disableRipple
-            disableTouchRipple
-            disableFocusRipple
             disabled={resendVerificationMutation.isPending}
             onClick={handleResend}
             sx={{
