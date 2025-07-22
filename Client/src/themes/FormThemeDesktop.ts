@@ -22,6 +22,9 @@ export const formThemeDesktop = createTheme({
   },
   components: {
     MuiButton: {
+      defaultProps: {
+        disableRipple: true,
+      },
       styleOverrides: {
         root: {
           textTransform: "none",
@@ -31,6 +34,18 @@ export const formThemeDesktop = createTheme({
           boxShadow: "0 2px 4px rgba(21, 101, 192, 0.3)",
           "&:hover": {
             boxShadow: "0 4px 8px rgba(21, 101, 192, 0.4)",
+          },
+        },
+      },
+    },
+    MuiIconButton: {
+      defaultProps: {
+        disableRipple: true,
+      },
+      styleOverrides: {
+        root: {
+          "&:hover": {
+            boxShadow: "0 0px 1.5px #42a5f5",
           },
         },
       },

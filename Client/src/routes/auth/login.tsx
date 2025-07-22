@@ -35,7 +35,7 @@ const LoginFormSchema = z.object({
   otp: z.string("Invalid otp").trim().length(6, "Invalid otp"),
 });
 
-export type loginFormSchema = z.infer<typeof LoginFormSchema>;
+type loginFormSchema = z.infer<typeof LoginFormSchema>;
 
 function Login() {
   const [step, setStep] = useState<number>(0);
@@ -100,7 +100,8 @@ function Login() {
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
   const form = (
     <Stack
-      padding={1}
+      paddingBlock={2}
+      paddingInline={1}
       gap={2}
       onSubmit={methods.handleSubmit(onSubmit)}
       sx={{
