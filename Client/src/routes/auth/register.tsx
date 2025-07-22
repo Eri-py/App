@@ -20,6 +20,7 @@ import {
   dateOfBirthSchema,
 } from "../../features/auth/Schemas";
 import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndEmail";
+import { HorizontalLinearStepper } from "../../components/HorizontalLinearStepper";
 import { OtpPage } from "../../features/auth/components/OtpPage";
 import { Password } from "../../features/auth/RegisterSteps/Password";
 import { PersonalDetails } from "../../features/auth/RegisterSteps/PersonalDetails";
@@ -59,6 +60,13 @@ const registrationSteps: Record<number, (keyof registrationFormSchema)[]> = {
   2: ["password", "confirmPassword"],
   3: ["firstname", "lastname", "dateOfBirth"],
 };
+
+const registrationStepLabels: string[] = [
+  "Username and Email",
+  "Verification Code",
+  "Password",
+  "Personal Details",
+];
 
 function Register() {
   const [step, setStep] = useState<number>(0);
@@ -141,6 +149,7 @@ function Register() {
   const form = (
     <Stack
       padding={1}
+      gap={2}
       sx={{
         width: { xs: "100%", sm: "480px" },
         height: "fit-content",
@@ -149,7 +158,13 @@ function Register() {
         borderRadius: { sm: "1rem" },
       }}
     >
-      <LogoWithName size={isSmOrLarger ? "large" : "medium"} align="center" />
+      {!isSmOrLarger && <LogoWithName size="large" align="center" />}
+
+      <HorizontalLinearStepper
+        steps={registrationStepLabels}
+        activeStep={step}
+        setActiveStep={(value) => setStep(value)}
+      />
 
       {serverError !== null && (
         <Alert severity="error" sx={{ color: theme.palette.text.primary, fontSize: "1rem" }}>
@@ -193,15 +208,22 @@ function Register() {
   return (
     <Box
       sx={{
-        minHeight: "100dvh",
         display: "flex",
+        minHeight: "100dvh",
         alignItems: { sm: "center" },
         justifyContent: "center",
         background: {
           sm: "radial-gradient(ellipse 150% 100% at top left, #42a5f5 0%, rgba(21, 101, 192, 0.7) 40%, rgba(13, 71, 161, 0.3) 70%, transparent 100%), radial-gradient(ellipse 120% 80% at bottom right, #1565c0 0%, rgba(13, 71, 161, 0.5) 50%, transparent 80%), radial-gradient(circle at center, #181818 0%, #2c2c2c 100%)",
         },
+        position: "relative",
       }}
     >
+      {isSmOrLarger && (
+        <Box sx={{ position: "absolute", top: "2rem", left: "3rem" }}>
+          <LogoWithName size="large" color="white" />
+        </Box>
+      )}
+
       {isSmOrLarger ? <ThemeProvider theme={formThemeDesktop}>{form}</ThemeProvider> : form}
     </Box>
   );

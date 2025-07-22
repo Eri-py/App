@@ -11,10 +11,18 @@ type HorizontalLinearStepperProps = {
 export function HorizontalLinearStepper({ steps, activeStep }: HorizontalLinearStepperProps) {
   return (
     <Stepper activeStep={activeStep} alternativeLabel>
-      {steps.map((label, idx) => {
+      {steps.map((label) => {
         return (
           <Step key={label}>
-            <StepLabel id={`${idx}`} color="primary">
+            <StepLabel
+              id={label}
+              color="primary"
+              slotProps={{
+                label: {
+                  sx: { fontSize: ".85rem", "&.MuiStepLabel-label": { marginTop: 0.5 } },
+                },
+              }}
+            >
               {label}
             </StepLabel>
           </Step>
