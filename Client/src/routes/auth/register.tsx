@@ -63,7 +63,7 @@ const registrationSteps: Record<number, (keyof registrationFormSchema)[]> = {
 
 const registrationStepLabels: string[] = [
   "Username and Email",
-  "Verifiction Code",
+  "Verification Code",
   "Password",
   "Personal Details",
 ];
