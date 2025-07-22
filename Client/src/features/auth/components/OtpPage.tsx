@@ -12,7 +12,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import { type resendVerifcationCodeRequest, resendVerifcationCode } from "../../../api/AuthApi";
+import { type resendVerificationCodeRequest, resendVerificationCode } from "../../../api/AuthApi";
 import { CustomFormHeader } from "./CustomInputs";
 
 type OtpPageProps = {
@@ -43,7 +43,7 @@ export function OtpPage({
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
 
   const resendVerifcationMutation = useMutation({
-    mutationFn: (data: resendVerifcationCodeRequest) => resendVerifcationCode(data, mode),
+    mutationFn: (data: resendVerificationCodeRequest) => resendVerificationCode(data, mode),
     onSuccess: (response: AxiosResponse) => {
       const newExpiresAt = response.data;
       const newEndTime = parseISO(newExpiresAt).getTime();

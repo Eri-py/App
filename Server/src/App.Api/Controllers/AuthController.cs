@@ -81,7 +81,6 @@ namespace App.Api.Controllers
         )
         {
             var result = await loginService.StartLoginAsync(request);
-            Console.WriteLine(result);
             return ResultMapper.Map(result);
         }
 
