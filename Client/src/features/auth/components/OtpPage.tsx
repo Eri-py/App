@@ -54,7 +54,7 @@ export function OtpPage({
   });
 
   const handleResend = async () => {
-    await resendVerifcationMutation.mutateAsync({ identifier: email });
+    await resendVerificationMutation.mutateAsync({ identifier: email });
   };
 
   return (
@@ -133,7 +133,7 @@ export function OtpPage({
             disableRipple
             disableTouchRipple
             disableFocusRipple
-            disabled={resendVerifcationMutation.isPending}
+            disabled={resendVerificationMutation.isPending}
             onClick={handleResend}
             sx={{
               padding: "0",
