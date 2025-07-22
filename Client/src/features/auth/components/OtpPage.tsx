@@ -42,7 +42,7 @@ export function OtpPage({
   const [endTime, setEndTime] = useState(parseISO(otpExpiresAt).getTime());
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
 
-  const resendVerifcationMutation = useMutation({
+  const resendVerificationMutation = useMutation({
     mutationFn: (data: resendVerificationCodeRequest) => resendVerificationCode(data, mode),
     onSuccess: (response: AxiosResponse) => {
       const newExpiresAt = response.data;
