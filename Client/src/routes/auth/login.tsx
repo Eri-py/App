@@ -7,7 +7,6 @@ import { useMutation } from "@tanstack/react-query";
 
 import { ThemeProvider, useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 
@@ -24,6 +23,7 @@ import {
 import { LogoWithName } from "../../components/Logo";
 import { OtpPage } from "../../features/auth/components/OtpPage";
 import type { AxiosResponse } from "axios";
+import { useBreakpoint } from "../../hooks/useBreakpoint";
 
 export const Route = createFileRoute("/auth/login")({
   component: Login,
@@ -46,7 +46,7 @@ function Login() {
 
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
   const defaultTheme = useTheme();
-  const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
+  const { isSmOrLarger } = useBreakpoint();
   const navigate = useNavigate();
 
   const methods = useForm<loginFormSchema>({

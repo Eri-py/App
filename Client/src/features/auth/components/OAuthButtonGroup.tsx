@@ -10,10 +10,6 @@ import IconButton from "@mui/material/IconButton";
 
 const CustomIconButton = styled(IconButton)(({ theme }) => ({
   border: `1px solid ${theme.palette.primary.main}`,
-  "&:hover": {
-    backgroundColor: "#f1f8ffff",
-    transition: "background-color 120ms linear",
-  },
 }));
 
 export function OAuthButtonGroup() {

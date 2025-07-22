@@ -9,7 +9,6 @@ import { ThemeProvider } from "@emotion/react";
 import { useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import Alert from "@mui/material/Alert";
 
 import {
@@ -36,6 +35,7 @@ import {
 import { useServerError, type ServerError } from "../../api/Client";
 import { LogoWithName } from "../../components/Logo";
 import type { AxiosResponse } from "axios";
+import { useBreakpoint } from "../../hooks/useBreakpoint";
 
 export const Route = createFileRoute("/auth/register")({
   component: Register,
@@ -74,7 +74,7 @@ function Register() {
 
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
   const defaultTheme = useTheme();
-  const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
+  const { isSmOrLarger } = useBreakpoint();
   const navigate = useNavigate();
 
   const methods = useForm<registrationFormSchema>({
