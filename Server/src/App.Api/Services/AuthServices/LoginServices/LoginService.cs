@@ -88,11 +88,11 @@ public class LoginService(AppDbContext context, IEmailService emailService, IJwt
         }
     }
 
-    public async Task<Result<AuthResult>> CompleteLoginAsync(VerifyOtpRequest request)
+    public async Task<Result<AuthResult>> CompleteLoginAsync(CompleteLoginRequest request)
     {
-        var email = request.Email.ToLower();
+        var identifier = request.Identifier.ToLower();
         var user = await context.Users.FirstOrDefaultAsync(u =>
-            u.Email == email && u.Otp == request.Otp
+            (u.Email == identifier || u.Username == identifier) && u.Otp == request.Otp
         );
 
         if (user is null || user.OtpExpiresAt < DateTime.UtcNow)

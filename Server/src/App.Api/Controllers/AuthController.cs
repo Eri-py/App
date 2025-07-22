@@ -95,7 +95,9 @@ namespace App.Api.Controllers
         }
 
         [HttpPost("login/complete")]
-        public async Task<ActionResult<string>> CompleteLogin([FromBody] VerifyOtpRequest request)
+        public async Task<ActionResult<string>> CompleteLogin(
+            [FromBody] CompleteLoginRequest request
+        )
         {
             var result = await loginService.CompleteLoginAsync(request);
             if (!result.IsSuccess)

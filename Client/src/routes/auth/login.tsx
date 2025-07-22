@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { useState } from "react";
@@ -15,11 +15,11 @@ import { formThemeDesktop } from "../../themes/FormThemeDesktop";
 import { useServerError, type ServerError } from "../../api/Client";
 import { UsernameAndPassword } from "../../features/auth/LoginSteps/UsernameAndPassword";
 import {
+  completeLogin,
   startLogin,
-  verifyOtpRegistration,
+  type completeLoginRequest,
   type startLoginRequest,
   type startLoginResponse,
-  type verifyOtpRegistrationRequest,
 } from "../../api/AuthApi";
 import { LogoWithName } from "../../components/Logo";
 import { OtpPage } from "../../features/auth/components/OtpPage";
@@ -46,6 +46,7 @@ function Login() {
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
+  const navigate = useNavigate();
 
   const methods = useForm<loginFormSchema>({
     mode: "onChange",
@@ -66,15 +67,10 @@ function Login() {
   });
 
   const completeLoginMutation = useMutation({
-    mutationFn: (data: verifyOtpRegistrationRequest) => verifyOtpRegistration(data),
-    onSuccess: (data) => console.log(data),
+    mutationFn: (data: completeLoginRequest) => completeLogin(data),
+    onSuccess: () => navigate({ to: "/home" }),
     onError: (error: ServerError) => handleServerError(error),
   });
-
-  const onSubmit = async (formData: loginFormSchema) => {
-    console.log(formData);
-    //await completeLoginMutation.mutateAsync(formData);
-  };
 
   const handleNext = async () => {
     const isValid = await methods.trigger(["identifier", "password"]);
@@ -94,6 +90,10 @@ function Login() {
         otpExpiresAt: newExpiresAt,
       });
     }
+  };
+
+  const onSubmit = async (formData: loginFormSchema) => {
+    await completeLoginMutation.mutateAsync(formData);
   };
 
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;

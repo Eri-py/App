@@ -68,3 +68,10 @@ public record class StartLoginResponse
     [Required]
     public required string Email { get; set; }
 }
+
+public record class CompleteLoginRequest
+{
+    [Required]
+    public required string Identifier { get; set; }
+    public required string Otp { get; set; }
+}
