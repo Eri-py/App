@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod/v4";
 import { useState } from "react";
@@ -14,41 +14,63 @@ import Alert from "@mui/material/Alert";
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
 import { useServerError, type ServerError } from "../../api/Client";
 import { UsernameAndPassword } from "../../features/auth/LoginSteps/UsernameAndPassword";
-import { startLogin, type loginRequest } from "../../api/AuthApi";
+import {
+  completeLogin,
+  startLogin,
+  type completeLoginRequest,
+  type startLoginRequest,
+  type startLoginResponse,
+} from "../../api/AuthApi";
 import { LogoWithName } from "../../components/Logo";
+import { OtpPage } from "../../features/auth/components/OtpPage";
 
 export const Route = createFileRoute("/auth/login")({
   component: Login,
 });
 
 const LoginFormSchema = z.object({
-  identifier: z.string(),
-  password: z.string(),
-  otp: z.string(),
+  identifier: z.string("Invalid username or email").nonempty("Please enter username or email"),
+  password: z.string("Invalid password").nonempty("Please enter password"),
+  otp: z.string("Invalid otp").trim().length(6, "Invalid otp"),
 });
 
 export type loginFormSchema = z.infer<typeof LoginFormSchema>;
 
 function Login() {
   const [step, setStep] = useState<number>(0);
+  const [otpData, setOtpData] = useState<{
+    email: string;
+    otpExpiresAt: string;
+  } | null>(null);
+
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
+  const navigate = useNavigate();
 
   const methods = useForm<loginFormSchema>({
     mode: "onChange",
     resolver: zodResolver(LoginFormSchema),
   });
 
-  const StartLoginMutation = useMutation({
-    mutationFn: (data: loginRequest) => startLogin(data),
-    onSuccess: () => setStep(1),
+  const startLoginMutation = useMutation({
+    mutationFn: (data: startLoginRequest) => startLogin(data),
+    onSuccess: (response) => {
+      const data: startLoginResponse = response.data;
+      setOtpData({
+        email: data.email,
+        otpExpiresAt: data.otpExpiresAt,
+      });
+      setStep(1);
+    },
     onError: (error: ServerError) => handleServerError(error),
   });
 
-  const onSubmit = (formData: loginFormSchema) => {
-    console.log(formData);
-  };
+  const completeLoginMutation = useMutation({
+    mutationFn: (data: completeLoginRequest) => completeLogin(data),
+    onSuccess: () => navigate({ to: "/home" }),
+    onError: (error: ServerError) => handleServerError(error),
+  });
 
   const handleNext = async () => {
     const isValid = await methods.trigger(["identifier", "password"]);
@@ -57,15 +79,27 @@ function Login() {
       clearServerError();
       const identifier = methods.getValues("identifier");
       const password = methods.getValues("password");
-      await StartLoginMutation.mutateAsync({ identifier, password });
+      await startLoginMutation.mutateAsync({ identifier, password });
     }
+  };
+
+  const handleOtpExpiresAtUpdate = (newExpiresAt: string) => {
+    if (otpData) {
+      setOtpData({
+        ...otpData,
+        otpExpiresAt: newExpiresAt,
+      });
+    }
+  };
+
+  const onSubmit = async (formData: loginFormSchema) => {
+    await completeLoginMutation.mutateAsync(formData);
   };
 
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
   const form = (
     <Stack
       padding={1}
-      gap={1}
       onSubmit={methods.handleSubmit(onSubmit)}
       sx={{
         maxWidth: { xs: "100%", sm: "480px" },
@@ -88,8 +122,19 @@ function Login() {
           {step === 0 && (
             <UsernameAndPassword
               handleNext={handleNext}
-              isPending={StartLoginMutation.isPending}
+              isPending={startLoginMutation.isPending}
               isContinueDisabled={continueDisabled}
+            />
+          )}
+          {step === 1 && otpData && (
+            <OtpPage
+              email={otpData.email}
+              otpExpiresAt={otpData.otpExpiresAt}
+              handleBack={() => setStep(0)}
+              isPending={completeLoginMutation.isPending}
+              isContinueDisabled={continueDisabled}
+              onOtpExpiresAtUpdate={handleOtpExpiresAtUpdate}
+              mode="login"
             />
           )}
         </form>

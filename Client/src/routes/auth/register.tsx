@@ -2,7 +2,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { string, z } from "zod/v4";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { ThemeProvider } from "@emotion/react";
@@ -20,17 +20,17 @@ import {
   dateOfBirthSchema,
 } from "../../features/auth/Schemas";
 import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndEmail";
-import { Otp } from "../../features/auth/RegisterSteps/Otp";
+import { OtpPage } from "../../features/auth/components/OtpPage";
 import { Password } from "../../features/auth/RegisterSteps/Password";
 import { PersonalDetails } from "../../features/auth/RegisterSteps/PersonalDetails";
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
 import {
-  verifyOtp,
+  verifyOtpRegistration,
   startRegistration,
   completeRegistration,
   type completeRegistrationRequest,
   type startRegistrationRequest,
-  type verifyOtpRequest,
+  type verifyOtpRegistrationRequest,
 } from "../../api/AuthApi";
 import { useServerError, type ServerError } from "../../api/Client";
 import { LogoWithName } from "../../components/Logo";
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/auth/register")({
 const RegistrationFormSchema = z.object({
   username: usernameSchema,
   email: emailSchema,
-  otp: z.string("Invalid otp").trim().length(6, "Invalid code"),
+  otp: z.string("Invalid otp").trim().length(6, "Invalid otp"),
   password: passwordSchema,
   confirmPassword: string("Invalid password").nonempty("Please enter password again"),
   firstname: nameSchema("Firstname"),
@@ -61,8 +61,9 @@ const registrationSteps: Record<number, (keyof registrationFormSchema)[]> = {
 
 function Register() {
   const [step, setStep] = useState<number>(0);
+  const [otpExpiresAt, setOtpExpiresAt] = useState<string | null>(null);
+
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
-  const queryClient = useQueryClient();
   const defaultTheme = useTheme();
   const isSmOrLarger = useMediaQuery(defaultTheme.breakpoints.up("sm"));
   const navigate = useNavigate();
@@ -75,14 +76,14 @@ function Register() {
   const startRegistrationMutation = useMutation({
     mutationFn: (data: startRegistrationRequest) => startRegistration(data),
     onSuccess: (response) => {
-      queryClient.setQueryData(["otpExpiresAt"], response.data);
+      setOtpExpiresAt(response.data);
       setStep(1);
     },
     onError: (error: ServerError) => handleServerError(error),
   });
 
   const verifyOtpMutation = useMutation({
-    mutationFn: (data: verifyOtpRequest) => verifyOtp(data),
+    mutationFn: (data: verifyOtpRegistrationRequest) => verifyOtpRegistration(data),
     onSuccess: () => setStep(2),
     onError: (error: ServerError) => handleServerError(error),
   });
@@ -126,6 +127,10 @@ function Register() {
     }
   };
 
+  const handleOtpExpiresAtUpdate = (newExpiresAt: string) => {
+    setOtpExpiresAt(newExpiresAt);
+  };
+
   const onSubmit = async (formData: registrationFormSchema) => {
     clearServerError();
     await completeRegistrationMutation.mutateAsync(formData);
@@ -135,7 +140,6 @@ function Register() {
   const form = (
     <Stack
       padding={1}
-      gap={1}
       sx={{
         width: { xs: "100%", sm: "480px" },
         height: "fit-content",
@@ -161,13 +165,16 @@ function Register() {
               isContinueDisabled={continueDisabled}
             />
           )}
-          {step === 1 && (
-            <Otp
+          {step === 1 && otpExpiresAt && (
+            <OtpPage
               email={methods.getValues("email")}
+              otpExpiresAt={otpExpiresAt}
               handleNext={handleNext}
               handleBack={() => setStep(0)}
               isPending={verifyOtpMutation.isPending}
               isContinueDisabled={continueDisabled}
+              onOtpExpiresAtUpdate={handleOtpExpiresAtUpdate}
+              mode="register"
             />
           )}
           {step === 2 && <Password handleNext={handleNext} />}

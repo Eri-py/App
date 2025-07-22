@@ -107,7 +107,7 @@ public class LoginServiceTest
         await _context.SaveChangesAsync();
         _context.ChangeTracker.Clear();
 
-        var request = new LoginRequest { Identifier = "testuser", Password = password };
+        var request = new StartLoginRequest { Identifier = "testuser", Password = password };
 
         var otp = "123456";
         var expiresAt = DateTime.UtcNow.AddMinutes(5);
@@ -124,7 +124,12 @@ public class LoginServiceTest
         Assert.Multiple(() =>
         {
             Assert.That(result.IsSuccess, Is.True);
-            Assert.That(result.Content, Is.EqualTo(expiresAt.ToString("o")));
+            Assert.That(result.Content, Is.Not.Null);
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Content.OtpExpiresAt, Is.EqualTo(expiresAt.ToString("o")));
+            Assert.That(result.Content.Email, Is.EqualTo(existingUser.Email));
         });
 
         _context.ChangeTracker.Clear();
@@ -158,7 +163,7 @@ public class LoginServiceTest
         await _context.SaveChangesAsync();
         _context.ChangeTracker.Clear();
 
-        var request = new LoginRequest { Identifier = "TEST@TEST.COM", Password = password };
+        var request = new StartLoginRequest { Identifier = "TEST@TEST.COM", Password = password };
 
         var otp = "123456";
         var expiresAt = DateTime.UtcNow.AddMinutes(5);
@@ -175,7 +180,12 @@ public class LoginServiceTest
         Assert.Multiple(() =>
         {
             Assert.That(result.IsSuccess, Is.True);
-            Assert.That(result.Content, Is.EqualTo(expiresAt.ToString("o")));
+            Assert.That(result.Content, Is.Not.Null);
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Content.OtpExpiresAt, Is.EqualTo(expiresAt.ToString("o")));
+            Assert.That(result.Content.Email, Is.EqualTo(existingUser.Email));
         });
 
         _context.ChangeTracker.Clear();
@@ -200,7 +210,7 @@ public class LoginServiceTest
     public async Task StartLoginAsync_UserNotFound_ReturnsNotFound()
     {
         // Arrange
-        var request = new LoginRequest
+        var request = new StartLoginRequest
         {
             Identifier = "nonexistent@test.com",
             Password = "Test@123",
@@ -231,7 +241,7 @@ public class LoginServiceTest
         await _context.SaveChangesAsync();
         _context.ChangeTracker.Clear();
 
-        var request = new LoginRequest { Identifier = "testuser", Password = "Test@123" };
+        var request = new StartLoginRequest { Identifier = "testuser", Password = "Test@123" };
 
         // Assert
         // Should throw null because password hash should be empty for incomplete registration
@@ -253,7 +263,11 @@ public class LoginServiceTest
         await _context.SaveChangesAsync();
         _context.ChangeTracker.Clear();
 
-        var request = new LoginRequest { Identifier = "testuser", Password = "WrongPassword@123" };
+        var request = new StartLoginRequest
+        {
+            Identifier = "testuser",
+            Password = "WrongPassword@123",
+        };
 
         // Act
         var result = await _loginService.StartLoginAsync(request);
@@ -288,7 +302,7 @@ public class LoginServiceTest
         await _context.SaveChangesAsync();
         _context.ChangeTracker.Clear();
 
-        var request = new LoginRequest { Identifier = "testuser", Password = password };
+        var request = new StartLoginRequest { Identifier = "testuser", Password = password };
 
         var otp = "123456";
         var expiresAt = DateTime.UtcNow.AddMinutes(5);
@@ -339,7 +353,7 @@ public class LoginServiceTest
         await _context.SaveChangesAsync();
         _context.ChangeTracker.Clear();
 
-        var request = new VerifyOtpRequest { Email = "test@test.com", Otp = "123456" };
+        var request = new CompleteLoginRequest { Identifier = "test@test.com", Otp = "123456" };
 
         var accessToken = "access_token";
         var accessTokenExpiresAt = DateTime.UtcNow.AddMinutes(15);
@@ -402,7 +416,7 @@ public class LoginServiceTest
         await _context.SaveChangesAsync();
         _context.ChangeTracker.Clear();
 
-        var request = new VerifyOtpRequest { Email = "test@test.com", Otp = "654321" };
+        var request = new CompleteLoginRequest { Identifier = "test@test.com", Otp = "654321" };
 
         // Act
         var result = await _loginService.CompleteLoginAsync(request);
@@ -433,7 +447,7 @@ public class LoginServiceTest
         await _context.SaveChangesAsync();
         _context.ChangeTracker.Clear();
 
-        var request = new VerifyOtpRequest { Email = "test@test.com", Otp = "123456" };
+        var request = new CompleteLoginRequest { Identifier = "test@test.com", Otp = "123456" };
 
         // Act
         var result = await _loginService.CompleteLoginAsync(request);
@@ -455,7 +469,11 @@ public class LoginServiceTest
     public async Task CompleteLoginAsync_UserNotFound_ReturnsBadRequest()
     {
         // Arrange
-        var request = new VerifyOtpRequest { Email = "nonexistent@test.com", Otp = "123456" };
+        var request = new CompleteLoginRequest
+        {
+            Identifier = "nonexistent@test.com",
+            Otp = "123456",
+        };
 
         // Act
         var result = await _loginService.CompleteLoginAsync(request);

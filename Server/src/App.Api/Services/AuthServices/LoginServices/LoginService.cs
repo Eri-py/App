@@ -17,7 +17,7 @@ public class LoginService(AppDbContext context, IEmailService emailService, IJwt
     private const int c_AccessTokenValidFor = 15; // Time in minutes Access Token is valid for.
     private const int c_RefreshTokenValidFor = 7; // Time in days Refresh Token is valid for.
 
-    public async Task<Result<string>> StartLoginAsync(LoginRequest request)
+    public async Task<Result<StartLoginResponse>> StartLoginAsync(StartLoginRequest request)
     {
         var identifier = request.Identifier.ToLower();
         var password = request.Password;
@@ -74,7 +74,12 @@ public class LoginService(AppDbContext context, IEmailService emailService, IJwt
             }
 
             await transaction.CommitAsync();
-            return Result<string>.Success(otpExpiresAt.ToString("o"));
+            var response = new StartLoginResponse
+            {
+                OtpExpiresAt = otpExpiresAt.ToString("o"),
+                Email = user.Email,
+            };
+            return Result<StartLoginResponse>.Success(response);
         }
         catch (Exception)
         {
@@ -83,11 +88,11 @@ public class LoginService(AppDbContext context, IEmailService emailService, IJwt
         }
     }
 
-    public async Task<Result<AuthResult>> CompleteLoginAsync(VerifyOtpRequest request)
+    public async Task<Result<AuthResult>> CompleteLoginAsync(CompleteLoginRequest request)
     {
-        var email = request.Email.ToLower();
+        var identifier = request.Identifier.ToLower();
         var user = await context.Users.FirstOrDefaultAsync(u =>
-            u.Email == email && u.Otp == request.Otp
+            (u.Email == identifier || u.Username == identifier) && u.Otp == request.Otp
         );
 
         if (user is null || user.OtpExpiresAt < DateTime.UtcNow)
@@ -134,5 +139,50 @@ public class LoginService(AppDbContext context, IEmailService emailService, IJwt
                 RefreshTokenExpiresAt = refreshTokenExpiresAt,
             }
         );
+    }
+
+    public async Task<Result<string>> ResendVerificationCodeAsync(
+        ResendVerificationCodeRequest request
+    )
+    {
+        var identifier = request.Identifier.ToLower();
+
+        var user = await context.Users.FirstOrDefaultAsync(u =>
+            u.Username == identifier || u.Email == identifier
+        );
+
+        if (user is null)
+            return Result.NotFound("User not found");
+
+        var (otp, otpExpiresAt) = jwtService.CreateOtp(c_OtpValidFor);
+
+        using var transaction = await context.Database.BeginTransactionAsync();
+        try
+        {
+            user.Otp = otp;
+            user.OtpExpiresAt = otpExpiresAt;
+
+            await context.SaveChangesAsync();
+
+            var emailResult = await emailService.SendEmailVerificationAsync(
+                to: user.Email!,
+                username: user.Username!,
+                verificationToken: otp,
+                codeValidFor: $"{c_OtpValidFor} minutes"
+            );
+            if (!emailResult.IsSuccess)
+            {
+                await transaction.RollbackAsync();
+                return emailResult;
+            }
+
+            await transaction.CommitAsync();
+            return Result<string>.Success(otpExpiresAt.ToString("o"));
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 }
