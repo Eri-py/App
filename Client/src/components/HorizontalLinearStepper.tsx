@@ -13,7 +13,7 @@ export function HorizontalLinearStepper({ steps, activeStep }: HorizontalLinearS
     <Stepper activeStep={activeStep} alternativeLabel>
       {steps.map((label) => {
         return (
-          <Step key={label} sx={{ fontSize: "1px" }}>
+          <Step key={label}>
             <StepLabel
               id={label}
               color="primary"
