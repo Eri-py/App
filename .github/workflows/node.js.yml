@@ -26,7 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        working-directory: Client
+        cache-dependency-path: Client/package-lock.json
     - name: Restore dependencies
       run: npm ci
       working-directory: Client
