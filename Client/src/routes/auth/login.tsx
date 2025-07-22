@@ -35,7 +35,7 @@ const LoginFormSchema = z.object({
   otp: z.string("Invalid otp").trim().length(6, "Invalid otp"),
 });
 
-export type loginFormSchema = z.infer<typeof LoginFormSchema>;
+type loginFormSchema = z.infer<typeof LoginFormSchema>;
 
 function Login() {
   const [step, setStep] = useState<number>(0);

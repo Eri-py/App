@@ -52,7 +52,7 @@ const RegistrationFormSchema = z.object({
   dateOfBirth: dateOfBirthSchema,
 });
 
-export type registrationFormSchema = z.infer<typeof RegistrationFormSchema>;
+type registrationFormSchema = z.infer<typeof RegistrationFormSchema>;
 
 const registrationSteps: Record<number, (keyof registrationFormSchema)[]> = {
   0: ["username", "email"],
