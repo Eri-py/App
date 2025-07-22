@@ -73,5 +73,6 @@ public record class CompleteLoginRequest
 {
     [Required]
     public required string Identifier { get; set; }
+    [Required]
     public required string Otp { get; set; }
 }
