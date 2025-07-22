@@ -1,21 +1,18 @@
 import { styled, useTheme } from "@mui/material/styles";
 import AppleIcon from "@mui/icons-material/Apple";
-import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 
 import { FacebookIcon, GoogleIcon } from "../../../components/CustomIcons";
+import IconButton from "@mui/material/IconButton";
 
-const CircularButton = styled(Button)(({ theme }) => ({
-  minWidth: "48px",
-  padding: "0.6rem",
-  aspectRatio: "1",
-  borderRadius: "50%",
+const CustomIconButton = styled(IconButton)(({ theme }) => ({
   border: `1px solid ${theme.palette.primary.main}`,
   "&:hover": {
-    borderColor: theme.palette.primary.light,
+    backgroundColor: "#f1f8ffff",
+    transition: "background-color 120ms linear",
   },
 }));
 
@@ -40,20 +37,20 @@ export function OAuthButtonGroup() {
       </Box>
 
       <Stack direction="row" spacing={2} alignSelf="center">
-        <CircularButton type="button" variant="outlined">
+        <CustomIconButton size="large" disableRipple>
           <GoogleIcon width="32px" />
-        </CircularButton>
-        <CircularButton type="button" variant="outlined">
+        </CustomIconButton>
+        <CustomIconButton size="large" disableRipple>
           <AppleIcon
             fontSize="large"
             sx={{
               color: theme.palette.mode === "dark" ? "#ffffff" : "#000000",
             }}
           />
-        </CircularButton>
-        <CircularButton type="button" variant="outlined">
+        </CustomIconButton>
+        <CustomIconButton size="large" disableRipple>
           <FacebookIcon width="32px" />
-        </CircularButton>
+        </CustomIconButton>
       </Stack>
 
       <Divider sx={{ borderColor: theme.palette.divider }} />

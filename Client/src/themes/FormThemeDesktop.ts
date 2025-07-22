@@ -38,6 +38,18 @@ export const formThemeDesktop = createTheme({
         },
       },
     },
+    MuiIconButton: {
+      defaultProps: {
+        disableRipple: true,
+      },
+      styleOverrides: {
+        root: {
+          "&:hover": {
+            boxShadow: "0 0px 1.5px #42a5f5",
+          },
+        },
+      },
+    },
     MuiFormHelperText: {
       styleOverrides: {
         root: {

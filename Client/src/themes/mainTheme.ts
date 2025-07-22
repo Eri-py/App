@@ -36,6 +36,12 @@ export const mainTheme = (isDarkMode: boolean) =>
           color: "transparent",
           position: "static",
         },
+        styleOverrides: {
+          root: {
+            boxShadow: "unset",
+            borderBottom: "1px solid rgba(21, 101, 192, .5)",
+          },
+        },
       },
       MuiButton: {
         defaultProps: {
