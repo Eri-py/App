@@ -7,7 +7,6 @@ import IconButton from "@mui/material/IconButton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Box from "@mui/material/Box";
 
-import { Logo, LogoWithName } from "../../../components/Logo";
 import { useBreakpoint } from "../../../hooks/useBreakpoint";
 import { LeftButtonGroup, DesktopRightButtons, MobileRightButtons } from "./NavbarSections";
 import { Searchbar } from "./Searchbar";
@@ -30,18 +29,14 @@ const MobileNavMode = ({
   onSearchClick: () => void;
 }) => (
   <>
-    <LeftButtonGroup onMenuClick={onMenuClick}>
-      <Logo width="27px" />
-    </LeftButtonGroup>
+    <LeftButtonGroup onMenuClick={onMenuClick}></LeftButtonGroup>
     <MobileRightButtons onSearchClick={onSearchClick} />
   </>
 );
 
 const DesktopNav = ({ onMenuClick }: { onMenuClick: () => void }) => (
   <>
-    <LeftButtonGroup onMenuClick={onMenuClick}>
-      <LogoWithName size="medium" />
-    </LeftButtonGroup>
+    <LeftButtonGroup onMenuClick={onMenuClick} />
     <Searchbar />
     <DesktopRightButtons />
   </>
@@ -52,20 +47,21 @@ export function Navbar() {
   const [isSearchMobile, setIsSearchMobile] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const openMobileSearch = () => setIsSearchMobile(true);
-  const closeMobileSearch = () => setIsSearchMobile(false);
-
   const renderContent = () => {
     if (isSmOrLarger) {
-      return <DesktopNav onMenuClick={toggleSidebar} />;
+      return <DesktopNav onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />;
     }
 
     if (isSearchMobile) {
-      return <MobileSearchMode onBack={closeMobileSearch} />;
+      return <MobileSearchMode onBack={() => setIsSearchMobile(false)} />;
     }
 
-    return <MobileNavMode onMenuClick={toggleSidebar} onSearchClick={openMobileSearch} />;
+    return (
+      <MobileNavMode
+        onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        onSearchClick={() => setIsSearchMobile(true)}
+      />
+    );
   };
 
   return (

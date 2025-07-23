@@ -1,30 +1,20 @@
-import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
+import { useState } from "react";
+import { SearchBox } from "./SearchBox";
 
 type SearchbarProps = {
   autoFocus?: boolean;
 };
 
 export function Searchbar({ autoFocus }: SearchbarProps) {
+  const [searchInput, onSearchInputChange] = useState("");
+
+  console.log(searchInput);
+
   return (
-    <Stack component="form" direction="row" flex={1} maxWidth={720}>
-      <TextField
-        variant="outlined"
-        size="small"
-        placeholder="Search..."
-        autoComplete="off"
-        autoFocus={autoFocus ?? false}
-        slotProps={{
-          root: {
-            sx: { flex: 1 },
-          },
-          input: {
-            startAdornment: <SearchIcon />,
-            sx: { borderRadius: 8, gap: 1 },
-          },
-        }}
-      />
-    </Stack>
+    <SearchBox
+      value={searchInput}
+      onChange={(e) => onSearchInputChange(e.currentTarget.value)}
+      autoFocus={autoFocus ?? false}
+    />
   );
 }
