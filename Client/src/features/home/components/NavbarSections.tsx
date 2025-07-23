@@ -1,16 +1,16 @@
-import type { ReactNode } from "react";
-
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import ChatIcon from "@mui/icons-material/Chat";
-import AddIcon from "@mui/icons-material/Add";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import AddIcon from "@mui/icons-material/Add";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { styled } from "@mui/material/styles";
 import Badge, { badgeClasses } from "@mui/material/Badge";
+
+import { LogoWithName } from "../../../components/Logo";
 
 const CustomBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -21,11 +21,10 @@ const CustomBadge = styled(Badge)`
 
 // Left side remains the same
 type LeftButtonGroupProps = {
-  children: ReactNode;
   onMenuClick: () => void;
 };
 
-export const LeftButtonGroup = ({ children, onMenuClick }: LeftButtonGroupProps) => {
+export const LeftButtonGroup = ({ onMenuClick }: LeftButtonGroupProps) => {
   return (
     <Stack direction="row" alignItems="center">
       <IconButton size="large" onClick={onMenuClick}>
@@ -40,7 +39,7 @@ export const LeftButtonGroup = ({ children, onMenuClick }: LeftButtonGroupProps)
           },
         }}
       >
-        {children}
+        <LogoWithName size="medium" />
       </Button>
     </Stack>
   );
@@ -98,26 +97,10 @@ export const MobileRightButtons = ({ onSearchClick }: MobileRightButtonsProps) =
         <SearchIcon />
       </IconButton>
 
-      {/* Create button */}
-      <IconButton>
-        <AddIcon />
-      </IconButton>
-
-      {/* Messages icon */}
-      <IconButton size="medium">
-        <ChatIcon />
-        <CustomBadge badgeContent={10} color="primary" overlap="circular" />
-      </IconButton>
-
-      {/* Notification icon */}
-      <IconButton size="medium">
-        <NotificationsIcon />
-        <CustomBadge badgeContent={2} color="primary" overlap="circular" />
-      </IconButton>
-
       {/* Account icon */}
       <IconButton>
         <AccountCircleIcon style={{ fontSize: 30 }} />
+        <CustomBadge badgeContent={2} color="primary" overlap="circular" />
       </IconButton>
     </Stack>
   );

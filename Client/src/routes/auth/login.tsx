@@ -11,7 +11,7 @@ import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 
 import { formThemeDesktop } from "../../themes/FormThemeDesktop";
-import { useServerError, type ServerError } from "../../api/Client";
+import { useServerError, type ServerError } from "../../hooks/useServerError";
 import { UsernameAndPassword } from "../../features/auth/LoginSteps/UsernameAndPassword";
 import {
   completeLogin,

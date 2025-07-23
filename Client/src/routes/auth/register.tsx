@@ -32,7 +32,7 @@ import {
   type startRegistrationRequest,
   type verifyOtpRegistrationRequest,
 } from "../../api/AuthApi";
-import { useServerError, type ServerError } from "../../api/Client";
+import { useServerError, type ServerError } from "../../hooks/useServerError";
 import { LogoWithName } from "../../components/Logo";
 import type { AxiosResponse } from "axios";
 import { useBreakpoint } from "../../hooks/useBreakpoint";

@@ -9,7 +9,7 @@ export const Route = createFileRoute("/home/")({
 function RouteComponent() {
   return (
     <div>
-      <Navbar />
+      <Navbar onMenuClick={() => {}} onSearchClick={() => {}} />
     </div>
   );
 }
