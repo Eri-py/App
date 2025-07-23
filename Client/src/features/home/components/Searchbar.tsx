@@ -1,18 +1,20 @@
 import { useState } from "react";
+
 import Autocomplete from "@mui/material/Autocomplete";
-import { testSearchResult } from "./testSearchResult";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
+
+import { testSearchResult } from "./testSearchResult";
 
 type SearchbarProps = {
   autoFocus?: boolean;
 };
 
-const options = testSearchResult.map((option) => option.title);
-
 export function Searchbar({ autoFocus }: SearchbarProps) {
   const [inputValue, setInputValue] = useState("");
+
+  const options = testSearchResult.map((option) => option.name);
 
   console.log(inputValue);
 
@@ -22,7 +24,7 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
       options={options}
       inputValue={inputValue}
       onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
-      sx={{ width: 500 }}
+      sx={{ flex: 1, maxWidth: 500 }}
       renderInput={(params) => (
         <TextField
           {...params}
