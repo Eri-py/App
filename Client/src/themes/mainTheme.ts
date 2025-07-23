@@ -34,7 +34,6 @@ export const mainTheme = (isDarkMode: boolean) =>
       MuiAppBar: {
         defaultProps: {
           color: "transparent",
-          position: "static",
         },
         styleOverrides: {
           root: {
