@@ -58,7 +58,7 @@ export function OtpPage({
   };
 
   return (
-    <Stack gap={1.5} padding={2}>
+    <Stack gap="0.75rem" padding="1rem">
       <CustomFormHeader
         header="Verify email"
         subtext={
@@ -106,7 +106,11 @@ export function OtpPage({
         renderer={({ minutes, seconds, completed }) => {
           if (!completed) {
             return (
-              <Typography fontSize={13.5} color={theme.palette.text.secondary} textAlign="center">
+              <Typography
+                fontSize="0.84375rem"
+                color={theme.palette.text.secondary}
+                textAlign="center"
+              >
                 Code expires in{" "}
                 <b>
                   {zeroPad(minutes)}:{zeroPad(seconds)}
@@ -115,7 +119,7 @@ export function OtpPage({
             );
           } else {
             return (
-              <Typography fontSize={15} color={theme.palette.error.main} textAlign="center">
+              <Typography fontSize="0.9375rem" color={theme.palette.error.main} textAlign="center">
                 Code expired
               </Typography>
             );
@@ -124,7 +128,7 @@ export function OtpPage({
       />
 
       {!isResendDisabled && (
-        <Typography fontSize={15} color={theme.palette.text.secondary} alignSelf="center">
+        <Typography fontSize="0.9375rem" color={theme.palette.text.secondary} alignSelf="center">
           Didn't get the Code?{" "}
           <Button
             type="button"
@@ -133,7 +137,7 @@ export function OtpPage({
             disabled={resendVerificationMutation.isPending}
             onClick={handleResend}
             sx={{
-              padding: "0",
+              padding: "0rem",
               width: "fit-content",
               textDecoration: "underline !important",
               "&:hover": {

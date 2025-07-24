@@ -14,8 +14,8 @@ import { LogoWithName } from "../../../components/Logo";
 
 const CustomBadge = styled(Badge)`
   & .${badgeClasses.badge} {
-    top: -8px;
-    right: 0px;
+    top: -0.5rem;
+    right: 0rem;
   }
 `;
 
@@ -33,7 +33,6 @@ export const LeftButtonGroup = ({ onMenuClick }: LeftButtonGroupProps) => {
       <Button
         variant="text"
         sx={{
-          marginLeft: { xs: -1.5, sm: 0 },
           "&:hover": {
             background: "none",
           },
@@ -47,16 +46,16 @@ export const LeftButtonGroup = ({ onMenuClick }: LeftButtonGroupProps) => {
 
 export const DesktopRightButtons = () => {
   return (
-    <Stack direction="row" gap={0.75}>
+    <Stack direction="row" gap={{ sm: "0rem", md: "0.75rem" }}>
       {/* Create button */}
       <Button
         variant="text"
         startIcon={<AddIcon />}
         sx={{
           color: "white",
-          borderRadius: 8,
+          borderRadius: "2rem",
           padding: "0rem 1rem",
-          fontSize: 16,
+          fontSize: "1rem",
           "&:hover": {
             backgroundColor: "#ffffff0d",
           },
@@ -79,7 +78,7 @@ export const DesktopRightButtons = () => {
 
       {/* Account icon */}
       <IconButton>
-        <AccountCircleIcon style={{ fontSize: 35 }} />
+        <AccountCircleIcon style={{ fontSize: "2rem" }} />
       </IconButton>
     </Stack>
   );
@@ -99,7 +98,7 @@ export const MobileRightButtons = ({ onSearchClick }: MobileRightButtonsProps) =
 
       {/* Account icon */}
       <IconButton>
-        <AccountCircleIcon style={{ fontSize: 30 }} />
+        <AccountCircleIcon style={{ fontSize: "2rem" }} />
         <CustomBadge badgeContent={2} color="primary" overlap="circular" />
       </IconButton>
     </Stack>

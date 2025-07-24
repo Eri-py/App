@@ -3,7 +3,7 @@ import Toolbar from "@mui/material/Toolbar";
 
 import { useBreakpoint } from "../../../hooks/useBreakpoint";
 import { LeftButtonGroup, DesktopRightButtons, MobileRightButtons } from "./NavbarSections";
-import { Searchbar } from "./Searchbar";
+import { Searchbar } from "./Searchbar/Searchbar";
 
 type NavbarProps = {
   onMenuClick: () => void;
@@ -15,15 +15,10 @@ export function Navbar({ onMenuClick, onSearchClick }: NavbarProps) {
 
   return (
     <>
-      <AppBar sx={{ padding: 0.25, height: { xs: 55, sm: 65 } }}>
+      <AppBar sx={{ height: { xs: "3.25rem", sm: "3.75rem" } }}>
         <Toolbar
           variant="dense"
-          sx={{
-            justifyContent: "space-between",
-            gap: 3,
-            paddingInline: { xs: 1 },
-            paddingBlock: 0.75,
-          }}
+          sx={{ justifyContent: "space-between", padding: ".5rem !important" }}
         >
           {isSmOrLarger ? (
             <>

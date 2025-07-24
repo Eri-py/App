@@ -15,7 +15,7 @@ export function PersonalDetails({ isPending, isContinueDisabled }: PersonalDetai
   const { control } = useFormContext();
 
   return (
-    <Stack gap={1.5} paddingInline={1.5}>
+    <Stack gap="0.75rem" paddingInline="1rem">
       <CustomFormHeader
         header="Personal details"
         subtext="Let's get to know a bit more about you :)"

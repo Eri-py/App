@@ -14,14 +14,14 @@ export function Password({ handleNext }: PasswordProps) {
   const theme = useTheme();
 
   return (
-    <Stack gap={1.5} paddingInline={1.5}>
+    <Stack gap="0.75rem" paddingInline="1rem">
       <CustomFormHeader
         header="Create a strong password"
         subtext="We will never ask you for your password."
         align="flex-start"
       />
 
-      <Stack gap={1}>
+      <Stack gap="1rem">
         <CustomTextField
           type="password"
           label="Password"
@@ -30,23 +30,23 @@ export function Password({ handleNext }: PasswordProps) {
           autoComplete="new-password"
         />
 
-        <Stack gap={0.5} marginLeft={1.5}>
-          <Typography fontWeight={200} fontSize={13} color={theme.palette.text.secondary}>
+        <Stack gap="0.25rem" marginLeft="1rem">
+          <Typography fontWeight={200} fontSize="0.8125rem" color={theme.palette.text.secondary}>
             • 8-64 characters
           </Typography>
-          <Typography fontWeight={200} fontSize={13} color={theme.palette.text.secondary}>
+          <Typography fontWeight={200} fontSize="0.8125rem" color={theme.palette.text.secondary}>
             • One uppercase letter (A-Z)
           </Typography>
-          <Typography fontWeight={200} fontSize={13} color={theme.palette.text.secondary}>
+          <Typography fontWeight={200} fontSize="0.8125rem" color={theme.palette.text.secondary}>
             • One lowercase letter (a-z)
           </Typography>
-          <Typography fontWeight={200} fontSize={13} color={theme.palette.text.secondary}>
+          <Typography fontWeight={200} fontSize="0.8125rem" color={theme.palette.text.secondary}>
             • One number (0-9)
           </Typography>
-          <Typography fontWeight={200} fontSize={13} color={theme.palette.text.secondary}>
+          <Typography fontWeight={200} fontSize="0.8125rem" color={theme.palette.text.secondary}>
             • One special character (# ? ! @ $ % ^ & - .)
           </Typography>
-          <Typography fontWeight={200} fontSize={13} color={theme.palette.text.secondary}>
+          <Typography fontWeight={200} fontSize="0.8125rem" color={theme.palette.text.secondary}>
             • Only allowed characters above
           </Typography>
         </Stack>

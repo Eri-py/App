@@ -19,7 +19,7 @@ export function HorizontalLinearStepper({ steps, activeStep }: HorizontalLinearS
               color="primary"
               slotProps={{
                 label: {
-                  sx: { fontSize: ".85rem", "&.MuiStepLabel-label": { marginTop: 0.5 } },
+                  sx: { fontSize: ".85rem", "&.MuiStepLabel-label": { marginTop: ".25rem" } },
                 },
               }}
             >

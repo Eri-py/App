@@ -3,7 +3,7 @@ import { useState } from "react";
 import type { ReactNode } from "@tanstack/react-router";
 
 import { useTheme } from "@mui/material/styles";
-import TextField from "@mui/material/TextField";
+import TextField, { type TextFieldProps } from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 
 import { Selector } from "../../../components/Selector";
 
-type CustomTextFieldProps = {
+type CustomTextFieldProps = TextFieldProps & {
   type: string;
   label: string;
   fieldValue: string;
@@ -27,8 +27,8 @@ export function CustomTextField({
   label,
   fieldValue,
   startIcon,
-  flex = 1,
   autoComplete,
+  ...props
 }: CustomTextFieldProps) {
   const theme = useTheme();
   const {
@@ -48,7 +48,7 @@ export function CustomTextField({
           setPasswordVisible(!isPasswordVisible);
         }}
         sx={{
-          padding: "0",
+          padding: "0rem",
           color: theme.palette.text.primary,
           "&:hover": {
             background: "none",
@@ -62,19 +62,19 @@ export function CustomTextField({
 
   return (
     <TextField
+      {...props}
       variant="outlined"
       type={isPasswordField ? (isPasswordVisible ? "text" : "password") : type}
       label={label}
       error={!!get(errors, fieldValue)}
       helperText={get(errors, fieldValue)?.message}
       autoComplete={autoComplete}
-      sx={{ flex: flex }}
       slotProps={{
         input: {
           startAdornment: startIcon ?? "",
           endAdornment: isPasswordField && passwordEndAdornment(),
           sx: {
-            gap: "0.75rem",
+            gap: "0.5rem",
             backgroundColor: theme.palette.background.paper,
           },
         },
@@ -131,7 +131,7 @@ export function SegmentedDatePicker({ value, onChange, error }: SegmentedDatePic
 
   return (
     <Stack>
-      <Stack direction="row" gap={3}>
+      <Stack direction="row" gap="0.75rem">
         <TextField
           type="text"
           variant="outlined"
@@ -143,7 +143,7 @@ export function SegmentedDatePicker({ value, onChange, error }: SegmentedDatePic
           slotProps={{
             input: {
               sx: {
-                gap: "0.75rem",
+                gap: "0.5rem",
                 backgroundColor: theme.palette.background.paper,
               },
             },
@@ -170,7 +170,7 @@ export function SegmentedDatePicker({ value, onChange, error }: SegmentedDatePic
           slotProps={{
             input: {
               sx: {
-                gap: "0.75rem",
+                gap: "0.5rem",
                 backgroundColor: theme.palette.background.paper,
               },
             },
@@ -192,10 +192,15 @@ type CustomFormHeaderProps = {
 export function CustomFormHeader({ header, subtext, align }: CustomFormHeaderProps) {
   return (
     <Stack alignItems={align}>
-      <Typography fontWeight={500} fontSize={25} color="textPrimary">
+      <Typography fontWeight={500} fontSize="1.5rem" color="textPrimary">
         {header}
       </Typography>
-      <Typography fontWeight={200} fontSize={15} color="textSecondary" sx={{ textWrap: "nowrap" }}>
+      <Typography
+        fontWeight={200}
+        fontSize="0.95rem"
+        color="textSecondary"
+        sx={{ textWrap: "nowrap" }}
+      >
         {subtext}
       </Typography>
     </Stack>
