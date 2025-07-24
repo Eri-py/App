@@ -3,7 +3,7 @@ import Toolbar from "@mui/material/Toolbar";
 
 import { useBreakpoint } from "../../../hooks/useBreakpoint";
 import { LeftButtonGroup, DesktopRightButtons, MobileRightButtons } from "./NavbarSections";
-import { Searchbar } from "./Searchbar";
+import { Searchbar } from "./Searchbar/Searchbar";
 
 type NavbarProps = {
   onMenuClick: () => void;
