@@ -10,3 +10,11 @@ export const testSearchResult = [
   { name: "TradingPro", category: "user" },
   { name: "HobbyExpert", category: "user" },
 ];
+
+export const testSearchHistory = [
+  { name: "Coin Collecting", category: "hobby" },
+  { name: "Model Trains", category: "hobby" },
+  { name: "AntiqueLover", category: "user" },
+  { name: "StampQueen", category: "user" },
+  { name: "ToyCollectorButWithALongNameBecauseIWantToTestSomething", category: "user" },
+];

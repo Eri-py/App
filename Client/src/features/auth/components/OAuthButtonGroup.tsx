@@ -16,13 +16,13 @@ export function OAuthButtonGroup() {
   const theme = useTheme();
 
   return (
-    <Stack gap={2}>
-      <Box sx={{ display: "flex", alignItems: "center", my: -1.5 }}>
+    <Stack gap=".75rem">
+      <Box sx={{ display: "flex", alignItems: "center" }}>
         <Divider sx={{ flexGrow: 1 }} />
         <Typography
           variant="body2"
           sx={{
-            mx: 2,
+            mx: ".5rem",
             color: theme.palette.text.secondary,
             fontSize: "0.875rem",
           }}
@@ -32,9 +32,9 @@ export function OAuthButtonGroup() {
         <Divider sx={{ flexGrow: 1 }} />
       </Box>
 
-      <Stack direction="row" spacing={2} alignSelf="center">
+      <Stack direction="row" gap="1rem" alignSelf="center">
         <CustomIconButton size="large" disableRipple>
-          <GoogleIcon width="32px" />
+          <GoogleIcon width="2rem" />
         </CustomIconButton>
         <CustomIconButton size="large" disableRipple>
           <AppleIcon
@@ -45,7 +45,7 @@ export function OAuthButtonGroup() {
           />
         </CustomIconButton>
         <CustomIconButton size="large" disableRipple>
-          <FacebookIcon width="32px" />
+          <FacebookIcon width="2rem" />
         </CustomIconButton>
       </Stack>
 

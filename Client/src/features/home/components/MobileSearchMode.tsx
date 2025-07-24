@@ -18,7 +18,7 @@ export const MobileSearchMode = ({ onBack }: MobileSearchModeProps) => (
       name="search"
       placeholder="Search..."
       autoFocus={true}
-      sx={{ flex: 1, maxWidth: 500 }}
+      sx={{ flex: 1, maxWidth: "31.25rem" }}
       slotProps={{
         input: {
           startAdornment: (
@@ -26,7 +26,7 @@ export const MobileSearchMode = ({ onBack }: MobileSearchModeProps) => (
               <SearchIcon />
             </IconButton>
           ),
-          sx: { borderRadius: 8 },
+          sx: { borderRadius: "0.5rem" },
         },
       }}
     />
