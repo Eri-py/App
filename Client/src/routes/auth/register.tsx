@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import type { AxiosResponse } from "axios";
 
 import { ThemeProvider } from "@emotion/react";
 import { useTheme } from "@mui/material/styles";
@@ -12,30 +13,29 @@ import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 
 import {
-  usernameSchema,
-  emailSchema,
-  passwordSchema,
-  nameSchema,
-  dateOfBirthSchema,
-} from "../../features/auth/Schemas";
-import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndEmail";
-import { HorizontalLinearStepper } from "../../components/HorizontalLinearStepper";
-import { OtpPage } from "../../features/auth/components/OtpPage";
-import { Password } from "../../features/auth/RegisterSteps/Password";
-import { PersonalDetails } from "../../features/auth/RegisterSteps/PersonalDetails";
-import { formThemeDesktop } from "../../themes/FormThemeDesktop";
-import {
-  verifyOtpRegistration,
-  startRegistration,
-  completeRegistration,
-  type completeRegistrationRequest,
   type startRegistrationRequest,
+  startRegistration,
   type verifyOtpRegistrationRequest,
-} from "../../api/AuthApi";
-import { useServerError, type ServerError } from "../../hooks/useServerError";
-import { LogoWithName } from "../../components/Logo";
-import type { AxiosResponse } from "axios";
-import { useBreakpoint } from "../../hooks/useBreakpoint";
+  verifyOtpRegistration,
+  type completeRegistrationRequest,
+  completeRegistration,
+} from "@/api/AuthApi";
+import { HorizontalLinearStepper } from "@/shared/components/HorizontalLinearStepper";
+import { LogoWithName } from "@/shared/components/Logo";
+import { useBreakpoint } from "@/shared/hooks/useBreakpoint";
+import { useServerError, type ServerError } from "@/shared/hooks/useServerError";
+import {
+  dateOfBirthSchema,
+  emailSchema,
+  nameSchema,
+  passwordSchema,
+  usernameSchema,
+} from "@/features/auth/Schemas";
+import { OtpPage } from "@/features/auth/components/OtpPage";
+import { formThemeDesktop } from "@/features/auth/FormThemeDesktop";
+import { Password } from "@/features/auth/RegisterSteps/Password";
+import { PersonalDetails } from "@/features/auth/RegisterSteps/PersonalDetails";
+import { UsernameAndEmail } from "@/features/auth/RegisterSteps/UsernameAndEmail";
 
 export const Route = createFileRoute("/auth/register")({
   component: Register,
@@ -113,13 +113,13 @@ function Register() {
         case 0: {
           const username = methods.getValues("username");
           const email = methods.getValues("email");
-          await startRegistrationMutation.mutateAsync({ username, email });
+          startRegistrationMutation.mutate({ username, email });
           break;
         }
         case 1: {
           const email = methods.getValues("email");
           const otp = methods.getValues("otp");
-          await verifyOtpMutation.mutateAsync({ email, otp });
+          verifyOtpMutation.mutate({ email, otp });
           break;
         }
         case 2: {
@@ -140,9 +140,9 @@ function Register() {
     setOtpExpiresAt(newExpiresAt);
   };
 
-  const onSubmit = async (formData: registrationFormSchema) => {
+  const onSubmit = (formData: registrationFormSchema) => {
     clearServerError();
-    await completeRegistrationMutation.mutateAsync(formData);
+    completeRegistrationMutation.mutate(formData);
   };
 
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;

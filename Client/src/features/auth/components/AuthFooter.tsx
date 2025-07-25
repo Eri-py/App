@@ -1,7 +1,8 @@
+import { Link } from "@tanstack/react-router";
+
 import Stack from "@mui/material/Stack";
 import { styled, useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import { Link } from "@tanstack/react-router";
 
 const CustomLink = styled(Link)(({ theme }) => ({
   color: theme.palette.primary.main,

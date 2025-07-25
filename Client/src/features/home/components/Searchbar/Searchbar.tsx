@@ -1,7 +1,14 @@
-import { useState } from "react";
+import type { AxiosResponse } from "axios";
+import { useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+
 import Autocomplete from "@mui/material/Autocomplete";
+
+import { SearchInput } from "./SearchInput";
+import { useDebounce } from "@/shared/hooks/useDebounce";
 import { testSearchHistory, testSearchResult } from "../testSearchResults";
-import { SearchInput, SearchOptionItem, SearchGroup, type SearchOption } from "./SearchInput";
+import { getSearchResults, type getSearchResultsResponse } from "@/api/HomeApi";
+import { type SearchOption, SearchGroup, SearchOptionItem } from "./SearchOptions";
 
 type SearchbarProps = {
   autoFocus?: boolean;
@@ -10,17 +17,37 @@ type SearchbarProps = {
 export function Searchbar({ autoFocus }: SearchbarProps) {
   const [inputValue, setInputValue] = useState<string>("");
   const [searchHistory, setSearchHistory] = useState<SearchOption[]>(testSearchHistory);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [searchResult, setSearchResult] = useState<SearchOption[]>(testSearchResult);
+  const [searchResult, setSearchResult] = useState<SearchOption[]>([]);
+  const debouncedSearchQuery = useDebounce(inputValue);
 
   const handleOptionRemove = (optionToRemove: SearchOption) => {
     setSearchHistory((prevOptions) => prevOptions.filter((item) => item !== optionToRemove));
   };
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: (query: string) => getSearchResults(query),
+    onSuccess: (response: AxiosResponse<getSearchResultsResponse>) => {
+      setSearchResult(response.data);
+    },
+    onError: (error) => {
+      console.log(error);
+      setSearchResult(testSearchResult);
+    },
+  });
+
+  useEffect(() => {
+    if (debouncedSearchQuery.length > 0) {
+      setSearchResult([]);
+      mutate(debouncedSearchQuery);
+    }
+  }, [debouncedSearchQuery, mutate]);
+
   return (
     <Autocomplete
       freeSolo
       options={inputValue.length > 0 ? searchResult : searchHistory}
+      filterOptions={(options) => options}
+      loading={isPending}
       getOptionLabel={(option) => {
         if (typeof option === "string") return option;
         return option.name;

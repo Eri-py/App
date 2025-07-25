@@ -4,26 +4,26 @@ import { z } from "zod/v4";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import type { AxiosResponse } from "axios";
 
 import { ThemeProvider, useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 
-import { formThemeDesktop } from "../../themes/FormThemeDesktop";
-import { useServerError, type ServerError } from "../../hooks/useServerError";
-import { UsernameAndPassword } from "../../features/auth/LoginSteps/UsernameAndPassword";
 import {
-  completeLogin,
-  startLogin,
-  type completeLoginRequest,
   type startLoginRequest,
+  startLogin,
   type startLoginResponse,
-} from "../../api/AuthApi";
-import { LogoWithName } from "../../components/Logo";
-import { OtpPage } from "../../features/auth/components/OtpPage";
-import type { AxiosResponse } from "axios";
-import { useBreakpoint } from "../../hooks/useBreakpoint";
+  type completeLoginRequest,
+  completeLogin,
+} from "@/api/AuthApi";
+import { OtpPage } from "@/features/auth/components/OtpPage";
+import { formThemeDesktop } from "@/features/auth/FormThemeDesktop";
+import { UsernameAndPassword } from "@/features/auth/LoginSteps/UsernameAndPassword";
+import { LogoWithName } from "@/shared/components/Logo";
+import { useBreakpoint } from "@/shared/hooks/useBreakpoint";
+import { useServerError, type ServerError } from "@/shared/hooks/useServerError";
 
 export const Route = createFileRoute("/auth/login")({
   component: Login,
@@ -80,7 +80,7 @@ function Login() {
       clearServerError();
       const identifier = methods.getValues("identifier");
       const password = methods.getValues("password");
-      await startLoginMutation.mutateAsync({ identifier, password });
+      startLoginMutation.mutate({ identifier, password });
     }
   };
 
@@ -94,7 +94,7 @@ function Login() {
   };
 
   const onSubmit = async (formData: loginFormSchema) => {
-    await completeLoginMutation.mutateAsync(formData);
+    completeLoginMutation.mutate(formData);
   };
 
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;

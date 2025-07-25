@@ -11,8 +11,9 @@ import Button from "@mui/material/Button";
 import FormHelperText from "@mui/material/FormHelperText";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
 
-import { type resendVerificationCodeRequest, resendVerificationCode } from "../../../api/AuthApi";
+import { type resendVerificationCodeRequest, resendVerificationCode } from "@/api/AuthApi";
 import { CustomFormHeader } from "./CustomInputs";
 
 type OtpPageProps = {
@@ -54,7 +55,7 @@ export function OtpPage({
   });
 
   const handleResend = async () => {
-    await resendVerificationMutation.mutateAsync({ identifier: email });
+    resendVerificationMutation.mutate({ identifier: email });
   };
 
   return (
@@ -130,23 +131,19 @@ export function OtpPage({
       {!isResendDisabled && (
         <Typography fontSize="0.9375rem" color={theme.palette.text.secondary} alignSelf="center">
           Didn't get the Code?{" "}
-          <Button
-            type="button"
-            variant="text"
-            size="small"
+          <Link
+            component="button"
+            underline="always"
             disabled={resendVerificationMutation.isPending}
             onClick={handleResend}
             sx={{
-              padding: "0rem",
-              width: "fit-content",
-              textDecoration: "underline !important",
               "&:hover": {
                 background: "none",
               },
             }}
           >
             Resend Code
-          </Button>
+          </Link>
         </Typography>
       )}
 

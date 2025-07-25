@@ -4,9 +4,9 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-
-import { FacebookIcon, GoogleIcon } from "../../../components/CustomIcons";
 import IconButton from "@mui/material/IconButton";
+
+import { FacebookIcon, GoogleIcon } from "@/shared/components/CustomIcons";
 
 const CustomIconButton = styled(IconButton)(({ theme }) => ({
   border: `1px solid ${theme.palette.primary.main}`,
