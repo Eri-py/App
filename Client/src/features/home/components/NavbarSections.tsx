@@ -46,7 +46,7 @@ export const LeftButtonGroup = ({ onMenuClick }: LeftButtonGroupProps) => {
 
 export const DesktopRightButtons = () => {
   return (
-    <Stack direction="row" gap={{ sm: "0rem", md: "0.75rem" }}>
+    <Stack direction="row">
       {/* Create button */}
       <Button
         variant="text"

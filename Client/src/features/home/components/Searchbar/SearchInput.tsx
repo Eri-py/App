@@ -47,7 +47,7 @@ export const SearchInput = ({ params, autoFocus }: SearchInputProps) => {
 type SearchOptionItemProps = {
   props: HTMLAttributes<HTMLLIElement> & { key: Key };
   option: SearchOption;
-  onRemove: (option: SearchOption) => void;
+  onRemove?: (option: SearchOption) => void;
 };
 
 export const SearchOptionItem = ({ props, option, onRemove }: SearchOptionItemProps) => {
@@ -66,15 +66,18 @@ export const SearchOptionItem = ({ props, option, onRemove }: SearchOptionItemPr
         <SearchIcon />
         {option.name}
       </Stack>
-      <IconButton
-        size="small"
-        onClick={(event) => {
-          event.stopPropagation();
-          onRemove(option);
-        }}
-      >
-        <CloseIcon />
-      </IconButton>
+      {onRemove && (
+        <IconButton
+          disableRipple
+          size="small"
+          onClick={(event) => {
+            event.stopPropagation();
+            onRemove(option);
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      )}
     </Stack>
   );
 };
@@ -89,7 +92,7 @@ type SearchGroupProps = {
 export const SearchGroup = ({ groupKey, groupName, inputValue, children }: SearchGroupProps) => {
   return (
     <Box key={groupKey}>
-      <Typography color="primary" fontSize={".85rem"} paddingInline={"1rem"}>
+      <Typography color="primary" fontSize={"0.85rem"} paddingInline={"1rem"}>
         {inputValue.length === 0 ? `Recent ${groupName}` : groupName}
       </Typography>
       {children}

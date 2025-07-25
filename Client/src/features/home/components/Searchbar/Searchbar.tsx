@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
-import { testSearchHistory } from "../testSearchResults";
+import { testSearchHistory, testSearchResult } from "../testSearchResults";
 import { SearchInput, SearchOptionItem, SearchGroup, type SearchOption } from "./SearchInput";
 
 type SearchbarProps = {
@@ -9,19 +9,18 @@ type SearchbarProps = {
 
 export function Searchbar({ autoFocus }: SearchbarProps) {
   const [inputValue, setInputValue] = useState<string>("");
-  const [options, setOptions] = useState<SearchOption[]>(testSearchHistory);
+  const [searchHistory, setSearchHistory] = useState<SearchOption[]>(testSearchHistory);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [searchResult, setSearchResult] = useState<SearchOption[]>(testSearchResult);
 
   const handleOptionRemove = (optionToRemove: SearchOption) => {
-    setOptions((prevOptions) => {
-      return prevOptions.filter((item) => item !== optionToRemove);
-    });
+    setSearchHistory((prevOptions) => prevOptions.filter((item) => item !== optionToRemove));
   };
 
   return (
     <Autocomplete
       freeSolo
-      blurOnSelect={false}
-      options={options}
+      options={inputValue.length > 0 ? searchResult : searchHistory}
       getOptionLabel={(option) => {
         if (typeof option === "string") return option;
         return option.name;
@@ -32,15 +31,44 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
           {params.children}
         </SearchGroup>
       )}
-      renderOption={(props, option) => (
-        <SearchOptionItem props={props} option={option} onRemove={handleOptionRemove} />
-      )}
+      renderOption={(props, option) => {
+        if (inputValue.length > 0) {
+          return <SearchOptionItem props={props} option={option} />;
+        }
+        return <SearchOptionItem props={props} option={option} onRemove={handleOptionRemove} />;
+      }}
       inputValue={inputValue}
       onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
       renderInput={(params) => <SearchInput params={params} autoFocus={autoFocus} />}
       sx={{ flex: 1, maxWidth: "31rem" }}
       slotProps={{
-        listbox: { sx: { overflow: "hidden", paddingInline: "0.25rem" } },
+        listbox: {
+          sx: {
+            overflow: "hidden",
+            paddingInline: "0.25rem",
+            minHeight: "fit-content",
+          },
+        },
+        popper: {
+          placement: "bottom-end",
+          modifiers: [
+            {
+              name: "offset",
+              options: {
+                offset: [0, 3],
+              },
+            },
+            {
+              name: "matchReferenceWidth",
+              enabled: true,
+              phase: "beforeWrite",
+              requires: ["computeStyles"],
+              fn: ({ state }) => {
+                state.styles.popper.width = `${state.rects.reference.width}px`;
+              },
+            },
+          ],
+        },
       }}
     />
   );
