@@ -10,7 +10,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { styled } from "@mui/material/styles";
 import Badge, { badgeClasses } from "@mui/material/Badge";
 
-import { LogoWithName } from "../../../components/Logo";
+import { LogoWithName } from "@/shared/components/Logo";
 
 const CustomBadge = styled(Badge)`
   & .${badgeClasses.badge} {

@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import type { AxiosResponse } from "axios";
 
 import { ThemeProvider } from "@emotion/react";
 import { useTheme } from "@mui/material/styles";
@@ -12,30 +13,29 @@ import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 
 import {
-  usernameSchema,
-  emailSchema,
-  passwordSchema,
-  nameSchema,
-  dateOfBirthSchema,
-} from "../../features/auth/Schemas";
-import { UsernameAndEmail } from "../../features/auth/RegisterSteps/UsernameAndEmail";
-import { HorizontalLinearStepper } from "../../components/HorizontalLinearStepper";
-import { OtpPage } from "../../features/auth/components/OtpPage";
-import { Password } from "../../features/auth/RegisterSteps/Password";
-import { PersonalDetails } from "../../features/auth/RegisterSteps/PersonalDetails";
-import { formThemeDesktop } from "../../themes/FormThemeDesktop";
-import {
-  verifyOtpRegistration,
-  startRegistration,
-  completeRegistration,
-  type completeRegistrationRequest,
   type startRegistrationRequest,
+  startRegistration,
   type verifyOtpRegistrationRequest,
-} from "../../api/AuthApi";
-import { useServerError, type ServerError } from "../../hooks/useServerError";
-import { LogoWithName } from "../../components/Logo";
-import type { AxiosResponse } from "axios";
-import { useBreakpoint } from "../../hooks/useBreakpoint";
+  verifyOtpRegistration,
+  type completeRegistrationRequest,
+  completeRegistration,
+} from "@/api/AuthApi";
+import { HorizontalLinearStepper } from "@/shared/components/HorizontalLinearStepper";
+import { LogoWithName } from "@/shared/components/Logo";
+import { useBreakpoint } from "@/shared/hooks/useBreakpoint";
+import { useServerError, type ServerError } from "@/shared/hooks/useServerError";
+import {
+  dateOfBirthSchema,
+  emailSchema,
+  nameSchema,
+  passwordSchema,
+  usernameSchema,
+} from "@/features/auth/Schemas";
+import { OtpPage } from "@/features/auth/components/OtpPage";
+import { formThemeDesktop } from "@/features/auth/FormThemeDesktop";
+import { Password } from "@/features/auth/RegisterSteps/Password";
+import { PersonalDetails } from "@/features/auth/RegisterSteps/PersonalDetails";
+import { UsernameAndEmail } from "@/features/auth/RegisterSteps/UsernameAndEmail";
 
 export const Route = createFileRoute("/auth/register")({
   component: Register,
@@ -69,8 +69,8 @@ const registrationStepLabels: string[] = [
 ];
 
 function Register() {
-  const [step, setStep] = useState<number>(1);
-  const [otpExpiresAt, setOtpExpiresAt] = useState<string | null>("20");
+  const [step, setStep] = useState<number>(0);
+  const [otpExpiresAt, setOtpExpiresAt] = useState<string | null>(null);
 
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
   const defaultTheme = useTheme();

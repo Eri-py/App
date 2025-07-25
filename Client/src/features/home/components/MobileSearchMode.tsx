@@ -1,7 +1,6 @@
 import IconButton from "@mui/material/IconButton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SearchIcon from "@mui/icons-material/Search";
-
 import TextField from "@mui/material/TextField";
 
 type MobileSearchModeProps = { onBack: () => void };

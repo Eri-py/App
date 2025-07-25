@@ -11,10 +11,10 @@ import Button from "@mui/material/Button";
 import FormHelperText from "@mui/material/FormHelperText";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-
-import { type resendVerificationCodeRequest, resendVerificationCode } from "../../../api/AuthApi";
-import { CustomFormHeader } from "./CustomInputs";
 import Link from "@mui/material/Link";
+
+import { type resendVerificationCodeRequest, resendVerificationCode } from "@/api/AuthApi";
+import { CustomFormHeader } from "./CustomInputs";
 
 type OtpPageProps = {
   email: string;

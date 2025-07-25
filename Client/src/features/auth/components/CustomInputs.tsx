@@ -11,7 +11,7 @@ import Stack from "@mui/material/Stack";
 import FormHelperText from "@mui/material/FormHelperText";
 import Typography from "@mui/material/Typography";
 
-import { Selector } from "../../../components/Selector";
+import { Selector } from "@/shared/components/Selector";
 
 type CustomTextFieldProps = TextFieldProps & {
   type: string;
