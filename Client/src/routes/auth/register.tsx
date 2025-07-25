@@ -69,8 +69,8 @@ const registrationStepLabels: string[] = [
 ];
 
 function Register() {
-  const [step, setStep] = useState<number>(0);
-  const [otpExpiresAt, setOtpExpiresAt] = useState<string | null>(null);
+  const [step, setStep] = useState<number>(1);
+  const [otpExpiresAt, setOtpExpiresAt] = useState<string | null>("20");
 
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
   const defaultTheme = useTheme();
@@ -113,13 +113,13 @@ function Register() {
         case 0: {
           const username = methods.getValues("username");
           const email = methods.getValues("email");
-          await startRegistrationMutation.mutateAsync({ username, email });
+          startRegistrationMutation.mutate({ username, email });
           break;
         }
         case 1: {
           const email = methods.getValues("email");
           const otp = methods.getValues("otp");
-          await verifyOtpMutation.mutateAsync({ email, otp });
+          verifyOtpMutation.mutate({ email, otp });
           break;
         }
         case 2: {
@@ -140,9 +140,9 @@ function Register() {
     setOtpExpiresAt(newExpiresAt);
   };
 
-  const onSubmit = async (formData: registrationFormSchema) => {
+  const onSubmit = (formData: registrationFormSchema) => {
     clearServerError();
-    await completeRegistrationMutation.mutateAsync(formData);
+    completeRegistrationMutation.mutate(formData);
   };
 
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;

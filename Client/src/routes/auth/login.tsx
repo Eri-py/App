@@ -80,7 +80,7 @@ function Login() {
       clearServerError();
       const identifier = methods.getValues("identifier");
       const password = methods.getValues("password");
-      await startLoginMutation.mutateAsync({ identifier, password });
+      startLoginMutation.mutate({ identifier, password });
     }
   };
 
@@ -94,7 +94,7 @@ function Login() {
   };
 
   const onSubmit = async (formData: loginFormSchema) => {
-    await completeLoginMutation.mutateAsync(formData);
+    completeLoginMutation.mutate(formData);
   };
 
   const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
