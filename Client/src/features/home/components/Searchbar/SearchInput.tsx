@@ -2,13 +2,15 @@ import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
 import { type AutocompleteRenderInputParams } from "@mui/material/Autocomplete";
+import CircularProgress from "@mui/material/CircularProgress";
 
 type SearchInputProps = {
   params?: AutocompleteRenderInputParams;
   autoFocus?: boolean;
+  isPending: boolean;
 };
 
-export const SearchInput = ({ params, autoFocus }: SearchInputProps) => {
+export const SearchInput = ({ params, autoFocus, isPending }: SearchInputProps) => {
   return (
     <TextField
       {...params}
@@ -25,7 +27,8 @@ export const SearchInput = ({ params, autoFocus }: SearchInputProps) => {
               <SearchIcon />
             </IconButton>
           ),
-          sx: { borderRadius: "2rem", height: "2.5rem" },
+          endAdornment: isPending ? <CircularProgress size="20px" sx={{ padding: 0 }} /> : null,
+          sx: { borderRadius: "2rem", height: "2.5rem", padding: "0.75rem !important" },
         },
       }}
     />
