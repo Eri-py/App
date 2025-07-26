@@ -1,61 +1,64 @@
-import Divider from "@mui/material/Divider";
+import type { ReactElement } from "react";
+
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Stack from "@mui/material/Stack";
+import HomeIcon from "@mui/icons-material/Home";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import StorefrontIcon from "@mui/icons-material/Storefront";
+import AddIcon from "@mui/icons-material/Add";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 type SidebarProps = {
   isOpen: boolean;
 };
 
+const xxx: { label: string; icon: ReactElement }[] = [
+  { label: "Home", icon: <HomeIcon /> },
+  { label: "Show & tell", icon: <AutoAwesomeIcon /> },
+  { label: "Trade", icon: <StorefrontIcon /> },
+  { label: "Create post", icon: <AddIcon /> },
+  { label: "Profile", icon: <AccountCircleIcon /> },
+];
+
 // TODO: Implement proper sidebar
 // Split collapsed and seprated into seprate components
 export function Sidebar({ isOpen }: SidebarProps) {
-  console.log(isOpen);
+  const yyy = xxx.map((x) => {
+    if (!isOpen) {
+      return (
+        <ListItemButton
+          sx={{
+            borderRadius: "0.75rem",
+          }}
+        >
+          <ListItemText
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              maxHeight: "3.5rem",
 
-  return isOpen ? (
-    // Sidebar expanded
-    <Stack width={200} sx={{ borderRight: "1px solid rgba(21, 101, 192, .5)" }}>
-      <List dense>
-        <ListItemButton>
-          <ListItemText primary="Home" />
+              "& .MuiListItemText-secondary": {
+                textAlign: "center",
+                fontSize: "0.75rem",
+              },
+            }}
+            primary={x.icon}
+            secondary={x.label}
+          />
         </ListItemButton>
-        <ListItemButton>
-          <ListItemText primary="Show and tell" />
-        </ListItemButton>
-        <ListItemButton>
-          <ListItemText primary="Create post" />
-        </ListItemButton>
-        <ListItemButton>
-          <ListItemText primary="Trading" />
-        </ListItemButton>
-        <ListItemButton>
-          <ListItemText primary="Profile" />
-        </ListItemButton>
-      </List>
-      <Divider />
-    </Stack>
-  ) : (
-    // Sidebar collapsed
-    <Stack width={90} sx={{ borderRight: "1px solid rgba(21, 101, 192, .5)" }}>
-      <List dense>
-        <ListItemButton>
-          <ListItemText primary="Home" />
-        </ListItemButton>
-        <ListItemButton>
-          <ListItemText primary="Show and tell" />
-        </ListItemButton>
-        <ListItemButton>
-          <ListItemText primary="Create post" />
-        </ListItemButton>
-        <ListItemButton>
-          <ListItemText primary="Trading" />
-        </ListItemButton>
-        <ListItemButton>
-          <ListItemText primary="Profile" />
-        </ListItemButton>
-      </List>
-      <Divider />
+      );
+    }
+  });
+
+  return (
+    <Stack
+      width={isOpen ? "18.75rem" : "5.5rem"}
+      sx={{ borderRight: "1px solid rgba(21, 101, 192, .5)", paddingInline: "0.5rem" }}
+    >
+      <List dense>{yyy}</List>
     </Stack>
   );
 }

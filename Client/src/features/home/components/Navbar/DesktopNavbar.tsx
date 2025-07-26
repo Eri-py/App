@@ -29,7 +29,11 @@ export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
     <AppBar position="sticky" sx={{ height: { xs: "3.25rem", sm: "3.75rem" } }}>
       <Toolbar
         variant="dense"
-        sx={{ justifyContent: "space-between", padding: ".5rem !important" }}
+        sx={{
+          justifyContent: "space-between",
+          paddingInline: "1.35rem !important",
+          paddingBlock: "0.5rem",
+        }}
       >
         <Stack direction="row" alignItems="center">
           <IconButton size="large" onClick={onMenuClick}>
