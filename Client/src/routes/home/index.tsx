@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { MobileSearchMode } from "@/features/home/components/MobileSearchMode";
 import { DesktopNavbar } from "@/features/home/components/Navbar/DesktopNavbar";
@@ -15,9 +15,15 @@ export const Route = createFileRoute("/home/")({
 });
 
 function Home() {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(true);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isMobileSearch, setIsMobileSearch] = useState<boolean>(false);
   const { isSmOrLarger } = useBreakpoint();
+
+  useEffect(() => {
+    if (isSmOrLarger) {
+      setIsMobileSearch(false);
+    }
+  }, [isSmOrLarger]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -31,16 +37,17 @@ function Home() {
         </>
       )}
       {isMobileSearch && <MobileSearchMode onBack={() => setIsMobileSearch(false)} />}
-      <Stack
-        direction="row"
-        height={{ xs: "calc(100dvh - 3.75rem)", sm: "calc(100dvh - 3.75rem)" }}
-        border="1px solid green"
-      >
-        {isSmOrLarger && <Sidebar isOpen={isMenuOpen} />}
-        <Stack>
-          <Typography>//TODO: Main content</Typography>
+      {!isMobileSearch && (
+        <Stack
+          direction="row"
+          height={{ xs: "calc(100dvh - 3.75rem)", sm: "calc(100dvh - 3.75rem)" }}
+        >
+          {isSmOrLarger && <Sidebar isOpen={isMenuOpen} />}
+          <Stack>
+            <Typography>Hello world</Typography>
+          </Stack>
         </Stack>
-      </Stack>
+      )}
     </Box>
   );
 }

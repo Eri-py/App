@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material/styles";
+import { alpha, createTheme } from "@mui/material/styles";
 
 export const mainTheme = (isDarkMode: boolean) =>
   createTheme({
@@ -31,21 +31,25 @@ export const mainTheme = (isDarkMode: boolean) =>
           }),
     },
     components: {
+      MuiSvgIcon: {
+        styleOverrides: {
+          root: {
+            color: isDarkMode ? "white" : "black",
+          },
+        },
+      },
       MuiAppBar: {
         defaultProps: {
           color: "transparent",
         },
         styleOverrides: {
-          root: {
+          root: ({ theme }) => ({
             boxShadow: "unset",
-            borderBottom: "1px solid rgba(21, 101, 192, .5)",
-          },
+            borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
+          }),
         },
       },
       MuiButton: {
-        defaultProps: {
-          disableRipple: true,
-        },
         styleOverrides: {
           root: {
             textTransform: "none",
@@ -65,9 +69,11 @@ export const mainTheme = (isDarkMode: boolean) =>
       MuiTextField: {
         styleOverrides: {
           root: {
-            "& input:-webkit-autofill": {
-              transition: "background-color 600000s 0s, color 600000s 0s",
-            },
+            "& input:-webkit-autofill, & input:-webkit-autofill:hover, & input:-webkit-autofill:focus, & input:-webkit-autofill:active":
+              {
+                WebkitBoxShadow: "0 0 0 1000px transparent inset !important",
+                transition: "background-color 5000s ease-in-out 0s",
+              },
           },
         },
       },
