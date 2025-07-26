@@ -45,28 +45,33 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
   return (
     <Autocomplete
       freeSolo
-      options={inputValue.length > 0 ? searchResult : searchHistory}
+      options={debouncedSearchQuery.length > 0 ? searchResult : searchHistory}
       filterOptions={(options) => options}
-      loading={isPending}
+      inputValue={inputValue}
+      onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
       getOptionLabel={(option) => {
         if (typeof option === "string") return option;
         return option.name;
       }}
       groupBy={(option) => option.category}
       renderGroup={(params) => (
-        <SearchGroup groupKey={params.key} groupName={params.group} inputValue={inputValue}>
+        <SearchGroup
+          groupKey={params.key}
+          groupName={params.group}
+          inputValue={debouncedSearchQuery}
+        >
           {params.children}
         </SearchGroup>
       )}
       renderOption={(props, option) => {
-        if (inputValue.length > 0) {
+        if (debouncedSearchQuery.length > 0) {
           return <SearchOptionItem props={props} option={option} />;
         }
         return <SearchOptionItem props={props} option={option} onRemove={handleOptionRemove} />;
       }}
-      inputValue={inputValue}
-      onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
-      renderInput={(params) => <SearchInput params={params} autoFocus={autoFocus} />}
+      renderInput={(params) => (
+        <SearchInput params={params} autoFocus={autoFocus} isPending={isPending} />
+      )}
       sx={{ flex: 1, maxWidth: "31rem" }}
       slotProps={{
         listbox: {
