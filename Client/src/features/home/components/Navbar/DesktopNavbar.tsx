@@ -1,18 +1,17 @@
-// DesktopNavbar.tsx
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import ChatIcon from "@mui/icons-material/Chat";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import AddIcon from "@mui/icons-material/Add";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { styled } from "@mui/material/styles";
 import Badge, { badgeClasses } from "@mui/material/Badge";
+import MenuIcon from "@mui/icons-material/Menu";
 
 import { Searchbar } from "../Searchbar/Searchbar";
-import { NavbarLeft } from "./NavbarLeft";
+import { LogoWithName } from "@/shared/components/Logo";
 
 const CustomBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -27,12 +26,26 @@ type DesktopNavbarProps = {
 
 export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
   return (
-    <AppBar sx={{ height: { xs: "3.25rem", sm: "3.75rem" } }}>
+    <AppBar position="sticky" sx={{ height: { xs: "3.25rem", sm: "3.75rem" } }}>
       <Toolbar
         variant="dense"
         sx={{ justifyContent: "space-between", padding: ".5rem !important" }}
       >
-        <NavbarLeft onMenuClick={onMenuClick} />
+        <Stack direction="row" alignItems="center">
+          <IconButton size="large" onClick={onMenuClick}>
+            <MenuIcon />
+          </IconButton>
+          <Button
+            variant="text"
+            sx={{
+              "&:hover": {
+                background: "none",
+              },
+            }}
+          >
+            <LogoWithName size="medium" />
+          </Button>
+        </Stack>
 
         <Searchbar />
 
@@ -43,7 +56,7 @@ export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
             sx={{
               color: "white",
               borderRadius: "2rem",
-              padding: "0rem 1rem",
+              padding: "0.5rem 1rem",
               fontSize: "1rem",
               "&:hover": {
                 backgroundColor: "#ffffff0d",
@@ -55,16 +68,12 @@ export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
 
           <IconButton size="large">
             <ChatIcon />
-            <CustomBadge badgeContent={10} color="primary" overlap="circular" />
-          </IconButton>
-
-          <IconButton size="large">
-            <NotificationsIcon />
             <CustomBadge badgeContent={2} color="primary" overlap="circular" />
           </IconButton>
 
           <IconButton>
             <AccountCircleIcon style={{ fontSize: "2rem" }} />
+            <CustomBadge badgeContent={10} color="primary" overlap="circular" />
           </IconButton>
         </Stack>
       </Toolbar>

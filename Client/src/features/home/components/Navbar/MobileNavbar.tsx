@@ -3,11 +3,12 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import SearchIcon from "@mui/icons-material/Search";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { styled } from "@mui/material/styles";
 import Badge, { badgeClasses } from "@mui/material/Badge";
+import Button from "@mui/material/Button";
+import ChatIcon from "@mui/icons-material/Chat";
 
-import { NavbarLeft } from "./NavbarLeft";
+import { LogoWithName } from "@/shared/components/Logo";
 
 const CustomBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -17,18 +18,32 @@ const CustomBadge = styled(Badge)`
 `;
 
 type MobileNavbarProps = {
-  onMenuClick: () => void;
   onSearchClick: () => void;
 };
 
-export function MobileNavbar({ onMenuClick, onSearchClick }: MobileNavbarProps) {
+export function MobileNavbar({ onSearchClick }: MobileNavbarProps) {
   return (
-    <AppBar sx={{ height: { xs: "3.25rem", sm: "3.75rem" } }}>
+    <AppBar
+      position="sticky"
+      sx={{
+        height: { xs: "3.25rem", sm: "3.75rem" },
+        zIndex: 1500,
+      }}
+    >
       <Toolbar
         variant="dense"
         sx={{ justifyContent: "space-between", padding: ".5rem !important" }}
       >
-        <NavbarLeft onMenuClick={onMenuClick} />
+        <Button
+          variant="text"
+          sx={{
+            "&:hover": {
+              background: "none",
+            },
+          }}
+        >
+          <LogoWithName size="medium" />
+        </Button>
 
         <Stack direction="row" alignItems="center">
           <IconButton onClick={onSearchClick}>
@@ -36,7 +51,7 @@ export function MobileNavbar({ onMenuClick, onSearchClick }: MobileNavbarProps) 
           </IconButton>
 
           <IconButton>
-            <AccountCircleIcon style={{ fontSize: "2rem" }} />
+            <ChatIcon />
             <CustomBadge badgeContent={2} color="primary" overlap="circular" />
           </IconButton>
         </Stack>
