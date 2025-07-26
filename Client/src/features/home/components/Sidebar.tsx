@@ -9,6 +9,7 @@ import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import AddIcon from "@mui/icons-material/Add";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import ListItemIcon from "@mui/material/ListItemIcon";
 
 type SidebarProps = {
   isOpen: boolean;
@@ -51,6 +52,20 @@ export function Sidebar({ isOpen }: SidebarProps) {
         </ListItemButton>
       );
     }
+
+    return (
+      <ListItemButton
+        selected={x.label === "Home"}
+        sx={{
+          borderRadius: "0.5rem",
+          gap: "1rem",
+          height: "2.5rem",
+        }}
+      >
+        <ListItemIcon sx={{ minWidth: "fit-content" }}>{x.icon}</ListItemIcon>
+        <ListItemText primary={x.label} />
+      </ListItemButton>
+    );
   });
 
   return (
@@ -58,7 +73,7 @@ export function Sidebar({ isOpen }: SidebarProps) {
       width={isOpen ? "18.75rem" : "5.5rem"}
       sx={{ borderRight: "1px solid rgba(21, 101, 192, .5)", paddingInline: "0.5rem" }}
     >
-      <List dense>{yyy}</List>
+      <List>{yyy}</List>
     </Stack>
   );
 }

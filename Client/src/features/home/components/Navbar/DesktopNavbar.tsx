@@ -58,13 +58,10 @@ export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
             variant="text"
             startIcon={<AddIcon />}
             sx={{
-              color: "white",
+              color: "text.primary",
               borderRadius: "2rem",
               padding: "0.5rem 1rem",
               fontSize: "1rem",
-              "&:hover": {
-                backgroundColor: "#ffffff0d",
-              },
             }}
           >
             Create

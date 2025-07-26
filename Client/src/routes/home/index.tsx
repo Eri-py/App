@@ -15,7 +15,7 @@ export const Route = createFileRoute("/home/")({
 });
 
 function Home() {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(true);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isMobileSearch, setIsMobileSearch] = useState<boolean>(false);
   const { isSmOrLarger } = useBreakpoint();
 
