@@ -99,7 +99,7 @@ function Register() {
 
   const completeRegistrationMutation = useMutation({
     mutationFn: (data: completeRegistrationRequest) => completeRegistration(data),
-    onSuccess: () => navigate({ to: "/home" }),
+    onSuccess: () => navigate({ to: "/" }),
     onError: (error: ServerError) => handleServerError(error),
   });
 

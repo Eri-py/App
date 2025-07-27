@@ -69,7 +69,7 @@ function Login() {
 
   const completeLoginMutation = useMutation({
     mutationFn: (data: completeLoginRequest) => completeLogin(data),
-    onSuccess: () => navigate({ to: "/home" }),
+    onSuccess: () => navigate({ to: "/" }),
     onError: (error: ServerError) => handleServerError(error),
   });
 

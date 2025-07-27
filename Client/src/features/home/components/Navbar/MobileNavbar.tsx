@@ -23,13 +23,7 @@ type MobileNavbarProps = {
 
 export function MobileNavbar({ onSearchClick }: MobileNavbarProps) {
   return (
-    <AppBar
-      position="sticky"
-      sx={{
-        height: { xs: "3.25rem", sm: "3.75rem" },
-        zIndex: 1500,
-      }}
-    >
+    <AppBar position="sticky" sx={{ height: "3.25rem" }}>
       <Toolbar
         variant="dense"
         sx={{ justifyContent: "space-between", padding: ".5rem !important" }}
