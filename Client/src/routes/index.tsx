@@ -43,7 +43,7 @@ function Home() {
           height={{ xs: "calc(100dvh - 3.25rem)", sm: "calc(100dvh - 3.75rem)" }}
         >
           {isSmOrLarger && <Sidebar isOpen={isMenuOpen} />}
-          <Stack>
+          <Stack flex={1} alignItems="center">
             <Typography>Hello world</Typography>
           </Stack>
         </Stack>
