@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using App.Api.Dtos;
 using App.Api.Results;
 using App.Api.Services.AuthServices.LoginServices;
@@ -128,6 +129,24 @@ namespace App.Api.Controllers
             Response.Cookies.Append("__Secure-refreshToken", refreshToken, refreshTokenOptions);
 
             return NoContent();
+        }
+
+        [HttpGet("get-user")]
+        public ActionResult<GetUserResponse> GetUser()
+        {
+            if (!User.Identity!.IsAuthenticated)
+                return Unauthorized();
+
+            var userDto = new UserDto
+            {
+                Id = User.FindFirst(ClaimTypes.NameIdentifier)!.Value,
+                Username = User.Identity.Name!,
+                Email = User.FindFirst(ClaimTypes.Email)!.Value,
+                Firstname = User.FindFirst(ClaimTypes.GivenName)!.Value,
+                Lastname = User.FindFirst(ClaimTypes.Surname)!.Value,
+            };
+
+            return Ok(new GetUserResponse { IsAuthenticated = true, User = userDto });
         }
     }
 }
