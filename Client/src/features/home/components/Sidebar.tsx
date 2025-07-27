@@ -55,7 +55,6 @@ export function Sidebar({ isOpen }: SidebarProps) {
 
     return (
       <ListItemButton
-        selected={x.label === "Home"}
         sx={{
           borderRadius: "0.5rem",
           gap: "1rem",

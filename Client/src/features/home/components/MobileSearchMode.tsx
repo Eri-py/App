@@ -9,7 +9,7 @@ type MobileSearchModeProps = { onBack: () => void };
 
 export const MobileSearchMode = ({ onBack }: MobileSearchModeProps) => (
   <>
-    <AppBar position="sticky" sx={{ height: { xs: "3.25rem", sm: "3.75rem" } }}>
+    <AppBar position="sticky" sx={{ height: "3.25rem" }}>
       <Toolbar
         variant="dense"
         sx={{ justifyContent: "space-between", padding: ".5rem !important" }}

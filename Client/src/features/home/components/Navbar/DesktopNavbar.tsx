@@ -26,7 +26,7 @@ type DesktopNavbarProps = {
 
 export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
   return (
-    <AppBar position="sticky" sx={{ height: { xs: "3.25rem", sm: "3.75rem" } }}>
+    <AppBar position="sticky" sx={{ height: "3.75rem" }}>
       <Toolbar
         variant="dense"
         sx={{
