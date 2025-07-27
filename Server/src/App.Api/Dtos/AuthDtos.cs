@@ -73,6 +73,15 @@ public record class CompleteLoginRequest
 {
     [Required]
     public required string Identifier { get; set; }
+
     [Required]
     public required string Otp { get; set; }
+}
+
+public record class GetUserResponse
+{
+    [Required]
+    public required bool IsAuthenticated { get; set; }
+
+    public UserDto? User { get; set; }
 }
