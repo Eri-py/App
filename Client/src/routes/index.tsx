@@ -9,6 +9,7 @@ import { Sidebar } from "@/features/home/components/Sidebar";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -18,6 +19,7 @@ function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isMobileSearch, setIsMobileSearch] = useState<boolean>(false);
   const { isSmOrLarger } = useBreakpoint();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (isSmOrLarger) {
@@ -30,9 +32,15 @@ function Home() {
       {!isMobileSearch && (
         <>
           {isSmOrLarger ? (
-            <DesktopNavbar onMenuClick={() => setIsMenuOpen(!isMenuOpen)} />
+            <DesktopNavbar
+              onMenuClick={() => setIsMenuOpen(!isMenuOpen)}
+              isAuthenticated={isAuthenticated}
+            />
           ) : (
-            <MobileNavbar onSearchClick={() => setIsMobileSearch(true)} />
+            <MobileNavbar
+              onSearchClick={() => setIsMobileSearch(true)}
+              isAuthenticated={isAuthenticated}
+            />
           )}
         </>
       )}

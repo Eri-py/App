@@ -19,6 +19,7 @@ const CustomBadge = styled(Badge)`
 
 type MobileNavbarProps = {
   onSearchClick: () => void;
+  isAuthenticated: boolean;
 };
 
 export function MobileNavbar({ onSearchClick }: MobileNavbarProps) {

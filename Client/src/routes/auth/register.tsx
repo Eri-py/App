@@ -36,6 +36,7 @@ import { formThemeDesktop } from "@/features/auth/FormThemeDesktop";
 import { Password } from "@/features/auth/RegisterSteps/Password";
 import { PersonalDetails } from "@/features/auth/RegisterSteps/PersonalDetails";
 import { UsernameAndEmail } from "@/features/auth/RegisterSteps/UsernameAndEmail";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 export const Route = createFileRoute("/auth/register")({
   component: Register,
@@ -76,6 +77,7 @@ function Register() {
   const defaultTheme = useTheme();
   const { isSmOrLarger } = useBreakpoint();
   const navigate = useNavigate();
+  const { refreshUser } = useAuth();
 
   const methods = useForm<registrationFormSchema>({
     mode: "onChange",
@@ -99,7 +101,10 @@ function Register() {
 
   const completeRegistrationMutation = useMutation({
     mutationFn: (data: completeRegistrationRequest) => completeRegistration(data),
-    onSuccess: () => navigate({ to: "/" }),
+    onSuccess: () => {
+      refreshUser();
+      navigate({ to: "/" });
+    },
     onError: (error: ServerError) => handleServerError(error),
   });
 

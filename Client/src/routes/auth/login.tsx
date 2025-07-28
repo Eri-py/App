@@ -24,6 +24,7 @@ import { UsernameAndPassword } from "@/features/auth/LoginSteps/UsernameAndPassw
 import { LogoWithName } from "@/shared/components/Logo";
 import { useBreakpoint } from "@/shared/hooks/useBreakpoint";
 import { useServerError, type ServerError } from "@/shared/hooks/useServerError";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 export const Route = createFileRoute("/auth/login")({
   component: Login,
@@ -48,6 +49,7 @@ function Login() {
   const defaultTheme = useTheme();
   const { isSmOrLarger } = useBreakpoint();
   const navigate = useNavigate();
+  const { refreshUser } = useAuth();
 
   const methods = useForm<loginFormSchema>({
     mode: "onChange",
@@ -69,7 +71,10 @@ function Login() {
 
   const completeLoginMutation = useMutation({
     mutationFn: (data: completeLoginRequest) => completeLogin(data),
-    onSuccess: () => navigate({ to: "/" }),
+    onSuccess: () => {
+      refreshUser();
+      navigate({ to: "/" });
+    },
     onError: (error: ServerError) => handleServerError(error),
   });
 

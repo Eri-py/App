@@ -23,6 +23,18 @@ export type startLoginResponse = { otpExpiresAt: string; email: string };
 
 export type completeLoginRequest = { identifier: string; otp: string };
 
+// Get user response
+export type getUserResponse = {
+  isAuthenticated: boolean;
+  user: {
+    id: string;
+    username: string;
+    email: string;
+    firstname: string;
+    lastname: string;
+  } | null;
+};
+
 // Registration Api calls
 export const startRegistration = (data: startRegistrationRequest) => {
   return apiClient.post("auth/register/start", data);
@@ -50,4 +62,9 @@ export const startLogin = (data: startLoginRequest) => {
 
 export const completeLogin = (data: completeLoginRequest) => {
   return apiClient.post("auth/login/complete", data);
+};
+
+// Get user calls
+export const getUser = () => {
+  return apiClient.get("auth/get-user");
 };
