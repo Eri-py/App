@@ -29,7 +29,9 @@ function Root() {
     refetchOnReconnect: false,
     refetchInterval: false,
   });
-  if (isPending) return;
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
 
   const refreshUser = () => {
     refetch();
