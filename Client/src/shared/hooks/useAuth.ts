@@ -13,5 +13,8 @@ export const AuthContext = createContext<AuthContextTypes>({
 
 export function useAuth() {
   const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useBreakpoint must be used within a BreakpointProvider.");
+  }
   return context;
 }
