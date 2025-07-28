@@ -22,6 +22,7 @@ const CustomBadge = styled(Badge)`
 
 type DesktopNavbarProps = {
   onMenuClick: () => void;
+  isAuthenticated: boolean;
 };
 
 export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
