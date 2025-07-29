@@ -1,13 +1,8 @@
-import { Link } from "@tanstack/react-router";
-
+import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
-import { styled, useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-
-const CustomLink = styled(Link)(({ theme }) => ({
-  color: theme.palette.primary.main,
-  fontWeight: 500,
-}));
+import { useNavigate } from "@tanstack/react-router";
 
 type AuthFooterProps = {
   mode: "login" | "register";
@@ -15,6 +10,7 @@ type AuthFooterProps = {
 
 export function AuthFooter({ mode }: AuthFooterProps) {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const footerContent = {
     login: {
@@ -41,7 +37,13 @@ export function AuthFooter({ mode }: AuthFooterProps) {
         }}
       >
         {currentContent.question}{" "}
-        <CustomLink to={currentContent.target}>{currentContent.linkText}</CustomLink>
+        <Link
+          component="button"
+          type="button"
+          onClick={() => navigate({ to: currentContent.target })}
+        >
+          {currentContent.linkText}
+        </Link>
       </Typography>
       <Typography
         sx={{
@@ -50,9 +52,8 @@ export function AuthFooter({ mode }: AuthFooterProps) {
           lineHeight: 1.4,
         }}
       >
-        This site is protected by reCAPTCHA and the Google{" "}
-        <CustomLink to="#">Privacy Policy</CustomLink> and{" "}
-        <CustomLink to="#">Terms of Service</CustomLink> apply
+        This site is protected by reCAPTCHA and the Google <Link>Privacy Policy</Link> and{" "}
+        <Link>Terms of Service</Link> apply
       </Typography>
     </Stack>
   );

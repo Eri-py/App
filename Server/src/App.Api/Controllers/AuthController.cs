@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using App.Api.Dtos;
 using App.Api.Results;
+using App.Api.Services.AuthServices;
 using App.Api.Services.AuthServices.LoginServices;
 using App.Api.Services.AuthServices.RegistrationServices;
 using Microsoft.AspNetCore.Mvc;
@@ -50,29 +51,7 @@ namespace App.Api.Controllers
                 return ResultMapper.Map<string>(result.ResultType, result.Message, null);
             }
 
-            var accessToken = result.Content!.AccessToken;
-            var accessTokenOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = Request.IsHttps,
-                SameSite = SameSiteMode.Lax,
-                Path = "/api",
-                Expires = result.Content.AccessTokenExpiresAt,
-            };
-
-            var refreshToken = result.Content!.RefreshToken;
-            var refreshTokenOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = Request.IsHttps,
-                SameSite = SameSiteMode.Strict,
-                Path = "/api/auth/refresh-token",
-                Expires = result.Content.RefreshTokenExpiresAt,
-            };
-
-            Response.Cookies.Append("accessToken", accessToken, accessTokenOptions);
-            Response.Cookies.Append("refreshToken", refreshToken, refreshTokenOptions);
-
+            SetAuthCookies(result.Content!);
             return NoContent();
         }
 
@@ -105,34 +84,12 @@ namespace App.Api.Controllers
                 return ResultMapper.Map<string>(result.ResultType, result.Message, null);
             }
 
-            var accessToken = result.Content!.AccessToken;
-            var accessTokenOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = Request.IsHttps,
-                SameSite = SameSiteMode.Lax,
-                Path = "/api",
-                Expires = result.Content.AccessTokenExpiresAt,
-            };
-
-            var refreshToken = result.Content!.RefreshToken;
-            var refreshTokenOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = Request.IsHttps,
-                SameSite = SameSiteMode.Strict,
-                Path = "/api/auth/refresh-token",
-                Expires = result.Content.RefreshTokenExpiresAt,
-            };
-
-            Response.Cookies.Append("accessToken", accessToken, accessTokenOptions);
-            Response.Cookies.Append("__Secure-refreshToken", refreshToken, refreshTokenOptions);
-
+            SetAuthCookies(result.Content!);
             return NoContent();
         }
 
-        [HttpGet("get-user")]
-        public ActionResult<GetUserResponse> GetUser()
+        [HttpGet("get-user-details")]
+        public ActionResult<GetUserResponse> GetUserDetails()
         {
             if (!User.Identity!.IsAuthenticated)
                 return Unauthorized();
@@ -147,6 +104,49 @@ namespace App.Api.Controllers
             };
 
             return Ok(new GetUserResponse { IsAuthenticated = true, User = userDto });
+        }
+
+        [HttpGet("refresh-token")]
+        public IActionResult RefreshToken()
+        {
+            foreach (var cookie in Request.Cookies)
+            {
+                Console.WriteLine(cookie.ToString());
+            }
+            Console.WriteLine("This is a test");
+            return Ok("This is a test");
+        }
+
+        private void SetAuthCookies(AuthResult tokens)
+        {
+            // Clear any existing tokens first
+            Response.Cookies.Delete("accessToken");
+            Response.Cookies.Delete("__Secure-refreshToken");
+
+            var accessTokenOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = Request.IsHttps,
+                SameSite = SameSiteMode.Lax,
+                Path = "/api",
+                Expires = tokens.AccessTokenExpiresAt,
+            };
+
+            var refreshTokenOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = Request.IsHttps,
+                SameSite = SameSiteMode.Strict,
+                Path = "/api/auth/refresh-token",
+                Expires = tokens.RefreshTokenExpiresAt,
+            };
+
+            Response.Cookies.Append("accessToken", tokens.AccessToken, accessTokenOptions);
+            Response.Cookies.Append(
+                "__Secure-refreshToken",
+                tokens.RefreshToken,
+                refreshTokenOptions
+            );
         }
     }
 }

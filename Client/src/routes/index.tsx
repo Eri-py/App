@@ -9,7 +9,7 @@ import { Sidebar } from "@/features/home/components/Sidebar";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useAuth } from "@/shared/hooks/useAuth";
+import { apiClient } from "@/api/Client";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -19,7 +19,6 @@ function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isMobileSearch, setIsMobileSearch] = useState<boolean>(false);
   const { isSmOrLarger } = useBreakpoint();
-  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (isSmOrLarger) {
@@ -32,15 +31,9 @@ function Home() {
       {!isMobileSearch && (
         <>
           {isSmOrLarger ? (
-            <DesktopNavbar
-              onMenuClick={() => setIsMenuOpen(!isMenuOpen)}
-              isAuthenticated={isAuthenticated}
-            />
+            <DesktopNavbar onMenuClick={() => setIsMenuOpen(!isMenuOpen)} />
           ) : (
-            <MobileNavbar
-              onSearchClick={() => setIsMobileSearch(true)}
-              isAuthenticated={isAuthenticated}
-            />
+            <MobileNavbar onSearchClick={() => setIsMobileSearch(true)} />
           )}
         </>
       )}
@@ -53,6 +46,13 @@ function Home() {
           {isSmOrLarger && <Sidebar isOpen={isMenuOpen} />}
           <Stack flex={1} alignItems="center">
             <Typography>Hello world</Typography>
+            <button
+              onClick={() => {
+                apiClient.get("/auth/refresh-token");
+              }}
+            >
+              Click Me!
+            </button>
           </Stack>
         </Stack>
       )}

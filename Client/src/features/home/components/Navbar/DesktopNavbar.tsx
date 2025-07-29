@@ -12,6 +12,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 import { Searchbar } from "../Searchbar/Searchbar";
 import { LogoWithName } from "@/shared/components/Logo";
+import { useAuth } from "@/shared/hooks/useAuth";
+import { useNavigate } from "@tanstack/react-router";
 
 const CustomBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -20,12 +22,21 @@ const CustomBadge = styled(Badge)`
   }
 `;
 
+const AuthButton = styled(Button)({
+  borderRadius: "2rem",
+  padding: "0.5rem 1rem",
+  fontSize: "1rem",
+  fontWeight: 400,
+});
+
 type DesktopNavbarProps = {
   onMenuClick: () => void;
-  isAuthenticated: boolean;
 };
 
 export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
   return (
     <AppBar position="sticky" sx={{ height: "3.75rem" }}>
       <Toolbar
@@ -54,30 +65,41 @@ export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
 
         <Searchbar />
 
-        <Stack direction="row" alignItems="center">
-          <Button
-            variant="text"
-            startIcon={<AddIcon />}
-            sx={{
-              color: "text.primary",
-              borderRadius: "2rem",
-              padding: "0.5rem 1rem",
-              fontSize: "1rem",
-            }}
-          >
-            Create
-          </Button>
+        {isAuthenticated ? (
+          <Stack direction="row" alignItems="center">
+            <Button
+              variant="text"
+              startIcon={<AddIcon />}
+              sx={{
+                color: "text.primary",
+                borderRadius: "2rem",
+                padding: "0.5rem 1rem",
+                fontSize: "1rem",
+              }}
+            >
+              Create
+            </Button>
 
-          <IconButton size="large">
-            <ChatIcon />
-            <CustomBadge badgeContent={2} color="primary" overlap="circular" />
-          </IconButton>
+            <IconButton size="large">
+              <ChatIcon />
+              <CustomBadge badgeContent={2} color="primary" overlap="circular" />
+            </IconButton>
 
-          <IconButton>
-            <AccountCircleIcon style={{ fontSize: "2rem" }} />
-            <CustomBadge badgeContent={10} color="primary" overlap="circular" />
-          </IconButton>
-        </Stack>
+            <IconButton>
+              <AccountCircleIcon style={{ fontSize: "2rem" }} />
+              <CustomBadge badgeContent={10} color="primary" overlap="circular" />
+            </IconButton>
+          </Stack>
+        ) : (
+          <Stack direction="row" alignItems="center" gap={1}>
+            <AuthButton onClick={() => navigate({ to: "/auth/login" })} variant="text">
+              Login
+            </AuthButton>
+            <AuthButton onClick={() => navigate({ to: "/auth/register" })} variant="contained">
+              Sign up
+            </AuthButton>
+          </Stack>
+        )}
       </Toolbar>
     </AppBar>
   );

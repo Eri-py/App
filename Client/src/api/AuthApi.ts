@@ -64,7 +64,11 @@ export const completeLogin = (data: completeLoginRequest) => {
   return apiClient.post("auth/login/complete", data);
 };
 
-// Get user calls
-export const getUser = () => {
-  return apiClient.get("auth/get-user");
+// User verification Api calls
+export const getUserDetails = () => {
+  return apiClient.get("auth/get-user-details");
+};
+
+export const refreshToken = () => {
+  return apiClient.get("auth/refresh-token");
 };

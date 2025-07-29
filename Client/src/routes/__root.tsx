@@ -7,7 +7,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 
 import { BreakpointContext } from "@/shared/hooks/useBreakpoint";
 import { mainTheme } from "@/shared/themes/mainTheme";
-import { getUser } from "@/api/AuthApi";
+import { getUserDetails } from "@/api/AuthApi";
 import { AuthContext, type AuthContextTypes } from "@/shared/hooks/useAuth";
 
 export const Route = createRootRoute({
@@ -20,8 +20,8 @@ function Root() {
   const isSmOrLarger = useMediaQuery(theme.breakpoints.up("sm"));
 
   const { data, isPending, refetch } = useQuery({
-    queryKey: ["user"],
-    queryFn: getUser,
+    queryKey: ["userDetails"],
+    queryFn: getUserDetails,
     staleTime: Infinity,
     gcTime: Infinity,
     refetchOnMount: false,
@@ -29,9 +29,6 @@ function Root() {
     refetchOnReconnect: false,
     refetchInterval: false,
   });
-  if (isPending) {
-    return <div>Loading...</div>;
-  }
 
   const refreshUser = () => {
     refetch();
@@ -47,9 +44,11 @@ function Root() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthContext.Provider value={authContextValue}>
-        <BreakpointContext.Provider value={{ isSmOrLarger }}>
-          <Outlet />
-        </BreakpointContext.Provider>
+        {!isPending && (
+          <BreakpointContext.Provider value={{ isSmOrLarger }}>
+            <Outlet />
+          </BreakpointContext.Provider>
+        )}
       </AuthContext.Provider>
     </ThemeProvider>
   );
