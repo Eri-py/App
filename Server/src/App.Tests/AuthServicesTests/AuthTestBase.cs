@@ -35,7 +35,7 @@ public abstract class AuthTestBase
     }
 
     [TearDown]
-    public virtual async Task TearDown()
+    public async Task TearDown()
     {
         if (Context != null)
         {

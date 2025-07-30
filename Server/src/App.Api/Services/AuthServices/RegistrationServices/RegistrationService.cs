@@ -31,11 +31,9 @@ public class RegistrationService(
             if (user is not null)
             {
                 if (user.CreatedAt.HasValue)
-                {
                     return user.Username == username
                         ? Result.Conflict("Username taken")
                         : Result.Conflict("Email taken");
-                }
 
                 // Update user details rather than create new user
                 user.Username = username;
@@ -54,7 +52,6 @@ public class RegistrationService(
                 };
                 context.Users.Add(newUser);
             }
-
             await context.SaveChangesAsync();
 
             var emailResult = await emailService.SendOtpEmailAsync(
@@ -63,7 +60,6 @@ public class RegistrationService(
                 otp: otpDetails.Value,
                 codeValidFor: $"{AuthConfig.OtpValidForMinutes} minutes"
             );
-
             if (!emailResult.IsSuccess)
             {
                 await transaction.RollbackAsync();
@@ -107,9 +103,7 @@ public class RegistrationService(
             u.Email == email && u.Username == username
         );
         if (user is null)
-        {
             return Result.NotFound("User not found");
-        }
 
         // Update user
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);

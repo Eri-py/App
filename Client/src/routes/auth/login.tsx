@@ -19,12 +19,12 @@ import {
   completeLogin,
 } from "@/api/AuthApi";
 import { OtpPage } from "@/features/auth/components/OtpPage";
-import { formThemeDesktop } from "@/features/auth/FormThemeDesktop";
 import { UsernameAndPassword } from "@/features/auth/LoginSteps/UsernameAndPassword";
 import { LogoWithName } from "@/shared/components/Logo";
 import { useBreakpoint } from "@/shared/hooks/useBreakpoint";
 import { useServerError, type ServerError } from "@/shared/hooks/useServerError";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { mainTheme } from "@/shared/themes/mainTheme";
 
 export const Route = createFileRoute("/auth/login")({
   component: Login,
@@ -48,6 +48,7 @@ function Login() {
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
   const defaultTheme = useTheme();
   const { isSmOrLarger } = useBreakpoint();
+  const desktopTheme = mainTheme(false); // Use light mode for desktop
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
 
@@ -102,7 +103,7 @@ function Login() {
     completeLoginMutation.mutate(formData);
   };
 
-  const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
+  const theme = isSmOrLarger ? desktopTheme : defaultTheme;
   const form = (
     <Stack
       paddingBlock={2}
@@ -169,7 +170,7 @@ function Login() {
         </Box>
       )}
 
-      {isSmOrLarger ? <ThemeProvider theme={formThemeDesktop}>{form}</ThemeProvider> : form}
+      {isSmOrLarger ? <ThemeProvider theme={desktopTheme}>{form}</ThemeProvider> : form}
     </Box>
   );
 }

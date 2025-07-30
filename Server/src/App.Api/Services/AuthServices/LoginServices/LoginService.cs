@@ -16,6 +16,11 @@ public class LoginService(
     ITokenService jwtService
 ) : ILoginService
 {
+    private readonly string _userNotFoundMessage =
+        "Your login credentials don't match an account in our system.";
+    private readonly string _incompleteRegistrationMessage =
+        "Account registration is not complete. Please complete your registration first.";
+
     public async Task<Result<StartLoginResponse>> StartLoginAsync(StartLoginRequest request)
     {
         var identifier = request.Identifier.ToLower();
@@ -23,19 +28,12 @@ public class LoginService(
         var user = await context.Users.FirstOrDefaultAsync(u =>
             u.Username == identifier || u.Email == identifier
         );
-
         if (user is null)
-        {
-            return Result.NotFound($"Your login credentials don't match an account in our system.");
-        }
+            return Result.NotFound(_userNotFoundMessage);
 
         // Check if user has completed registration
         if (!user.CreatedAt.HasValue)
-        {
-            return Result.BadRequest(
-                "Account registration is not complete. Please complete your registration first."
-            );
-        }
+            return Result.BadRequest(_incompleteRegistrationMessage);
 
         // Verify password
         var verifyPasswordResult = new PasswordHasher<User>().VerifyHashedPassword(
@@ -45,9 +43,7 @@ public class LoginService(
         );
 
         if (verifyPasswordResult == PasswordVerificationResult.Failed)
-        {
-            return Result.NotFound("Your login credentials don't match an account in our system.");
-        }
+            return Result.NotFound(_userNotFoundMessage);
 
         var otpDetails = jwtService.CreateOtp(AuthConfig.OtpValidForMinutes);
         using var transaction = await context.Database.BeginTransactionAsync();
@@ -71,8 +67,8 @@ public class LoginService(
                 await transaction.RollbackAsync();
                 return emailResult;
             }
-
             await transaction.CommitAsync();
+
             var response = new StartLoginResponse
             {
                 OtpExpiresAt = otpDetails.ExpiresAt.ToString("o"),
@@ -95,17 +91,11 @@ public class LoginService(
         );
 
         if (user is null || user.OtpExpiresAt < DateTime.UtcNow)
-        {
             return Result.BadRequest("Invalid or expired verification code");
-        }
 
         // Check if user has completed registration
         if (!user.CreatedAt.HasValue)
-        {
-            return Result.BadRequest(
-                "Account registration is not complete. Please complete your registration first."
-            );
-        }
+            return Result.BadRequest(_incompleteRegistrationMessage);
 
         // Clear the OTP
         user.Otp = null;

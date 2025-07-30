@@ -80,7 +80,6 @@ public class JwtService(
             return Result.NotFound("User not found");
 
         var otpDetails = CreateOtp(AuthConfig.OtpValidForMinutes);
-
         using var transaction = await context.Database.BeginTransactionAsync();
         try
         {
@@ -126,13 +125,17 @@ public class JwtService(
         var newRefreshToken = CreateRefreshToken(AuthConfig.RefreshTokenValidForDays);
         var accessToken = CreateAccessToken(token.User!, AuthConfig.AccessTokenValidForMinutes);
 
+        // Update the refresh token.
+        token.TokenHash = HashToken(newRefreshToken.Value);
+        await context.SaveChangesAsync();
+
         return Result<AuthResult>.Success(
             new()
             {
                 AccessToken = accessToken.Value,
                 RefreshToken = newRefreshToken.Value,
                 AccessTokenExpiresAt = accessToken.ExpiresAt,
-                RefreshTokenExpiresAt = newRefreshToken.ExpiresAt,
+                RefreshTokenExpiresAt = token.TokenExpiresAt,
             }
         );
     }

@@ -32,11 +32,11 @@ import {
   usernameSchema,
 } from "@/features/auth/Schemas";
 import { OtpPage } from "@/features/auth/components/OtpPage";
-import { formThemeDesktop } from "@/features/auth/FormThemeDesktop";
 import { Password } from "@/features/auth/RegisterSteps/Password";
 import { PersonalDetails } from "@/features/auth/RegisterSteps/PersonalDetails";
 import { UsernameAndEmail } from "@/features/auth/RegisterSteps/UsernameAndEmail";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { mainTheme } from "@/shared/themes/mainTheme";
 
 export const Route = createFileRoute("/auth/register")({
   component: Register,
@@ -76,6 +76,7 @@ function Register() {
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
   const defaultTheme = useTheme();
   const { isSmOrLarger } = useBreakpoint();
+  const desktopTheme = mainTheme(false); // Use light mode for desktop
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
 
@@ -150,7 +151,7 @@ function Register() {
     completeRegistrationMutation.mutate(formData);
   };
 
-  const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
+  const theme = isSmOrLarger ? desktopTheme : defaultTheme;
   const form = (
     <Stack
       paddingBlock={2}
@@ -230,7 +231,7 @@ function Register() {
         </Box>
       )}
 
-      {isSmOrLarger ? <ThemeProvider theme={formThemeDesktop}>{form}</ThemeProvider> : form}
+      {isSmOrLarger ? <ThemeProvider theme={desktopTheme}>{form}</ThemeProvider> : form}
     </Box>
   );
 }

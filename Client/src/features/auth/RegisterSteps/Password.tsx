@@ -32,22 +32,22 @@ export function Password({ handleNext }: PasswordProps) {
 
         <Stack gap="0.25rem" marginLeft="1rem">
           <Typography fontWeight={200} fontSize="0.8125rem" color={theme.palette.text.secondary}>
-            • 8-64 characters
+            &#149; 8-64 characters
           </Typography>
           <Typography fontWeight={200} fontSize="0.8125rem" color={theme.palette.text.secondary}>
-            • One uppercase letter (A-Z)
+            &#149; One uppercase letter (A-Z)
           </Typography>
           <Typography fontWeight={200} fontSize="0.8125rem" color={theme.palette.text.secondary}>
-            • One lowercase letter (a-z)
+            &#149; One lowercase letter (a-z)
           </Typography>
           <Typography fontWeight={200} fontSize="0.8125rem" color={theme.palette.text.secondary}>
-            • One number (0-9)
+            &#149; One number (0-9)
           </Typography>
           <Typography fontWeight={200} fontSize="0.8125rem" color={theme.palette.text.secondary}>
-            • One special character (# ? ! @ $ % ^ & - .)
+            &#149; One special character (# ? ! @ $ % ^ & - .)
           </Typography>
           <Typography fontWeight={200} fontSize="0.8125rem" color={theme.palette.text.secondary}>
-            • Only allowed characters above
+            &#149; Only allowed characters above
           </Typography>
         </Stack>
       </Stack>
@@ -57,7 +57,7 @@ export function Password({ handleNext }: PasswordProps) {
         label="Confirm Password"
         fieldValue="confirmPassword"
         startIcon={<LockIcon />}
-        autoComplete="off"
+        autoComplete="new-password"
       />
 
       <Button type="button" variant="contained" size="large" onClick={handleNext}>

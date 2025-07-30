@@ -10,5 +10,5 @@ public class RefreshToken
 
     [ForeignKey("User")]
     public required Guid UserId { get; set; }
-    public User? User { get; }
+    public User? User { get; set; }
 }
