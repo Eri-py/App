@@ -11,12 +11,10 @@ export const apiClient = axios.create({
 apiClient.interceptors.response.use(undefined, async (error: AxiosError) => {
   if (error.status === 401) {
     try {
-      await refreshToken();
-      console.log("Successful");
-      // return apiClient.request(error.config!);
-      return Promise.reject(error);
-    } catch {
-      return Promise.reject(error);
+      await refreshToken(); // Try to get a new accessToken.
+      return apiClient.request(error.config!);
+    } catch (refreshError) {
+      return Promise.reject(refreshError);
     }
   }
   return Promise.reject(error);
