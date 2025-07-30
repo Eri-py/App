@@ -15,8 +15,8 @@ import Alert from "@mui/material/Alert";
 import {
   type startRegistrationRequest,
   startRegistration,
-  type verifyOtpRegistrationRequest,
-  verifyOtpRegistration,
+  type verifyOtpRequest,
+  verifyOtp,
   type completeRegistrationRequest,
   completeRegistration,
 } from "@/api/AuthApi";
@@ -94,7 +94,7 @@ function Register() {
   });
 
   const verifyOtpMutation = useMutation({
-    mutationFn: (data: verifyOtpRegistrationRequest) => verifyOtpRegistration(data),
+    mutationFn: (data: verifyOtpRequest) => verifyOtp(data),
     onSuccess: () => setStep(2),
     onError: (error: ServerError) => handleServerError(error),
   });

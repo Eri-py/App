@@ -22,12 +22,6 @@ function Root() {
   const { data, isPending, refetch } = useQuery({
     queryKey: ["userDetails"],
     queryFn: getUserDetails,
-    staleTime: Infinity,
-    gcTime: Infinity,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    refetchInterval: false,
   });
 
   const refreshUser = () => {
@@ -35,8 +29,8 @@ function Root() {
   };
 
   const authContextValue: AuthContextTypes = {
-    isAuthenticated: data?.data?.isAuthenticated || false,
-    user: data?.data?.user || null,
+    isAuthenticated: data?.data.isAuthenticated || false,
+    user: data?.data.user || null,
     refreshUser,
   };
 

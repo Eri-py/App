@@ -4,6 +4,7 @@ using App.Api.Results;
 using App.Api.Services.AuthServices;
 using App.Api.Services.AuthServices.LoginServices;
 using App.Api.Services.AuthServices.RegistrationServices;
+using App.Api.Services.AuthServices.TokenServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Api.Controllers
@@ -12,7 +13,8 @@ namespace App.Api.Controllers
     [ApiController]
     public class AuthController(
         IRegistrationService registrationService,
-        ILoginService loginService
+        ILoginService loginService,
+        ITokenService tokenService
     ) : ControllerBase
     {
         [HttpPost("register/start")]
@@ -31,12 +33,10 @@ namespace App.Api.Controllers
             return ResultMapper.Map(result);
         }
 
-        [HttpPost("register/resend-verification-code")]
-        public async Task<ActionResult<string>> ResendVerificationCodeRegister(
-            [FromBody] ResendVerificationCodeRequest request
-        )
+        [HttpPost("resend-otp")]
+        public async Task<ActionResult<string>> ResendOtp([FromBody] ResendOtpRequest request)
         {
-            var result = await registrationService.ResendVerificationCodeAsync(request);
+            var result = await tokenService.ResendOtpAsync(request.Identifier);
             return ResultMapper.Map(result);
         }
 
@@ -61,15 +61,6 @@ namespace App.Api.Controllers
         )
         {
             var result = await loginService.StartLoginAsync(request);
-            return ResultMapper.Map(result);
-        }
-
-        [HttpPost("login/resend-verification-code")]
-        public async Task<ActionResult<string>> ResendVerificationCodeLogin(
-            [FromBody] ResendVerificationCodeRequest request
-        )
-        {
-            var result = await loginService.ResendVerificationCodeAsync(request);
             return ResultMapper.Map(result);
         }
 
@@ -107,14 +98,22 @@ namespace App.Api.Controllers
         }
 
         [HttpGet("refresh-token")]
-        public IActionResult RefreshToken()
+        public async Task<ActionResult<string>> RefreshToken()
         {
-            foreach (var cookie in Request.Cookies)
+            var refreshToken = Request.Cookies["__Secure-refreshToken"];
+            if (refreshToken is null)
             {
-                Console.WriteLine(cookie.ToString());
+                return BadRequest("Invalid token");
             }
-            Console.WriteLine("This is a test");
-            return Ok("This is a test");
+
+            var result = await tokenService.VerifyRefreshTokenAsync(refreshToken);
+            if (!result.IsSuccess)
+            {
+                return ResultMapper.Map<string>(result.ResultType, result.Message, null);
+            }
+
+            SetAuthCookies(result.Content!);
+            return NoContent();
         }
 
         private void SetAuthCookies(AuthResult tokens)

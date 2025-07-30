@@ -10,13 +10,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace App.Api.Services.AuthServices.LoginServices;
 
-public class LoginService(AppDbContext context, IEmailService emailService, IJwtService jwtService)
-    : ILoginService
+public class LoginService(
+    AppDbContext context,
+    IEmailService emailService,
+    ITokenService jwtService
+) : ILoginService
 {
-    private const int c_OtpValidFor = 5; // Time in minutes Otp is valid for.
-    private const int c_AccessTokenValidFor = 15; // Time in minutes Access Token is valid for.
-    private const int c_RefreshTokenValidFor = 7; // Time in days Refresh Token is valid for.
-
     public async Task<Result<StartLoginResponse>> StartLoginAsync(StartLoginRequest request)
     {
         var identifier = request.Identifier.ToLower();
@@ -39,32 +38,32 @@ public class LoginService(AppDbContext context, IEmailService emailService, IJwt
         }
 
         // Verify password
-        var verificationResult = new PasswordHasher<User>().VerifyHashedPassword(
+        var verifyPasswordResult = new PasswordHasher<User>().VerifyHashedPassword(
             user,
             user.PasswordHash!,
             password
         );
 
-        if (verificationResult == PasswordVerificationResult.Failed)
+        if (verifyPasswordResult == PasswordVerificationResult.Failed)
         {
             return Result.NotFound("Your login credentials don't match an account in our system.");
         }
 
-        var (otp, otpExpiresAt) = jwtService.CreateOtp(c_OtpValidFor);
+        var otpDetails = jwtService.CreateOtp(AuthConfig.OtpValidForMinutes);
         using var transaction = await context.Database.BeginTransactionAsync();
         try
         {
             // Update user with new OTP
-            user.Otp = otp;
-            user.OtpExpiresAt = otpExpiresAt;
+            user.Otp = otpDetails.Value;
+            user.OtpExpiresAt = otpDetails.ExpiresAt;
 
             await context.SaveChangesAsync();
 
-            var emailResult = await emailService.SendEmailVerificationAsync(
+            var emailResult = await emailService.SendOtpEmailAsync(
                 to: user.Email!,
                 username: user.Username!,
-                verificationToken: otp,
-                codeValidFor: $"{c_OtpValidFor} minutes"
+                otp: otpDetails.Value,
+                codeValidFor: $"{AuthConfig.OtpValidForMinutes} minutes"
             );
 
             if (!emailResult.IsSuccess)
@@ -76,7 +75,7 @@ public class LoginService(AppDbContext context, IEmailService emailService, IJwt
             await transaction.CommitAsync();
             var response = new StartLoginResponse
             {
-                OtpExpiresAt = otpExpiresAt.ToString("o"),
+                OtpExpiresAt = otpDetails.ExpiresAt.ToString("o"),
                 Email = user.Email,
             };
             return Result<StartLoginResponse>.Success(response);
@@ -112,77 +111,32 @@ public class LoginService(AppDbContext context, IEmailService emailService, IJwt
         user.Otp = null;
         user.OtpExpiresAt = null;
 
-        var (refreshToken, refreshTokenExpiresAt) = jwtService.CreateRefreshToken(
-            c_RefreshTokenValidFor
+        var refreshTokenDetails = jwtService.CreateRefreshToken(
+            AuthConfig.RefreshTokenValidForDays
         );
         // Add token to database
         var refreshTokenEntry = new RefreshToken
         {
-            TokenHash = jwtService.HashToken(refreshToken),
-            TokenExpiresAt = refreshTokenExpiresAt,
+            TokenHash = jwtService.HashToken(refreshTokenDetails.Value),
+            TokenExpiresAt = refreshTokenDetails.ExpiresAt,
             UserId = user.Id,
         };
         user.RefreshTokens.Add(refreshTokenEntry);
 
         await context.SaveChangesAsync();
 
-        var (accessToken, accessTokenExpiresAt) = jwtService.CreateAccessToken(
+        var accessTokenDetails = jwtService.CreateAccessToken(
             user,
-            c_AccessTokenValidFor
+            AuthConfig.AccessTokenValidForMinutes
         );
         return Result<AuthResult>.Success(
             new AuthResult
             {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                AccessTokenExpiresAt = accessTokenExpiresAt,
-                RefreshTokenExpiresAt = refreshTokenExpiresAt,
+                AccessToken = accessTokenDetails.Value,
+                RefreshToken = refreshTokenDetails.Value,
+                AccessTokenExpiresAt = accessTokenDetails.ExpiresAt,
+                RefreshTokenExpiresAt = refreshTokenDetails.ExpiresAt,
             }
         );
-    }
-
-    public async Task<Result<string>> ResendVerificationCodeAsync(
-        ResendVerificationCodeRequest request
-    )
-    {
-        var identifier = request.Identifier.ToLower();
-
-        var user = await context.Users.FirstOrDefaultAsync(u =>
-            u.Username == identifier || u.Email == identifier
-        );
-
-        if (user is null)
-            return Result.NotFound("User not found");
-
-        var (otp, otpExpiresAt) = jwtService.CreateOtp(c_OtpValidFor);
-
-        using var transaction = await context.Database.BeginTransactionAsync();
-        try
-        {
-            user.Otp = otp;
-            user.OtpExpiresAt = otpExpiresAt;
-
-            await context.SaveChangesAsync();
-
-            var emailResult = await emailService.SendEmailVerificationAsync(
-                to: user.Email!,
-                username: user.Username!,
-                verificationToken: otp,
-                codeValidFor: $"{c_OtpValidFor} minutes"
-            );
-            if (!emailResult.IsSuccess)
-            {
-                await transaction.RollbackAsync();
-                return emailResult;
-            }
-
-            await transaction.CommitAsync();
-            return Result<string>.Success(otpExpiresAt.ToString("o"));
-        }
-        catch (Exception)
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
     }
 }

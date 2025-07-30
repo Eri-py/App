@@ -5,10 +5,10 @@ namespace App.Api.Services.EmailServices;
 public interface IEmailService
 {
     public Task<Result> SendEmailAsync(string to, string subject, string body);
-    public Task<Result> SendEmailVerificationAsync(
+    public Task<Result> SendOtpEmailAsync(
         string to,
         string username,
-        string verificationToken,
+        string otp,
         string codeValidFor
     );
 }
