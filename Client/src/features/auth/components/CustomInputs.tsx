@@ -42,6 +42,7 @@ export function CustomTextField({
   const passwordEndAdornment = () => {
     return (
       <Button
+        disableRipple
         type="button"
         variant="text"
         onClick={() => {

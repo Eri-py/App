@@ -49,7 +49,7 @@ if (builder.Environment.IsDevelopment())
 
 // Authentication Services
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
-builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<ITokenService, JwtService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 
 // JWT Configuration

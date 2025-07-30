@@ -23,7 +23,7 @@ public record class VerifyOtpRequest
     public required string Otp { get; set; }
 }
 
-public record class ResendVerificationCodeRequest
+public record class ResendOtpRequest
 {
     [Required]
     public required string Identifier { get; set; }

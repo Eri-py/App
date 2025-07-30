@@ -2,9 +2,7 @@ import { apiClient } from "./Client";
 
 // Registration Dtos
 export type startRegistrationRequest = { username: string; email: string };
-
-export type verifyOtpRegistrationRequest = { email: string; otp: string };
-
+export type verifyOtpRequest = { email: string; otp: string };
 export type completeRegistrationRequest = {
   username: string;
   email: string;
@@ -13,14 +11,11 @@ export type completeRegistrationRequest = {
   lastname: string;
   dateOfBirth: string;
 };
-
-export type resendVerificationCodeRequest = { identifier: string };
+export type resendOtpRequest = { identifier: string };
 
 // Login Dtos
 export type startLoginRequest = { identifier: string; password: string };
-
 export type startLoginResponse = { otpExpiresAt: string; email: string };
-
 export type completeLoginRequest = { identifier: string; otp: string };
 
 // Get user response
@@ -40,19 +35,12 @@ export const startRegistration = (data: startRegistrationRequest) => {
   return apiClient.post("auth/register/start", data);
 };
 
-export const verifyOtpRegistration = (data: verifyOtpRegistrationRequest) => {
+export const verifyOtp = (data: verifyOtpRequest) => {
   return apiClient.post("auth/register/verify-otp", data);
 };
 
 export const completeRegistration = (data: completeRegistrationRequest) => {
   return apiClient.post("auth/register/complete", data);
-};
-
-export const resendVerificationCode = (
-  data: resendVerificationCodeRequest,
-  context: "login" | "register"
-) => {
-  return apiClient.post(`auth/${context}/resend-verification-code`, data);
 };
 
 // Login Api calls
@@ -71,4 +59,8 @@ export const getUserDetails = () => {
 
 export const refreshToken = () => {
   return apiClient.get("auth/refresh-token");
+};
+
+export const resendOtp = (data: resendOtpRequest) => {
+  return apiClient.post("auth/resend-otp", data);
 };

@@ -13,7 +13,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 
-import { type resendVerificationCodeRequest, resendVerificationCode } from "@/api/AuthApi";
+import { resendOtp, type resendOtpRequest } from "@/api/AuthApi";
 import { CustomFormHeader } from "./CustomInputs";
 
 type OtpPageProps = {
@@ -43,8 +43,8 @@ export function OtpPage({
   const [endTime, setEndTime] = useState(parseISO(otpExpiresAt).getTime());
   const [isResendDisabled, setIsResendDisabled] = useState<boolean>(true);
 
-  const resendVerificationMutation = useMutation({
-    mutationFn: (data: resendVerificationCodeRequest) => resendVerificationCode(data, mode),
+  const resendOtpMutation = useMutation({
+    mutationFn: (data: resendOtpRequest) => resendOtp(data),
     onSuccess: (response: AxiosResponse) => {
       const newExpiresAt = response.data;
       const newEndTime = parseISO(newExpiresAt).getTime();
@@ -55,7 +55,7 @@ export function OtpPage({
   });
 
   const handleResend = async () => {
-    resendVerificationMutation.mutate({ identifier: email });
+    resendOtpMutation.mutate({ identifier: email });
   };
 
   return (
@@ -134,7 +134,7 @@ export function OtpPage({
           <Link
             component="button"
             underline="always"
-            disabled={resendVerificationMutation.isPending}
+            disabled={resendOtpMutation.isPending}
             onClick={handleResend}
             sx={{
               "&:hover": {

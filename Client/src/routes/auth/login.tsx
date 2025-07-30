@@ -19,12 +19,13 @@ import {
   completeLogin,
 } from "@/api/AuthApi";
 import { OtpPage } from "@/features/auth/components/OtpPage";
-import { formThemeDesktop } from "@/features/auth/FormThemeDesktop";
 import { UsernameAndPassword } from "@/features/auth/LoginSteps/UsernameAndPassword";
 import { LogoWithName } from "@/shared/components/Logo";
 import { useBreakpoint } from "@/shared/hooks/useBreakpoint";
 import { useServerError, type ServerError } from "@/shared/hooks/useServerError";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { mainTheme } from "@/shared/themes/mainTheme";
+import { FormContainer } from "@/features/auth/components/FormContainer";
 
 export const Route = createFileRoute("/auth/login")({
   component: Login,
@@ -48,6 +49,7 @@ function Login() {
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
   const defaultTheme = useTheme();
   const { isSmOrLarger } = useBreakpoint();
+  const desktopTheme = mainTheme(false); // Use light mode for desktop
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
 
@@ -102,7 +104,7 @@ function Login() {
     completeLoginMutation.mutate(formData);
   };
 
-  const theme = isSmOrLarger ? formThemeDesktop : defaultTheme;
+  const theme = isSmOrLarger ? desktopTheme : defaultTheme;
   const form = (
     <Stack
       paddingBlock={2}
@@ -151,25 +153,14 @@ function Login() {
   );
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        minHeight: "100dvh",
-        alignItems: { sm: "center" },
-        justifyContent: "center",
-        background: {
-          sm: "radial-gradient(ellipse 150% 100% at top left, #42a5f5 0%, rgba(21, 101, 192, 0.7) 40%, rgba(13, 71, 161, 0.3) 70%, transparent 100%), radial-gradient(ellipse 120% 80% at bottom right, #1565c0 0%, rgba(13, 71, 161, 0.5) 50%, transparent 80%), radial-gradient(circle at center, #181818 0%, #2c2c2c 100%)",
-        },
-        position: "relative",
-      }}
-    >
+    <FormContainer>
       {isSmOrLarger && (
         <Box sx={{ position: "absolute", top: "2rem", left: "3rem" }}>
           <LogoWithName size="large" color="white" />
         </Box>
       )}
 
-      {isSmOrLarger ? <ThemeProvider theme={formThemeDesktop}>{form}</ThemeProvider> : form}
-    </Box>
+      {isSmOrLarger ? <ThemeProvider theme={desktopTheme}>{form}</ThemeProvider> : form}
+    </FormContainer>
   );
 }

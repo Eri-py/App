@@ -12,13 +12,9 @@ namespace App.Api.Services.AuthServices.RegistrationServices;
 public class RegistrationService(
     AppDbContext context,
     IEmailService emailService,
-    IJwtService jwtService
+    ITokenService jwtService
 ) : IRegistrationService
 {
-    private const int c_OtpValidFor = 5; // Time in minutes Otp is valid for.
-    private const int c_AccessTokenValidFor = 15; // Time in minutes Access Token is valid for.
-    private const int c_RefreshTokenValidFor = 7; // Time in days Refresh Token is valid for.
-
     public async Task<Result<string>> StartRegistrationAsync(StartRegistrationRequest request)
     {
         var username = request.Username.ToLower();
@@ -28,24 +24,22 @@ public class RegistrationService(
             u.Username == username || u.Email == email
         );
 
-        var (otp, otpExpiresAt) = jwtService.CreateOtp(c_OtpValidFor);
+        var otpDetails = jwtService.CreateOtp(AuthConfig.OtpValidForMinutes);
         using var transaction = await context.Database.BeginTransactionAsync();
         try
         {
             if (user is not null)
             {
                 if (user.CreatedAt.HasValue)
-                {
                     return user.Username == username
                         ? Result.Conflict("Username taken")
                         : Result.Conflict("Email taken");
-                }
 
                 // Update user details rather than create new user
                 user.Username = username;
                 user.Email = email;
-                user.Otp = otp;
-                user.OtpExpiresAt = otpExpiresAt;
+                user.Otp = otpDetails.Value;
+                user.OtpExpiresAt = otpDetails.ExpiresAt;
             }
             else
             {
@@ -53,21 +47,19 @@ public class RegistrationService(
                 {
                     Username = username,
                     Email = email,
-                    Otp = otp,
-                    OtpExpiresAt = otpExpiresAt,
+                    Otp = otpDetails.Value,
+                    OtpExpiresAt = otpDetails.ExpiresAt,
                 };
                 context.Users.Add(newUser);
             }
-
             await context.SaveChangesAsync();
 
-            var emailResult = await emailService.SendEmailVerificationAsync(
+            var emailResult = await emailService.SendOtpEmailAsync(
                 to: email,
                 username: username,
-                verificationToken: otp,
-                codeValidFor: $"{c_OtpValidFor} minutes"
+                otp: otpDetails.Value,
+                codeValidFor: $"{AuthConfig.OtpValidForMinutes} minutes"
             );
-
             if (!emailResult.IsSuccess)
             {
                 await transaction.RollbackAsync();
@@ -75,7 +67,7 @@ public class RegistrationService(
             }
 
             await transaction.CommitAsync();
-            return Result<string>.Success(otpExpiresAt.ToString("o"));
+            return Result<string>.Success(otpDetails.ExpiresAt.ToString("o"));
         }
         catch (Exception)
         {
@@ -110,7 +102,6 @@ public class RegistrationService(
         var user = await context.Users.FirstOrDefaultAsync(u =>
             u.Email == email && u.Username == username
         );
-
         if (user is null)
             return Result.NotFound("User not found");
 
@@ -121,78 +112,33 @@ public class RegistrationService(
         user.DateOfBirth = DateOnly.Parse(request.DateOfBirth);
         user.CreatedAt = DateTime.UtcNow;
 
-        var (refreshToken, refreshTokenExpiresAt) = jwtService.CreateRefreshToken(
-            c_RefreshTokenValidFor
+        var refreshTokenDetails = jwtService.CreateRefreshToken(
+            AuthConfig.RefreshTokenValidForDays
         );
 
         // Add token to database
         var refreshTokenEntry = new RefreshToken
         {
-            TokenHash = jwtService.HashToken(refreshToken),
-            TokenExpiresAt = refreshTokenExpiresAt,
+            TokenHash = jwtService.HashToken(refreshTokenDetails.Value),
+            TokenExpiresAt = refreshTokenDetails.ExpiresAt,
             UserId = user.Id,
         };
         user.RefreshTokens.Add(refreshTokenEntry);
 
         await context.SaveChangesAsync();
 
-        var (accessToken, accessTokenExpiresAt) = jwtService.CreateAccessToken(
+        var accessTokenDetails = jwtService.CreateAccessToken(
             user,
-            c_AccessTokenValidFor
+            AuthConfig.AccessTokenValidForMinutes
         );
         return Result<AuthResult>.Success(
             new AuthResult
             {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                AccessTokenExpiresAt = accessTokenExpiresAt,
-                RefreshTokenExpiresAt = refreshTokenExpiresAt,
+                AccessToken = accessTokenDetails.Value,
+                RefreshToken = refreshTokenDetails.Value,
+                AccessTokenExpiresAt = accessTokenDetails.ExpiresAt,
+                RefreshTokenExpiresAt = refreshTokenDetails.ExpiresAt,
             }
         );
-    }
-
-    public async Task<Result<string>> ResendVerificationCodeAsync(
-        ResendVerificationCodeRequest request
-    )
-    {
-        var identifier = request.Identifier.ToLower();
-
-        var user = await context.Users.FirstOrDefaultAsync(u =>
-            u.Username == identifier || u.Email == identifier
-        );
-
-        if (user is null)
-            return Result.NotFound("User not found");
-
-        var (otp, otpExpiresAt) = jwtService.CreateOtp(c_OtpValidFor);
-
-        using var transaction = await context.Database.BeginTransactionAsync();
-        try
-        {
-            user.Otp = otp;
-            user.OtpExpiresAt = otpExpiresAt;
-
-            await context.SaveChangesAsync();
-
-            var emailResult = await emailService.SendEmailVerificationAsync(
-                to: user.Email!,
-                username: user.Username!,
-                verificationToken: otp,
-                codeValidFor: $"{c_OtpValidFor} minutes"
-            );
-            if (!emailResult.IsSuccess)
-            {
-                await transaction.RollbackAsync();
-                return emailResult;
-            }
-
-            await transaction.CommitAsync();
-            return Result<string>.Success(otpExpiresAt.ToString("o"));
-        }
-        catch (Exception)
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
     }
 }

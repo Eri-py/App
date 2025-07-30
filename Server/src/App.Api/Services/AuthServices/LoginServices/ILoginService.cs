@@ -8,5 +8,4 @@ public interface ILoginService
 {
     public Task<Result<StartLoginResponse>> StartLoginAsync(StartLoginRequest request);
     public Task<Result<AuthResult>> CompleteLoginAsync(CompleteLoginRequest request);
-    public Task<Result<string>> ResendVerificationCodeAsync(ResendVerificationCodeRequest request);
 }

@@ -1,4 +1,4 @@
-import { type HTMLAttributes, type Key } from "react";
+import { type HTMLAttributes, type Key, type ReactNode } from "react";
 
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
@@ -54,7 +54,7 @@ type SearchGroupProps = {
   groupKey: number;
   groupName: string;
   inputValue: string;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export const SearchGroup = ({ groupKey, groupName, inputValue, children }: SearchGroupProps) => {

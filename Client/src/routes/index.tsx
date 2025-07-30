@@ -9,7 +9,6 @@ import { Sidebar } from "@/features/home/components/Sidebar";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { apiClient } from "@/api/Client";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -46,13 +45,6 @@ function Home() {
           {isSmOrLarger && <Sidebar isOpen={isMenuOpen} />}
           <Stack flex={1} alignItems="center">
             <Typography>Hello world</Typography>
-            <button
-              onClick={() => {
-                apiClient.get("/auth/refresh-token");
-              }}
-            >
-              Click Me!
-            </button>
           </Stack>
         </Stack>
       )}

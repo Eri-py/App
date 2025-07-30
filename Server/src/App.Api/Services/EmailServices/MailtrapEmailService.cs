@@ -47,10 +47,10 @@ public class MailtrapEmailService(IConfiguration configuration) : IEmailService
         }
     }
 
-    public async Task<Result> SendEmailVerificationAsync(
+    public async Task<Result> SendOtpEmailAsync(
         string to,
         string username,
-        string verificationCode,
+        string otp,
         string codeValidFor
     )
     {
@@ -63,7 +63,7 @@ public class MailtrapEmailService(IConfiguration configuration) : IEmailService
 
         var htmlBody = htmlTemplate
             .Replace("{{Username}}", username)
-            .Replace("{{VerificationCode}}", verificationCode)
+            .Replace("{{Otp}}", otp)
             .Replace("{{CodeValidFor}}", codeValidFor);
 
         var emailResult = await SendEmailAsync(to, "Verify Your Email Address", htmlBody);
