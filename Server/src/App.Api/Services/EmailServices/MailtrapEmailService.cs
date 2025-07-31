@@ -51,12 +51,14 @@ public class MailtrapEmailService(IConfiguration configuration) : IEmailService
         string to,
         string username,
         string otp,
-        string codeValidFor
+        string otpValidFor
     )
     {
         var templatePath = Path.Combine(
             Directory.GetCurrentDirectory(),
-            "Templates",
+            "Services",
+            "EmailServices",
+            "EmailTemplates",
             "VerificationEmailTemplate.html"
         );
         var htmlTemplate = await File.ReadAllTextAsync(templatePath);
@@ -64,7 +66,7 @@ public class MailtrapEmailService(IConfiguration configuration) : IEmailService
         var htmlBody = htmlTemplate
             .Replace("{{Username}}", username)
             .Replace("{{Otp}}", otp)
-            .Replace("{{CodeValidFor}}", codeValidFor);
+            .Replace("{{OtpValidFor}}", otpValidFor);
 
         var emailResult = await SendEmailAsync(to, "Verify Your Email Address", htmlBody);
         return emailResult;

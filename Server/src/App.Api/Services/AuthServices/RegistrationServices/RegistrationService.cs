@@ -58,7 +58,7 @@ public class RegistrationService(
                 to: email,
                 username: username,
                 otp: otpDetails.Value,
-                codeValidFor: $"{AuthConfig.OtpValidForMinutes} minutes"
+                otpValidFor: $"{AuthConfig.OtpValidForMinutes} minutes"
             );
             if (!emailResult.IsSuccess)
             {

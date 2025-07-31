@@ -91,7 +91,7 @@ public class JwtService(
                 to: user.Email!,
                 username: user.Username!,
                 otp: otpDetails.Value,
-                codeValidFor: $"{AuthConfig.OtpValidForMinutes} minutes"
+                otpValidFor: $"{AuthConfig.OtpValidForMinutes} minutes"
             );
 
             if (!emailResult.IsSuccess)
