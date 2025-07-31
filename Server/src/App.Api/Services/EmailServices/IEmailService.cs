@@ -9,6 +9,6 @@ public interface IEmailService
         string to,
         string username,
         string otp,
-        string codeValidFor
+        string otpValidFor
     );
 }

@@ -1,4 +1,3 @@
-using System;
 using App.Api.Data;
 using App.Api.Data.Entities;
 using App.Api.Dtos;
@@ -59,7 +58,7 @@ public class LoginService(
                 to: user.Email!,
                 username: user.Username!,
                 otp: otpDetails.Value,
-                codeValidFor: $"{AuthConfig.OtpValidForMinutes} minutes"
+                otpValidFor: $"{AuthConfig.OtpValidForMinutes} minutes"
             );
 
             if (!emailResult.IsSuccess)
