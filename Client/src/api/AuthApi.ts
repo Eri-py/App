@@ -57,7 +57,7 @@ export const getUserDetails = () => {
   return apiClient.get("auth/get-user-details");
 };
 
-export const refreshToken = () => {
+export const getNewAccessToken = () => {
   return apiClient.get("auth/refresh-token");
 };
 
