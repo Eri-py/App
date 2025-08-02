@@ -6,8 +6,12 @@ import Autocomplete from "@mui/material/Autocomplete";
 
 import { SearchInput } from "./SearchInput";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import { testSearchHistory, testSearchResult } from "../testSearchResults";
-import { getSearchResults, type getSearchResultsResponse } from "@/api/HomeApi";
+import { testSearchHistory } from "../testSearchResults";
+import {
+  getSearchResult,
+  type getSearchResultRequest,
+  type getSearchResultsResponse,
+} from "@/api/HomeApi";
 import { type SearchOption, SearchGroup, SearchOptionItem } from "./SearchOptions";
 
 type SearchbarProps = {
@@ -25,20 +29,15 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
   };
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (data: string) => getSearchResults(data),
-    onSuccess: (response: AxiosResponse<getSearchResultsResponse>) => {
-      setSearchResult(response.data);
-    },
-    onError: (error) => {
-      console.log(error);
-      setSearchResult(testSearchResult);
-    },
+    mutationFn: (data: getSearchResultRequest) => getSearchResult(data),
+    onSuccess: (response: AxiosResponse<getSearchResultsResponse>) =>
+      setSearchResult(response.data),
   });
 
   useEffect(() => {
     if (debouncedSearchQuery.length > 0) {
       setSearchResult([]);
-      mutate(debouncedSearchQuery);
+      mutate({ query: debouncedSearchQuery });
     }
   }, [debouncedSearchQuery, mutate]);
 
