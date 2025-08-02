@@ -14,6 +14,6 @@ public interface ISearchService
     /// Compares query value against entries in hobbies and users database to get matching hobbies and usernames.
     /// </summary>
     /// <param name="query">String containing text being searched for.</param>
-    /// <returns>List containing <see cref="GetSearchResultDto"/> if matches are found else, an emtpy list.</returns>
+    /// <returns>List containing <see cref="GetSearchResultDto"/> if matches are found else, an empty list.</returns>
     public Task<Result<List<GetSearchResultDto>>> GetSearchResultAsync(string query);
 }
