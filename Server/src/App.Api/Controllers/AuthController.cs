@@ -85,16 +85,8 @@ namespace App.Api.Controllers
             if (!User.Identity!.IsAuthenticated)
                 return Unauthorized();
 
-            var userDto = new UserDto
-            {
-                Id = User.FindFirst(ClaimTypes.NameIdentifier)!.Value,
-                Username = User.Identity.Name!,
-                Email = User.FindFirst(ClaimTypes.Email)!.Value,
-                Firstname = User.FindFirst(ClaimTypes.GivenName)!.Value,
-                Lastname = User.FindFirst(ClaimTypes.Surname)!.Value,
-            };
-
-            return Ok(new GetUserResponse { IsAuthenticated = true, User = userDto });
+            var user = ApiHelper.GetUserDetails(User);
+            return Ok(new GetUserResponse { IsAuthenticated = true, User = user });
         }
 
         [HttpGet("refresh-token")]
@@ -118,10 +110,6 @@ namespace App.Api.Controllers
 
         private void SetAuthCookies(AuthResult tokens)
         {
-            // Clear any existing tokens first
-            Response.Cookies.Delete("accessToken");
-            Response.Cookies.Delete("__Secure-refreshToken");
-
             var accessTokenOptions = new CookieOptions
             {
                 HttpOnly = true,

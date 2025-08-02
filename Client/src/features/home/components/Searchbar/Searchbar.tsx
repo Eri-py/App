@@ -25,7 +25,7 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
   };
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (query: string) => getSearchResults(query),
+    mutationFn: (data: string) => getSearchResults(data),
     onSuccess: (response: AxiosResponse<getSearchResultsResponse>) => {
       setSearchResult(response.data);
     },
