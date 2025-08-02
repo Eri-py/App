@@ -4,6 +4,7 @@ using App.Api.Services.AuthServices.LoginServices;
 using App.Api.Services.AuthServices.RegistrationServices;
 using App.Api.Services.AuthServices.TokenServices;
 using App.Api.Services.EmailServices;
+using App.Api.Services.SearchService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -79,6 +80,9 @@ builder
             },
         };
     });
+
+//Search Service
+builder.Services.AddScoped<ISearchService, SearchService>();
 
 var app = builder.Build();
 

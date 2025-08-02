@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace App.Api.Dtos;
 
+/// <summary>
+/// Defines a transferable user. Stores non-sensitive information like the username, and name of user.
+/// </summary>
 public record class UserDto
 {
     [Required]

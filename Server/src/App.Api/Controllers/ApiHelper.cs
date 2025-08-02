@@ -1,11 +1,18 @@
-using System;
 using System.Security.Claims;
 using App.Api.Dtos;
 
 namespace App.Api.Controllers;
 
+/// <summary>
+/// Helper class containing static methods that are likely to be used throught the controller layer.
+/// </summary>
 public class ApiHelper
 {
+    /// <summary>
+    /// Extracts the user information from the Claims and stores it in a transferable user dto.
+    /// </summary>
+    /// <param name="user">Claim principals containing information about the user. See <see cref="ClaimsPrincipal"/></param>
+    /// <returns><see cref="UserDto"/> </returns>
     public static UserDto GetUserDetails(ClaimsPrincipal user)
     {
         return new UserDto
