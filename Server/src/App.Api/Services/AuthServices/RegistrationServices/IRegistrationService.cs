@@ -1,14 +1,6 @@
 using App.Api.Dtos;
 using App.Api.Results;
 
-/// <summary>
-/// Initiates the registration process by validating and storing initial user information.
-/// </summary>
-/// <param name="request">The registration request containing username and email. See <see cref="StartRegistrationRequest"/></param>
-/// <returns>Result<string></returns>
-/// <remarks>
-/// This first step validates the username/email availability and sends an OTP to the provided email.
-/// </remarks>
 namespace App.Api.Services.AuthServices.RegistrationServices;
 
 /// <summary>
