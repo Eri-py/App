@@ -4,7 +4,7 @@ using App.Api.Dtos;
 namespace App.Api.Controllers;
 
 /// <summary>
-/// Helper class containing static methods that are likely to be used throught the controller layer.
+/// Helper class containing static methods that are likely to be used throughout the controller layer.
 /// </summary>
 public class ApiHelper
 {

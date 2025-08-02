@@ -1,4 +1,3 @@
-using System;
 using App.Api.Dtos;
 using App.Api.Results;
 

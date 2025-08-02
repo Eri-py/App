@@ -1,5 +1,3 @@
-using System;
-
 namespace App.Api.Data.Entities;
 
 public class Hobbies
