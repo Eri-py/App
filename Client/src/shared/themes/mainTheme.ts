@@ -20,7 +20,7 @@ export const mainTheme = (isDarkMode: boolean) =>
         ? {
             background: {
               default: "#181818",
-              paper: "#171616ff",
+              paper: "#171616",
             },
           }
         : {
