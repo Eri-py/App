@@ -61,16 +61,11 @@ type AutoCompleteGroupProps = {
   children: ReactNode;
 };
 
-export const AutoCompleteGroup = ({
-  groupKey,
-  groupName,
-  inputValue,
-  children,
-}: AutoCompleteGroupProps) => {
+export const AutoCompleteGroup = ({ groupKey, groupName, children }: AutoCompleteGroupProps) => {
   return (
     <Box key={groupKey}>
       <Typography color="primary" fontSize={"0.85rem"} paddingInline={"1rem"}>
-        {inputValue.length === 0 ? `Recent ${groupName}` : groupName}
+        {groupName}
       </Typography>
       {children}
     </Box>

@@ -4,6 +4,7 @@ using App.Api.Results;
 using App.Api.Services.SearchService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.Api.Controllers
 {
@@ -32,6 +33,18 @@ namespace App.Api.Controllers
             return Ok(
                 $"Adding search history route.\n{user!.Firstname}\n{user.Lastname}\n{user.Email}"
             );
+        }
+
+        [HttpPost("update-search-history")]
+        public IActionResult UpdateSearchHistory()
+        {
+            var userHistory = context.Users.Include(u => u.Searches).ToList();
+            foreach (var entry in userHistory)
+            {
+                Console.WriteLine($"History: {entry}");
+            }
+
+            return Ok("Adding update endpoint");
         }
     }
 }

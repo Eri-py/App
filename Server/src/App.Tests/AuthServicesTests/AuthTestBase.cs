@@ -50,7 +50,7 @@ public abstract class AuthTestBase
 
     public class UserBuilder
     {
-        private readonly User _user = new()
+        private readonly UserEntity _user = new()
         {
             Id = Guid.NewGuid(),
             Username = "testuser",
@@ -72,7 +72,7 @@ public abstract class AuthTestBase
 
         public UserBuilder WithPassword(string password)
         {
-            var hasher = new PasswordHasher<User>();
+            var hasher = new PasswordHasher<UserEntity>();
             _user.PasswordHash = hasher.HashPassword(_user, password);
             return this;
         }
@@ -119,7 +119,7 @@ public abstract class AuthTestBase
         public UserBuilder WithRefreshToken(string tokenHash, DateTime? expiresAt = null)
         {
             _user.RefreshTokens.Add(
-                new RefreshToken
+                new RefreshTokenEntity
                 {
                     TokenHash = tokenHash,
                     TokenExpiresAt = expiresAt ?? DateTime.UtcNow.AddDays(7),
@@ -129,7 +129,7 @@ public abstract class AuthTestBase
             return this;
         }
 
-        public User Build() => _user;
+        public UserEntity Build() => _user;
     }
 
     #endregion
@@ -161,7 +161,7 @@ public abstract class AuthTestBase
         };
 
         TokenServiceMock
-            .Setup(x => x.CreateAccessToken(It.IsAny<User>(), validForMinutes))
+            .Setup(x => x.CreateAccessToken(It.IsAny<UserEntity>(), validForMinutes))
             .Returns(tokenDetails);
 
         return tokenDetails;
@@ -220,7 +220,7 @@ public abstract class AuthTestBase
 
     #region Database Helpers
 
-    protected async Task<User> AddUserToDatabase(User user)
+    protected async Task<UserEntity> AddUserToDatabase(UserEntity user)
     {
         Context.Users.Add(user);
         await Context.SaveChangesAsync();
@@ -228,7 +228,7 @@ public abstract class AuthTestBase
         return user;
     }
 
-    protected async Task<User?> GetUserById(Guid userId, bool includeRefreshTokens = false)
+    protected async Task<UserEntity?> GetUserById(Guid userId, bool includeRefreshTokens = false)
     {
         Context.ChangeTracker.Clear();
         var query = Context.Users.AsQueryable();
@@ -249,7 +249,7 @@ public abstract class AuthTestBase
 
     #region Assertion Helpers
 
-    protected static void AssertUserEquals(User expected, User actual)
+    protected static void AssertUserEquals(UserEntity expected, UserEntity actual)
     {
         Assert.Multiple(() =>
         {
