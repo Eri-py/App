@@ -4,16 +4,20 @@ import { useMutation } from "@tanstack/react-query";
 
 import Autocomplete from "@mui/material/Autocomplete";
 
-import { SearchInput } from "./SearchInput";
-import { useDebounce } from "@/shared/hooks/useDebounce";
-import { testSearchHistory } from "../testSearchResults";
 import {
   getSearchResult,
   type getSearchResultRequest,
   type getSearchResultsResponse,
 } from "@/api/HomeApi";
-import { type SearchOption, SearchGroup, SearchOptionItem } from "./SearchOptions";
+import {
+  type SearchOption,
+  AutoCompleteGroup,
+  AutoCompleteOptionItem,
+} from "./AutoCompleteComponents";
 import { useNavigate } from "@tanstack/react-router";
+import { useDebounce } from "@/shared/hooks/useDebounce";
+import { SearchInput } from "../components/SearchInput";
+import { testSearchHistory } from "../components/testSearchResults";
 
 type SearchbarProps = {
   autoFocus?: boolean;
@@ -62,19 +66,21 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
       }}
       groupBy={(option) => option.category}
       renderGroup={(params) => (
-        <SearchGroup
+        <AutoCompleteGroup
           groupKey={params.key}
           groupName={params.group}
           inputValue={debouncedSearchQuery}
         >
           {params.children}
-        </SearchGroup>
+        </AutoCompleteGroup>
       )}
       renderOption={(props, option) => {
         if (debouncedSearchQuery.length > 0) {
-          return <SearchOptionItem props={props} option={option} />;
+          return <AutoCompleteOptionItem props={props} option={option} />;
         }
-        return <SearchOptionItem props={props} option={option} onRemove={handleOptionRemove} />;
+        return (
+          <AutoCompleteOptionItem props={props} option={option} onRemove={handleOptionRemove} />
+        );
       }}
       renderInput={(params) => (
         <form onSubmit={handleSubmit}>

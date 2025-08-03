@@ -12,13 +12,17 @@ export type SearchOption = {
   category: string;
 };
 
-type SearchOptionItemProps = {
+type AutoCompleteOptionItemProps = {
   props: HTMLAttributes<HTMLLIElement> & { key: Key };
   option: SearchOption;
   onRemove?: (option: SearchOption) => void;
 };
 
-export const SearchOptionItem = ({ props, option, onRemove }: SearchOptionItemProps) => {
+export const AutoCompleteOptionItem = ({
+  props,
+  option,
+  onRemove,
+}: AutoCompleteOptionItemProps) => {
   return (
     <Stack
       {...props}
@@ -50,14 +54,19 @@ export const SearchOptionItem = ({ props, option, onRemove }: SearchOptionItemPr
   );
 };
 
-type SearchGroupProps = {
+type AutoCompleteGroupProps = {
   groupKey: number;
   groupName: string;
   inputValue: string;
   children: ReactNode;
 };
 
-export const SearchGroup = ({ groupKey, groupName, inputValue, children }: SearchGroupProps) => {
+export const AutoCompleteGroup = ({
+  groupKey,
+  groupName,
+  inputValue,
+  children,
+}: AutoCompleteGroupProps) => {
   return (
     <Box key={groupKey}>
       <Typography color="primary" fontSize={"0.85rem"} paddingInline={"1rem"}>

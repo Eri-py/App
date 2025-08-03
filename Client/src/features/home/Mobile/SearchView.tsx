@@ -2,7 +2,7 @@ import IconButton from "@mui/material/IconButton";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import { SearchInput } from "./Searchbar/SearchInput";
+import { SearchInput } from "../components/SearchInput";
 
 type MobileSearchModeProps = { onBack: () => void };
 

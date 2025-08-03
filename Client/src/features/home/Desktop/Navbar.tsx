@@ -10,7 +10,7 @@ import { styled } from "@mui/material/styles";
 import Badge, { badgeClasses } from "@mui/material/Badge";
 import MenuIcon from "@mui/icons-material/Menu";
 
-import { Searchbar } from "../Searchbar/Searchbar";
+import { Searchbar } from "./Searchbar";
 import { LogoWithName } from "@/shared/components/Logo";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { useNavigate } from "@tanstack/react-router";

@@ -1,14 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
-import { MobileSearchMode } from "@/features/home/components/MobileSearchMode";
-import { DesktopNavbar } from "@/features/home/components/Navbar/DesktopNavbar";
-import { MobileNavbar } from "@/features/home/components/Navbar/MobileNavbar";
-import { useBreakpoint } from "@/shared/hooks/useBreakpoint";
-import { Sidebar } from "@/features/home/components/Sidebar";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+
+import { DesktopNavbar } from "@/features/home/Desktop/Navbar";
+import { Sidebar } from "@/features/home/Desktop/Sidebar";
+import { MobileNavbar } from "@/features/home/Mobile/Navbar";
+import { MobileSearchMode } from "@/features/home/Mobile/SearchView";
+import { useBreakpoint } from "@/shared/hooks/useBreakpoint";
 
 export const Route = createFileRoute("/")({
   component: Home,
