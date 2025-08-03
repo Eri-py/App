@@ -8,6 +8,20 @@ namespace App.Api.Services.SearchService;
 
 public class SearchService(AppDbContext context) : ISearchService
 {
+    public async Task<Result<GetSearchHistoryResponse>> GetSearchHistoryAsync(Guid userId)
+    {
+        var userSearchTerms = await context
+            .Searches.Where(s => s.UserId == userId)
+            .OrderByDescending(s => s.SearchAmount)
+            .Select(s => s.SearchTerm)
+            .Take(10)
+            .ToListAsync();
+
+        return Result<GetSearchHistoryResponse>.Success(
+            new GetSearchHistoryResponse { Result = userSearchTerms }
+        );
+    }
+
     public async Task<Result<GetSearchResultResponse>> GetSearchResultAsync(string query)
     {
         // Check if query is empty.

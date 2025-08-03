@@ -42,3 +42,8 @@ public record class UpdateSearchHistoryRequest
     [Required]
     public required List<string> SearchTerms { get; set; }
 }
+
+public record class GetSearchHistoryResponse
+{
+    public required List<string> Result { get; set; }
+}

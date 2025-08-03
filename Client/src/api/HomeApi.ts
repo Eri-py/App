@@ -10,6 +10,10 @@ export const getSearchResult = (data: getSearchResultRequest) => {
   return apiClient.post("home/search-results", data);
 };
 
+export const getSearchHistory = () => {
+  return apiClient.get("home/get-search-history");
+};
+
 export const updateSearchHistory = (data: updateSearchHistoryRequest) => {
   return apiClient.post("home/update-search-history", data);
 };

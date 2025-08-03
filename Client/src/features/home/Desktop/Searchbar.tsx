@@ -1,10 +1,11 @@
 import type { AxiosResponse } from "axios";
 import { useState, useEffect, type FormEvent } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import Autocomplete from "@mui/material/Autocomplete";
 
 import {
+  getSearchHistory,
   getSearchResult,
   updateSearchHistory,
   type getSearchResultRequest,
@@ -18,7 +19,6 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { SearchInput } from "../components/SearchInput";
-import { testSearchHistory } from "../components/testSearchResults";
 
 type SearchbarProps = {
   autoFocus?: boolean;
@@ -30,6 +30,20 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
   const [searchResult, setSearchResult] = useState<SearchOption[]>([]);
   const debouncedSearchQuery = useDebounce(inputValue);
   const navigate = useNavigate();
+
+  // Get user search history on page load.
+  const { data } = useQuery({
+    queryKey: ["userSearches"],
+    queryFn: getSearchHistory,
+  });
+  useEffect(() => {
+    const dataAsSearchOptions = data?.data.result.map((term: string) => ({
+      name: term,
+      category: "Recent searches",
+    }));
+
+    setSearchHistory(dataAsSearchOptions);
+  }, [data]);
 
   const handleOptionRemove = (optionToRemove: SearchOption) => {
     setSearchHistory((prevOptions) => prevOptions.filter((item) => item !== optionToRemove));
@@ -49,7 +63,8 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
     navigate({ to: "/search", search: { q: query } });
 
     // Update the user search history based off the state of searchHistory
-    updateSearchHistory({ searchTerms: [...testSearchHistory, query] });
+    const searchTerms = searchHistory.map((term) => term.name);
+    updateSearchHistory({ searchTerms: [...searchTerms, query] });
   };
 
   useEffect(() => {

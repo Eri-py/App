@@ -22,4 +22,12 @@ public interface ISearchService
     /// <param name="query"></param>
     /// <returns></returns>
     public Task<Result> UpdateSearchHistoryAsync(UpdateSearchHistoryRequest request, Guid userId);
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    public Task<Result<GetSearchHistoryResponse>> GetSearchHistoryAsync(Guid userId);
 }
