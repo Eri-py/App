@@ -8,17 +8,18 @@ type SearchInputProps = {
   params?: AutocompleteRenderInputParams;
   autoFocus?: boolean;
   isPending: boolean;
+  flex?: number;
 };
 
-export const SearchInput = ({ params, autoFocus, isPending }: SearchInputProps) => {
+export const SearchInput = ({ params, autoFocus, isPending, flex }: SearchInputProps) => {
   return (
     <TextField
       {...params}
-      component="form"
       variant="outlined"
       name="search"
       placeholder="Search..."
       autoFocus={autoFocus ?? false}
+      sx={{ flex: flex }}
       slotProps={{
         input: {
           ...params?.InputProps,

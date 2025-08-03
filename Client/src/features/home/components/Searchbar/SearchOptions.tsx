@@ -38,8 +38,8 @@ export const SearchOptionItem = ({ props, option, onRemove }: SearchOptionItemPr
         <IconButton
           disableRipple
           size="small"
-          onClick={(event) => {
-            event.stopPropagation();
+          onClick={(e) => {
+            e.stopPropagation();
             onRemove(option);
           }}
         >
