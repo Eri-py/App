@@ -1,12 +1,8 @@
-using System.Threading.Tasks;
-using App.Api.Data;
-using App.Api.Data.Entities;
 using App.Api.Dtos;
 using App.Api.Results;
 using App.Api.Services.SearchService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace App.Api.Controllers
 {
@@ -14,13 +10,13 @@ namespace App.Api.Controllers
     [ApiController]
     public class HomeController(ISearchService searchService) : ControllerBase
     {
-        [HttpPost("search-results")]
-        public async Task<ActionResult<GetSearchResultResponse>> GetSearchResult(
-            [FromBody] GetSearchResultRequest request
+        [HttpPost("search-suggestions")]
+        public async Task<ActionResult<GetSearchSuggestionsResponse>> GetSearchSuggestions(
+            [FromBody] GetSearchSuggestionsRequest request
         )
         {
             var query = request.Query.ToLower();
-            var result = await searchService.GetSearchResultAsync(query);
+            var result = await searchService.GetSearchSuggestionsAsync(query);
 
             return ResultMapper.Map(result);
         }
@@ -35,14 +31,26 @@ namespace App.Api.Controllers
             return ResultMapper.Map(result);
         }
 
-        [HttpPost("update-search-history")]
+        [HttpPost("add-search-term")]
         [Authorize]
-        public async Task<IActionResult> UpdateSearchHistory(
-            [FromBody] UpdateSearchHistoryRequest request
+        public async Task<IActionResult> AddOrUpdateSearchTerm(
+            [FromBody] AddOrUpdateSearchTermRequest request
         )
         {
             var userId = Guid.Parse(ApiHelper.GetUserDetails(User).Id);
-            var result = await searchService.UpdateSearchHistoryAsync(request, userId);
+            var result = await searchService.AddOrUpdateSearchTermAsync(request, userId);
+
+            return ResultMapper.Map(result);
+        }
+
+        [HttpPost("remove-search-terms")]
+        [Authorize]
+        public async Task<IActionResult> RemoveSearchTerms(
+            [FromBody] RemoveSearchTermsRequest request
+        )
+        {
+            var userId = Guid.Parse(ApiHelper.GetUserDetails(User).Id);
+            var result = await searchService.RemoveSearchTermsAsync(request, userId);
 
             return ResultMapper.Map(result);
         }

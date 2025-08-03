@@ -22,75 +22,90 @@ public class SearchService(AppDbContext context) : ISearchService
         );
     }
 
-    public async Task<Result<GetSearchResultResponse>> GetSearchResultAsync(string query)
+    public async Task<Result<GetSearchSuggestionsResponse>> GetSearchSuggestionsAsync(string query)
     {
-        // Check if query is empty.
         if (string.IsNullOrWhiteSpace(query))
-            return Result<GetSearchResultResponse>.Success(
-                new GetSearchResultResponse { Result = [] }
+            return Result<GetSearchSuggestionsResponse>.Success(
+                new GetSearchSuggestionsResponse { Result = [] }
             );
 
         query = query.Trim();
-        List<GetSearchResultDto> results = [];
+        List<GetSearchSuggestionDto> results = [];
 
-        // get all hobbies matching the query.
+        // get all hobbies matching the query
         var hobbies = await context
             .Hobbies.Where(h => h.CategoryName.Contains(query))
-            .Select(h => new GetSearchResultDto { Name = h.CategoryName, Category = "hobbies" })
+            .Select(h => new GetSearchSuggestionDto { Name = h.CategoryName, Category = "hobbies" })
             .ToListAsync();
 
-        // get all users matching the query.
+        // get all users matching the query
         var users = await context
             .Users.Where(u => u.Username.Contains(query))
-            .Select(u => new GetSearchResultDto { Name = u.Username, Category = "users" })
+            .Select(u => new GetSearchSuggestionDto { Name = u.Username, Category = "users" })
             .ToListAsync();
 
         results.AddRange(hobbies);
         results.AddRange(users);
 
-        return Result<GetSearchResultResponse>.Success(
-            new GetSearchResultResponse { Result = results }
+        return Result<GetSearchSuggestionsResponse>.Success(
+            new GetSearchSuggestionsResponse { Result = results }
         );
     }
 
-    public async Task<Result> UpdateSearchHistoryAsync(
-        UpdateSearchHistoryRequest request,
+    public async Task<Result> AddOrUpdateSearchTermAsync(
+        AddOrUpdateSearchTermRequest request,
         Guid userId
     )
     {
-        // Get all existing searches for user
-        var existingSearches = await context.Searches.Where(s => s.UserId == userId).ToListAsync();
-
-        // Check if there's content to delete or update
-        if (existingSearches.Count != 0)
+        if (string.IsNullOrWhiteSpace(request.SearchTerm))
         {
-            // Delete searches not in request
-            var toDelete = existingSearches.Where(s => !request.SearchTerms.Contains(s.SearchTerm));
-            context.Searches.RemoveRange(toDelete);
-
-            // Update existing searches that are in request
-            var toUpdate = existingSearches.Where(s => request.SearchTerms.Contains(s.SearchTerm));
-            foreach (var entry in toUpdate)
-            {
-                entry.SearchAmount++;
-                entry.SearchedAt = DateTime.UtcNow;
-            }
+            return Result.BadRequest("Search term cannot be empty");
         }
 
-        // Add new search terms
-        var existingTerms = existingSearches.Select(s => s.SearchTerm).ToList();
-        var toAdd = request
-            .SearchTerms.Where(term => !existingTerms.Contains(term))
-            .Select(term => new SearchEntity
+        var existingSearch = await context.Searches.FirstOrDefaultAsync(s =>
+            s.UserId == userId && s.SearchTerm == request.SearchTerm
+        );
+
+        if (existingSearch != null)
+        {
+            // Increment search count and update timestamp
+            existingSearch.SearchAmount++;
+            existingSearch.SearchedAt = DateTime.UtcNow;
+        }
+        else
+        {
+            // Add new search term
+            var newSearch = new SearchEntity
             {
                 UserId = userId,
-                SearchTerm = term,
+                SearchTerm = request.SearchTerm,
                 SearchAmount = 1,
                 SearchedAt = DateTime.UtcNow,
-            });
-        ;
+            };
+            await context.Searches.AddAsync(newSearch);
+        }
 
-        await context.Searches.AddRangeAsync(toAdd);
+        await context.SaveChangesAsync();
+        return Result.NoContent();
+    }
+
+    public async Task<Result> RemoveSearchTermsAsync(RemoveSearchTermsRequest request, Guid userId)
+    {
+        if (request.SearchTerms == null || request.SearchTerms.Count == 0)
+        {
+            return Result.BadRequest("No search terms provided for removal");
+        }
+
+        var searchesToRemove = await context
+            .Searches.Where(s => s.UserId == userId && request.SearchTerms.Contains(s.SearchTerm))
+            .ToListAsync();
+
+        if (searchesToRemove.Count == 0)
+        {
+            return Result.NotFound("No matching search terms found for this user");
+        }
+
+        context.Searches.RemoveRange(searchesToRemove);
         await context.SaveChangesAsync();
 
         return Result.NoContent();

@@ -4,30 +4,43 @@ using App.Api.Results;
 namespace App.Api.Services.SearchService;
 
 /// <summary>
-/// Provides services for handling searching functionality including getting search results, and
-/// updating user search history.
+/// Provides services for handling searching functionality including getting search suggestions,
+/// managing user search history, and retrieving search history.
 /// </summary>
 public interface ISearchService
 {
     /// <summary>
-    /// Compares query value against entries in hobbies and users database to get matching hobbies and usernames.
+    /// Compares query value against entries in hobbies and users database to get matching hobbies and usernames
+    /// for autocomplete/suggestion purposes.
     /// </summary>
     /// <param name="query">String containing text being searched for.</param>
-    /// <returns><see cref="GetSearchResultResponse"/> containing matching results if found, else an empty list.</returns>
-    public Task<Result<GetSearchResultResponse>> GetSearchResultAsync(string query);
+    /// <returns><see cref="GetSearchSuggestionsResponse"/> containing matching suggestions if found, else an empty list.</returns>
+    public Task<Result<GetSearchSuggestionsResponse>> GetSearchSuggestionsAsync(string query);
 
     /// <summary>
-    /// Updates the user's search history after a search action.
+    /// Retrieves the user's search history, ordered by frequency of searches (most searched first).
+    /// Returns up to 10 most frequently searched terms.
     /// </summary>
-    /// <param name="query"></param>
-    /// <returns></returns>
-    public Task<Result> UpdateSearchHistoryAsync(UpdateSearchHistoryRequest request, Guid userId);
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="request"></param>
-    /// <param name="userId"></param>
-    /// <returns></returns>
+    /// <param name="userId">The unique identifier of the user whose search history is being retrieved.</param>
+    /// <returns><see cref="GetSearchHistoryResponse"/> containing the user's search history terms.</returns>
     public Task<Result<GetSearchHistoryResponse>> GetSearchHistoryAsync(Guid userId);
+
+    /// <summary>
+    /// Adds a single search term to the user's search history or increments the search count if it already exists.
+    /// </summary>
+    /// <param name="request">Contains the search term to add.</param>
+    /// <param name="userId">The unique identifier of the user.</param>
+    /// <returns>A result indicating success or failure of the operation.</returns>
+    public Task<Result> AddOrUpdateSearchTermAsync(
+        AddOrUpdateSearchTermRequest request,
+        Guid userId
+    );
+
+    /// <summary>
+    /// Removes specified search terms from the user's search history.
+    /// </summary>
+    /// <param name="request">Contains the list of search terms to remove.</param>
+    /// <param name="userId">The unique identifier of the user.</param>
+    /// <returns>A result indicating success or failure of the operation.</returns>
+    public Task<Result> RemoveSearchTermsAsync(RemoveSearchTermsRequest request, Guid userId);
 }

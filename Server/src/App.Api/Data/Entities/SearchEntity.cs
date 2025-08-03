@@ -12,6 +12,6 @@ public class SearchEntity
     [ForeignKey("User")]
     public required Guid UserId { get; set; }
 
-    //Navigation Property
+    // Navigation property
     public UserEntity? User { get; set; }
 }

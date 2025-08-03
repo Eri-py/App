@@ -1,19 +1,25 @@
 import { apiClient } from "./Client";
 
-export type getSearchResultsResponse = { result: { name: string; category: string }[] };
+export type getSearchSuggestionsResponse = { result: { name: string; category: string }[] };
 
-export type getSearchResultRequest = { query: string };
+export type getSearchSuggestionsRequest = { query: string };
 
-export type updateSearchHistoryRequest = { searchTerms: string[] };
+export type addOrUpdateSearchTermRequest = { searchTerm: string };
 
-export const getSearchResult = (data: getSearchResultRequest) => {
-  return apiClient.post("home/search-results", data);
+export type removeSearchTermsRequest = { searchTerms: string[] };
+
+export const getSearchSuggestions = (data: getSearchSuggestionsRequest) => {
+  return apiClient.post("home/search-suggestions", data);
 };
 
 export const getSearchHistory = () => {
   return apiClient.get("home/get-search-history");
 };
 
-export const updateSearchHistory = (data: updateSearchHistoryRequest) => {
-  return apiClient.post("home/update-search-history", data);
+export const addOrUpdateSearchTerm = (data: addOrUpdateSearchTermRequest) => {
+  return apiClient.post("home/add-search-term", data);
+};
+
+export const removeSearchTerms = (data: removeSearchTermsRequest) => {
+  return apiClient.post("home/remove-search-terms", data);
 };

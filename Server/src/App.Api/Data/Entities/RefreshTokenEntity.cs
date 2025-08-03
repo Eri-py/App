@@ -11,6 +11,6 @@ public class RefreshTokenEntity
     [ForeignKey("User")]
     public required Guid UserId { get; set; }
 
-    //Navigation property
+    // Navigation property
     public UserEntity? User { get; set; }
 }
