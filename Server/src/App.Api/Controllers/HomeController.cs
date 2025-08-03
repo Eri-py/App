@@ -1,9 +1,11 @@
 using App.Api.Data;
+using App.Api.Data.Entities;
 using App.Api.Dtos;
 using App.Api.Results;
 using App.Api.Services.SearchService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.Api.Controllers
 {
@@ -22,7 +24,7 @@ namespace App.Api.Controllers
             return ResultMapper.Map(result);
         }
 
-        [HttpGet("search-history")]
+        [HttpGet("get-search-history")]
         [Authorize]
         public IActionResult GetSearchHistory()
         {
@@ -35,14 +37,15 @@ namespace App.Api.Controllers
         }
 
         [HttpPost("update-search-history")]
-        public IActionResult UpdateSearchHistory([FromBody] SearchHistoryRequest request)
+        [Authorize]
+        public async Task<IActionResult> UpdateSearchHistory(
+            [FromBody] UpdateSearchHistoryRequest request
+        )
         {
-            foreach (var entry in request.SearchTerms)
-            {
-                Console.WriteLine(entry);
-            }
+            var userId = Guid.Parse(ApiHelper.GetUserDetails(User).Id);
+            var result = await searchService.UpdateSearchHistoryAsync(request, userId);
 
-            return Ok("Adding update endpoint");
+            return ResultMapper.Map(result);
         }
     }
 }

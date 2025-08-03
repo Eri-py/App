@@ -1,4 +1,5 @@
 using App.Api.Data;
+using App.Api.Data.Entities;
 using App.Api.Dtos;
 using App.Api.Results;
 using Microsoft.EntityFrameworkCore;
@@ -36,5 +37,48 @@ public class SearchService(AppDbContext context) : ISearchService
         return Result<GetSearchResultResponse>.Success(
             new GetSearchResultResponse { Result = results }
         );
+    }
+
+    public async Task<Result> UpdateSearchHistoryAsync(
+        UpdateSearchHistoryRequest request,
+        Guid userId
+    )
+    {
+        // Get all existing searches for user
+        var existingSearches = await context.Searches.Where(s => s.UserId == userId).ToListAsync();
+
+        // Check if there's content to delete or update
+        if (existingSearches.Count != 0)
+        {
+            // Delete searches not in request
+            var toDelete = existingSearches.Where(s => !request.SearchTerms.Contains(s.SearchTerm));
+            context.Searches.RemoveRange(toDelete);
+
+            // Update existing searches that are in request
+            var toUpdate = existingSearches.Where(s => request.SearchTerms.Contains(s.SearchTerm));
+            foreach (var entry in toUpdate)
+            {
+                entry.SearchAmount++;
+                entry.SearchedAt = DateTime.UtcNow;
+            }
+        }
+
+        // Add new search terms
+        var existingTerms = existingSearches.Select(s => s.SearchTerm).ToList();
+        var toAdd = request
+            .SearchTerms.Where(term => !existingTerms.Contains(term))
+            .Select(term => new SearchEntity
+            {
+                UserId = userId,
+                SearchTerm = term,
+                SearchAmount = 1,
+                SearchedAt = DateTime.UtcNow,
+            });
+        ;
+
+        await context.Searches.AddRangeAsync(toAdd);
+        await context.SaveChangesAsync();
+
+        return Result.NoContent();
     }
 }

@@ -44,8 +44,12 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Redirect to search results page.
     const query = new FormData(e.currentTarget).get("search") as string;
     navigate({ to: "/search", search: { q: query } });
+
+    // Update the user search history based off the state of searchHistory
+    updateSearchHistory({ searchTerms: [...testSearchHistory, query] });
   };
 
   useEffect(() => {
@@ -66,9 +70,7 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
           if (typeof option === "string") return option;
           return option.name;
         }}
-        groupBy={(option) =>
-          debouncedSearchQuery.length > 0 ? option.category : "Recent Searches"
-        }
+        groupBy={(option) => option.category}
         renderGroup={(params) => (
           <AutoCompleteGroup
             groupKey={params.key}
@@ -121,9 +123,6 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
           },
         }}
       />
-      <button onClick={() => updateSearchHistory({ searchTerms: testSearchHistory })}>
-        Click me!
-      </button>
     </>
   );
 }

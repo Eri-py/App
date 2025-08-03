@@ -43,7 +43,7 @@ public class MailtrapEmailService(IConfiguration configuration) : IEmailService
         }
         catch (Exception)
         {
-            return Result.InternalServerError("Error sending email");
+            return Result.InternalServerError(Messages.UnexpectedErrorMessage);
         }
     }
 

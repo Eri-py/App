@@ -36,7 +36,7 @@ public record class GetSearchResultResponse
 /// <summary>
 /// Defines the shape of data expected from the web client when updating search history.
 /// </summary>
-public record class SearchHistoryRequest
+public record class UpdateSearchHistoryRequest
 {
     /// <summary>List of search terms to add to user's search history</summary>
     [Required]
