@@ -13,7 +13,7 @@ public interface ITokenService
 {
     public TokenDetails CreateOtp(int otpValidForMinutes);
     public Task<Result<string>> ResendOtpAsync(string identifier);
-    public TokenDetails CreateAccessToken(User user, int tokenValidFor);
+    public TokenDetails CreateAccessToken(UserEntity user, int tokenValidFor);
     public TokenDetails CreateRefreshToken(int tokenValidForDays);
     public Task<Result<AuthResult>> VerifyRefreshTokenAsync(string refreshToken);
     public string HashToken(string token);

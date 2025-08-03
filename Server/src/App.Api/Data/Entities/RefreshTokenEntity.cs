@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace App.Api.Data.Entities;
 
-public class RefreshToken
+public class RefreshTokenEntity
 {
     public Guid Id { get; set; }
     public required string TokenHash { get; set; }
@@ -10,5 +10,7 @@ public class RefreshToken
 
     [ForeignKey("User")]
     public required Guid UserId { get; set; }
-    public User? User { get; set; }
+
+    // Navigation property
+    public UserEntity? User { get; set; }
 }

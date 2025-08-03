@@ -1,6 +1,6 @@
 namespace App.Api.Data.Entities;
 
-public class User
+public class UserEntity
 {
     public Guid Id { get; set; }
     public required string Username { get; set; }
@@ -12,5 +12,8 @@ public class User
     public string? Lastname { get; set; }
     public DateOnly? DateOfBirth { get; set; }
     public DateTime? CreatedAt { get; set; }
-    public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
+
+    // Navigation properties
+    public ICollection<RefreshTokenEntity> RefreshTokens { get; set; } = [];
+    public ICollection<SearchEntity> Searches { get; set; } = [];
 }

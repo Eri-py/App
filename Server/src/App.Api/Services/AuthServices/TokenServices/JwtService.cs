@@ -24,7 +24,7 @@ public class JwtService(
         return new TokenDetails { Value = token, ExpiresAt = expiresAt };
     }
 
-    public TokenDetails CreateAccessToken(User user, int tokenValidForMinutes)
+    public TokenDetails CreateAccessToken(UserEntity user, int tokenValidForMinutes)
     {
         var claims = new List<Claim>
         {

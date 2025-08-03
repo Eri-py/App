@@ -43,7 +43,7 @@ public class RegistrationService(
             }
             else
             {
-                var newUser = new User
+                var newUser = new UserEntity
                 {
                     Username = username,
                     Email = email,
@@ -106,7 +106,7 @@ public class RegistrationService(
             return Result.NotFound("User not found");
 
         // Update user
-        user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
+        user.PasswordHash = new PasswordHasher<UserEntity>().HashPassword(user, request.Password);
         user.Firstname = request.Firstname;
         user.Lastname = request.Lastname;
         user.DateOfBirth = DateOnly.Parse(request.DateOfBirth);
@@ -117,7 +117,7 @@ public class RegistrationService(
         );
 
         // Add token to database
-        var refreshTokenEntry = new RefreshToken
+        var refreshTokenEntry = new RefreshTokenEntity
         {
             TokenHash = jwtService.HashToken(refreshTokenDetails.Value),
             TokenExpiresAt = refreshTokenDetails.ExpiresAt,

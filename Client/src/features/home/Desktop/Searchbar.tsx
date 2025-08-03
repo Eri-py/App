@@ -1,62 +1,37 @@
-import type { AxiosResponse } from "axios";
-import { useState, useEffect, type FormEvent } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { type FormEvent } from "react";
 
 import Autocomplete from "@mui/material/Autocomplete";
 
-import {
-  getSearchResult,
-  type getSearchResultRequest,
-  type getSearchResultsResponse,
-} from "@/api/HomeApi";
-import {
-  type SearchOption,
-  AutoCompleteGroup,
-  AutoCompleteOptionItem,
-} from "./AutoCompleteComponents";
-import { useNavigate } from "@tanstack/react-router";
-import { useDebounce } from "@/shared/hooks/useDebounce";
+import { AutoCompleteGroup, AutoCompleteOptionItem } from "./AutoCompleteComponents";
 import { SearchInput } from "../components/SearchInput";
-import { testSearchHistory } from "../components/testSearchResults";
+import { useSearch } from "../hooks/useSearch";
 
 type SearchbarProps = {
   autoFocus?: boolean;
 };
 
 export function Searchbar({ autoFocus }: SearchbarProps) {
-  const [inputValue, setInputValue] = useState<string>("");
-  const [searchHistory, setSearchHistory] = useState<SearchOption[]>(testSearchHistory);
-  const [searchResult, setSearchResult] = useState<SearchOption[]>([]);
-  const debouncedSearchQuery = useDebounce(inputValue);
-  const navigate = useNavigate();
-
-  const handleOptionRemove = (optionToRemove: SearchOption) => {
-    setSearchHistory((prevOptions) => prevOptions.filter((item) => item !== optionToRemove));
-  };
-
-  const { mutate, isPending } = useMutation({
-    mutationFn: (data: getSearchResultRequest) => getSearchResult(data),
-    onSuccess: (response: AxiosResponse<getSearchResultsResponse>) =>
-      setSearchResult(response.data),
-  });
+  const {
+    inputValue,
+    setInputValue,
+    searchHistory,
+    searchSuggestions,
+    isLoading,
+    handleRemoveSearchTerm,
+    handleSearch,
+    debouncedSearchQuery,
+  } = useSearch();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const query = new FormData(e.currentTarget).get("search") as string;
-    navigate({ to: "/search", search: { q: query } });
+    handleSearch(query);
   };
-
-  useEffect(() => {
-    if (debouncedSearchQuery.length > 0) {
-      mutate({ query: debouncedSearchQuery });
-    }
-  }, [debouncedSearchQuery, mutate]);
 
   return (
     <Autocomplete
       freeSolo
-      options={debouncedSearchQuery.length > 0 ? searchResult : searchHistory}
+      options={debouncedSearchQuery.length > 0 ? searchSuggestions : searchHistory}
       filterOptions={(options) => options}
       inputValue={inputValue}
       onInputChange={(_, newInputValue) => setInputValue(newInputValue)}
@@ -79,12 +54,12 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
           return <AutoCompleteOptionItem props={props} option={option} />;
         }
         return (
-          <AutoCompleteOptionItem props={props} option={option} onRemove={handleOptionRemove} />
+          <AutoCompleteOptionItem props={props} option={option} onRemove={handleRemoveSearchTerm} />
         );
       }}
       renderInput={(params) => (
         <form onSubmit={handleSubmit}>
-          <SearchInput params={params} autoFocus={autoFocus} isPending={isPending} />
+          <SearchInput params={params} autoFocus={autoFocus} isPending={isLoading} />
         </form>
       )}
       sx={{ flex: 1, maxWidth: "31rem" }}
@@ -97,6 +72,7 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
           },
         },
         popper: {
+          placement: "bottom-end",
           modifiers: [
             {
               name: "offset",

@@ -35,7 +35,7 @@ public class LoginService(
             return Result.BadRequest(_incompleteRegistrationMessage);
 
         // Verify password
-        var verifyPasswordResult = new PasswordHasher<User>().VerifyHashedPassword(
+        var verifyPasswordResult = new PasswordHasher<UserEntity>().VerifyHashedPassword(
             user,
             user.PasswordHash!,
             password
@@ -104,7 +104,7 @@ public class LoginService(
             AuthConfig.RefreshTokenValidForDays
         );
         // Add token to database
-        var refreshTokenEntry = new RefreshToken
+        var refreshTokenEntry = new RefreshTokenEntity
         {
             TokenHash = jwtService.HashToken(refreshTokenDetails.Value),
             TokenExpiresAt = refreshTokenDetails.ExpiresAt,
