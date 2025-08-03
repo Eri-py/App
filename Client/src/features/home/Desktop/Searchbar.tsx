@@ -1,18 +1,23 @@
 import type { AxiosResponse } from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useMutation } from "@tanstack/react-query";
 
 import Autocomplete from "@mui/material/Autocomplete";
 
-import { SearchInput } from "./SearchInput";
-import { useDebounce } from "@/shared/hooks/useDebounce";
-import { testSearchHistory } from "../testSearchResults";
 import {
   getSearchResult,
   type getSearchResultRequest,
   type getSearchResultsResponse,
 } from "@/api/HomeApi";
-import { type SearchOption, SearchGroup, SearchOptionItem } from "./SearchOptions";
+import {
+  type SearchOption,
+  AutoCompleteGroup,
+  AutoCompleteOptionItem,
+} from "./AutoCompleteComponents";
+import { useNavigate } from "@tanstack/react-router";
+import { useDebounce } from "@/shared/hooks/useDebounce";
+import { SearchInput } from "../components/SearchInput";
+import { testSearchHistory } from "../components/testSearchResults";
 
 type SearchbarProps = {
   autoFocus?: boolean;
@@ -23,6 +28,7 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
   const [searchHistory, setSearchHistory] = useState<SearchOption[]>(testSearchHistory);
   const [searchResult, setSearchResult] = useState<SearchOption[]>([]);
   const debouncedSearchQuery = useDebounce(inputValue);
+  const navigate = useNavigate();
 
   const handleOptionRemove = (optionToRemove: SearchOption) => {
     setSearchHistory((prevOptions) => prevOptions.filter((item) => item !== optionToRemove));
@@ -34,9 +40,15 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
       setSearchResult(response.data),
   });
 
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const query = new FormData(e.currentTarget).get("search") as string;
+    navigate({ to: "/search", search: { q: query } });
+  };
+
   useEffect(() => {
     if (debouncedSearchQuery.length > 0) {
-      setSearchResult([]);
       mutate({ query: debouncedSearchQuery });
     }
   }, [debouncedSearchQuery, mutate]);
@@ -54,22 +66,26 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
       }}
       groupBy={(option) => option.category}
       renderGroup={(params) => (
-        <SearchGroup
+        <AutoCompleteGroup
           groupKey={params.key}
           groupName={params.group}
           inputValue={debouncedSearchQuery}
         >
           {params.children}
-        </SearchGroup>
+        </AutoCompleteGroup>
       )}
       renderOption={(props, option) => {
         if (debouncedSearchQuery.length > 0) {
-          return <SearchOptionItem props={props} option={option} />;
+          return <AutoCompleteOptionItem props={props} option={option} />;
         }
-        return <SearchOptionItem props={props} option={option} onRemove={handleOptionRemove} />;
+        return (
+          <AutoCompleteOptionItem props={props} option={option} onRemove={handleOptionRemove} />
+        );
       }}
       renderInput={(params) => (
-        <SearchInput params={params} autoFocus={autoFocus} isPending={isPending} />
+        <form onSubmit={handleSubmit}>
+          <SearchInput params={params} autoFocus={autoFocus} isPending={isPending} />
+        </form>
       )}
       sx={{ flex: 1, maxWidth: "31rem" }}
       slotProps={{
@@ -81,7 +97,6 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
           },
         },
         popper: {
-          placement: "bottom-end",
           modifiers: [
             {
               name: "offset",
