@@ -7,14 +7,16 @@ namespace App.Api.Services.SearchService;
 
 public class SearchService(AppDbContext context) : ISearchService
 {
-    public async Task<Result<List<GetSearchResultDto>>> GetSearchResultAsync(string query)
+    public async Task<Result<GetSearchResultResponse>> GetSearchResultAsync(string query)
     {
         // Check if query is empty.
         if (string.IsNullOrWhiteSpace(query))
-            return Result<List<GetSearchResultDto>>.Success([]);
+            return Result<GetSearchResultResponse>.Success(
+                new GetSearchResultResponse { Result = [] }
+            );
 
         query = query.Trim();
-        List<GetSearchResultDto> result = [];
+        List<GetSearchResultDto> results = [];
 
         // get all hobbies matching the query.
         var hobbies = await context
@@ -28,9 +30,11 @@ public class SearchService(AppDbContext context) : ISearchService
             .Select(u => new GetSearchResultDto { Name = u.Username, Category = "users" })
             .ToListAsync();
 
-        result.AddRange(hobbies);
-        result.AddRange(users);
+        results.AddRange(hobbies);
+        results.AddRange(users);
 
-        return Result<List<GetSearchResultDto>>.Success(result);
+        return Result<GetSearchResultResponse>.Success(
+            new GetSearchResultResponse { Result = results }
+        );
     }
 }

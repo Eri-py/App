@@ -4,7 +4,6 @@ using App.Api.Results;
 using App.Api.Services.SearchService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace App.Api.Controllers
 {
@@ -13,7 +12,7 @@ namespace App.Api.Controllers
     public class HomeController(AppDbContext context, ISearchService searchService) : ControllerBase
     {
         [HttpPost("search-results")]
-        public async Task<ActionResult<List<GetSearchResultDto>>> GetSearchResult(
+        public async Task<ActionResult<GetSearchResultResponse>> GetSearchResult(
             [FromBody] GetSearchResultRequest request
         )
         {
@@ -36,12 +35,11 @@ namespace App.Api.Controllers
         }
 
         [HttpPost("update-search-history")]
-        public IActionResult UpdateSearchHistory()
+        public IActionResult UpdateSearchHistory([FromBody] SearchHistoryRequest request)
         {
-            var userHistory = context.Users.Include(u => u.Searches).ToList();
-            foreach (var entry in userHistory)
+            foreach (var entry in request.SearchTerms)
             {
-                Console.WriteLine($"History: {entry}");
+                Console.WriteLine(entry);
             }
 
             return Ok("Adding update endpoint");

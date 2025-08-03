@@ -23,3 +23,22 @@ public record class GetSearchResultDto
     /// <summary>If the result found is a user or a hobby</summary>
     public required string Category { get; set; }
 }
+
+/// <summary>
+/// Defines the shape of the response containing search results returned to the web client.
+/// </summary>
+public record class GetSearchResultResponse
+{
+    /// <summary>List of search results matching the query</summary>
+    public required List<GetSearchResultDto> Result { get; set; }
+}
+
+/// <summary>
+/// Defines the shape of data expected from the web client when updating search history.
+/// </summary>
+public record class SearchHistoryRequest
+{
+    /// <summary>List of search terms to add to user's search history</summary>
+    [Required]
+    public required List<string> SearchTerms { get; set; }
+}

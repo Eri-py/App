@@ -26,7 +26,7 @@ type SearchbarProps = {
 
 export function Searchbar({ autoFocus }: SearchbarProps) {
   const [inputValue, setInputValue] = useState<string>("");
-  const [searchHistory, setSearchHistory] = useState<SearchOption[]>(testSearchHistory);
+  const [searchHistory, setSearchHistory] = useState<SearchOption[]>([]);
   const [searchResult, setSearchResult] = useState<SearchOption[]>([]);
   const debouncedSearchQuery = useDebounce(inputValue);
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
   const { mutate, isPending } = useMutation({
     mutationFn: (data: getSearchResultRequest) => getSearchResult(data),
     onSuccess: (response: AxiosResponse<getSearchResultsResponse>) =>
-      setSearchResult(response.data),
+      setSearchResult(response.data.result),
   });
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -121,7 +121,9 @@ export function Searchbar({ autoFocus }: SearchbarProps) {
           },
         }}
       />
-      <button onClick={() => updateSearchHistory()}>Click me!</button>
+      <button onClick={() => updateSearchHistory({ searchTerms: testSearchHistory })}>
+        Click me!
+      </button>
     </>
   );
 }
