@@ -1,15 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
-import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 
 import { DesktopNavbar } from "@/features/home/Desktop/Navbar";
 import { Sidebar } from "@/features/home/Desktop/Sidebar";
 import { MobileNavbar } from "@/features/home/Mobile/Navbar";
 import { MobileSearchMode } from "@/features/home/Mobile/SearchView";
 import { useBreakpoint } from "@/shared/hooks/useBreakpoint";
+import { BottomNavbar } from "@/features/home/Mobile/BottomNavbar";
+import { TestMainContent } from "@/features/home/components/TestMainContent";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -27,7 +27,8 @@ function Home() {
   }, [isSmOrLarger]);
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Stack>
+      {/* Header */}
       {!isMobileSearch && (
         <>
           {isSmOrLarger ? (
@@ -37,18 +38,32 @@ function Home() {
           )}
         </>
       )}
+
       {isMobileSearch && <MobileSearchMode onBack={() => setIsMobileSearch(false)} />}
+
+      {/* Main content area */}
       {!isMobileSearch && (
         <Stack
-          direction="row"
-          height={{ xs: "calc(100dvh - 3.25rem)", sm: "calc(100dvh - 3.75rem)" }}
+          direction="column"
+          height={{ xs: "calc(100dvh - 3.25rem - 3rem)", sm: "calc(100dvh - 3.75rem)" }}
         >
-          {isSmOrLarger && <Sidebar isOpen={isMenuOpen} />}
-          <Stack flex={1} alignItems="center">
-            <Typography>Hello world</Typography>
-          </Stack>
+          {isSmOrLarger ? (
+            <Stack direction="row" flex={1} overflow="hidden">
+              <Sidebar isOpen={isMenuOpen} />
+              <Stack flex={1} alignItems="center" overflow="auto">
+                <TestMainContent />
+              </Stack>
+            </Stack>
+          ) : (
+            <Stack flex={1} alignItems="center" overflow="auto">
+              <TestMainContent />
+            </Stack>
+          )}
         </Stack>
       )}
-    </Box>
+
+      {/* Mobile footer */}
+      {!isSmOrLarger && !isMobileSearch && <BottomNavbar />}
+    </Stack>
   );
 }

@@ -1,4 +1,4 @@
-import { alpha, createTheme } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
 
 export const mainTheme = (isDarkMode: boolean) =>
   createTheme({
@@ -36,17 +36,6 @@ export const mainTheme = (isDarkMode: boolean) =>
           root: {
             color: isDarkMode ? "white" : "black",
           },
-        },
-      },
-      MuiAppBar: {
-        defaultProps: {
-          color: "transparent",
-        },
-        styleOverrides: {
-          root: ({ theme }) => ({
-            boxShadow: "unset",
-            borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
-          }),
         },
       },
       MuiButton: {
