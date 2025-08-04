@@ -13,7 +13,7 @@ export function useNavigationButtons() {
     navigate({ to: "/messages" });
   };
 
-  //messages button. Would probably move to it's own seprate hook to handle notifications.
+  //profile button. Would probably move to its own separate hook to handle notifications.
   const handleProfileClick = () => {
     navigate({ to: "/profile" });
   };
