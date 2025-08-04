@@ -14,6 +14,7 @@ import { Searchbar } from "./Searchbar";
 import { LogoWithName } from "@/shared/components/Logo";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { useNavigate } from "@tanstack/react-router";
+import { useNavigationButtons } from "../hooks/useNavigationButtons";
 
 const CustomBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -35,6 +36,7 @@ type DesktopNavbarProps = {
 
 export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
   const { isAuthenticated } = useAuth();
+  const { handleCreateClick, handleMessagesClick, handleProfileClick } = useNavigationButtons();
   const navigate = useNavigate();
 
   return (
@@ -53,6 +55,7 @@ export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
           </IconButton>
           <Button
             variant="text"
+            disableRipple
             sx={{
               "&:hover": {
                 background: "none",
@@ -70,22 +73,26 @@ export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
             <Button
               variant="text"
               startIcon={<AddIcon />}
+              onClick={handleCreateClick}
               sx={{
                 color: "text.primary",
                 borderRadius: "2rem",
                 padding: "0.5rem 1rem",
                 fontSize: "1rem",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.08)",
+                },
               }}
             >
               Create
             </Button>
 
-            <IconButton size="large">
+            <IconButton size="large" onClick={handleMessagesClick}>
               <ChatIcon />
               <CustomBadge badgeContent={2} color="primary" overlap="circular" />
             </IconButton>
 
-            <IconButton>
+            <IconButton onClick={handleProfileClick}>
               <AccountCircleIcon style={{ fontSize: "2rem" }} />
               <CustomBadge badgeContent={10} color="primary" overlap="circular" />
             </IconButton>

@@ -12,7 +12,8 @@ public class SearchService(AppDbContext context) : ISearchService
     {
         var userSearchTerms = await context
             .Searches.Where(s => s.UserId == userId)
-            .OrderByDescending(s => s.SearchAmount)
+            .OrderByDescending(s => s.SearchedAt)
+            .ThenByDescending(s => s.SearchAmount)
             .Select(s => s.SearchTerm)
             .Take(10)
             .ToListAsync();
@@ -57,13 +58,12 @@ public class SearchService(AppDbContext context) : ISearchService
         Guid userId
     )
     {
-        if (string.IsNullOrWhiteSpace(request.SearchTerm))
-        {
+        var searchTerm = request.SearchTerm.ToLower();
+        if (string.IsNullOrWhiteSpace(searchTerm))
             return Result.BadRequest("Search term cannot be empty");
-        }
 
         var existingSearch = await context.Searches.FirstOrDefaultAsync(s =>
-            s.UserId == userId && s.SearchTerm == request.SearchTerm
+            s.UserId == userId && s.SearchTerm == searchTerm
         );
 
         if (existingSearch != null)
@@ -78,7 +78,7 @@ public class SearchService(AppDbContext context) : ISearchService
             var newSearch = new SearchEntity
             {
                 UserId = userId,
-                SearchTerm = request.SearchTerm,
+                SearchTerm = searchTerm,
                 SearchAmount = 1,
                 SearchedAt = DateTime.UtcNow,
             };
@@ -91,19 +91,13 @@ public class SearchService(AppDbContext context) : ISearchService
 
     public async Task<Result> RemoveSearchTermsAsync(RemoveSearchTermsRequest request, Guid userId)
     {
+        // Frontend should not send empty arrays
         if (request.SearchTerms == null || request.SearchTerms.Count == 0)
-        {
             return Result.BadRequest("No search terms provided for removal");
-        }
 
         var searchesToRemove = await context
             .Searches.Where(s => s.UserId == userId && request.SearchTerms.Contains(s.SearchTerm))
             .ToListAsync();
-
-        if (searchesToRemove.Count == 0)
-        {
-            return Result.NotFound("No matching search terms found for this user");
-        }
 
         context.Searches.RemoveRange(searchesToRemove);
         await context.SaveChangesAsync();
