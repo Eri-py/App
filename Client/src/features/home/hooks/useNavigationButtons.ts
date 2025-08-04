@@ -8,7 +8,7 @@ export function useNavigationButtons() {
     navigate({ to: "/create" });
   };
 
-  //messages button. Would probably move to it's own seprate hook to handle notifications.
+  //messages button. Would probably move to its own separate hook to handle notifications.
   const handleMessagesClick = () => {
     navigate({ to: "/messages" });
   };
