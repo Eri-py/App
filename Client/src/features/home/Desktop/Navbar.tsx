@@ -1,4 +1,3 @@
-import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -15,6 +14,7 @@ import { LogoWithName } from "@/shared/components/Logo";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { useNavigate } from "@tanstack/react-router";
 import { useNavigationButtons } from "../hooks/useNavigationButtons";
+import { NavbarContainer } from "../components/NavbarContainer";
 
 const CustomBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -40,7 +40,7 @@ export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
   const navigate = useNavigate();
 
   return (
-    <AppBar position="sticky" sx={{ height: "3.75rem" }}>
+    <NavbarContainer>
       <Toolbar
         variant="dense"
         sx={{
@@ -108,6 +108,6 @@ export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
           </Stack>
         )}
       </Toolbar>
-    </AppBar>
+    </NavbarContainer>
   );
 }

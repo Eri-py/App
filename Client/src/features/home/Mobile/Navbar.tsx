@@ -1,4 +1,3 @@
-import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
@@ -10,6 +9,7 @@ import ChatIcon from "@mui/icons-material/Chat";
 
 import { LogoWithName } from "@/shared/components/Logo";
 import { useAuth } from "@/shared/hooks/useAuth";
+import { NavbarContainer } from "../components/NavbarContainer";
 
 const CustomBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -26,10 +26,10 @@ export function MobileNavbar({ onSearchClick }: MobileNavbarProps) {
   const { isAuthenticated } = useAuth();
 
   return (
-    <AppBar position="sticky" sx={{ height: "3.25rem" }}>
+    <NavbarContainer>
       <Toolbar
         variant="dense"
-        sx={{ justifyContent: "space-between", padding: ".5rem !important" }}
+        sx={{ justifyContent: "space-between", paddingInline: "0.25rem !important" }}
       >
         <Button
           variant="text"
@@ -55,6 +55,6 @@ export function MobileNavbar({ onSearchClick }: MobileNavbarProps) {
           )}
         </Stack>
       </Toolbar>
-    </AppBar>
+    </NavbarContainer>
   );
 }

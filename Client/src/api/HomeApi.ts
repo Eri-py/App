@@ -23,3 +23,7 @@ export const addOrUpdateSearchTerm = (data: addOrUpdateSearchTermRequest) => {
 export const removeSearchTerms = (data: removeSearchTermsRequest) => {
   return apiClient.post("home/remove-search-terms", data);
 };
+
+export const getUserHobbies = () => {
+  return apiClient.get("home/get-user-hobbies");
+};
