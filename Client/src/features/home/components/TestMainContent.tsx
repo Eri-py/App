@@ -10,34 +10,6 @@ export function TestMainContent() {
         bibendum eget quam. Sed sed dolor orci. In molestie, magna non porttitor facilisis, magna
         eros molestie diam, at pulvinar turpis nunc nec ipsum.
       </Typography>
-
-      <Typography>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vel orci enim. Donec feugiat
-        convallis dolor ac scelerisque. Vivamus odio ligula, maximus eget fringilla laoreet,
-        bibendum eget quam. Sed sed dolor orci. In molestie, magna non porttitor facilisis, magna
-        eros molestie diam, at pulvinar turpis nunc nec ipsum.
-      </Typography>
-
-      <Typography>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vel orci enim. Donec feugiat
-        convallis dolor ac scelerisque. Vivamus odio ligula, maximus eget fringilla laoreet,
-        bibendum eget quam. Sed sed dolor orci. In molestie, magna non porttitor facilisis, magna
-        eros molestie diam, at pulvinar turpis nunc nec ipsum.
-      </Typography>
-
-      <Typography>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vel orci enim. Donec feugiat
-        convallis dolor ac scelerisque. Vivamus odio ligula, maximus eget fringilla laoreet,
-        bibendum eget quam. Sed sed dolor orci. In molestie, magna non porttitor facilisis, magna
-        eros molestie diam, at pulvinar turpis nunc nec ipsum.
-      </Typography>
-
-      <Typography>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vel orci enim. Donec feugiat
-        convallis dolor ac scelerisque. Vivamus odio ligula, maximus eget fringilla laoreet,
-        bibendum eget quam. Sed sed dolor orci. In molestie, magna non porttitor facilisis, magna
-        eros molestie diam, at pulvinar turpis nunc nec ipsum.
-      </Typography>
     </Stack>
   );
 }
