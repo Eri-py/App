@@ -187,11 +187,15 @@ export function Sidebar({ isOpen }: SidebarProps) {
       </List>
       <Stack component="footer" paddingBottom="1rem">
         <FormControlLabel
-          control={<ThemeSwitch sx={{ m: 1 }} />}
-          checked={mode === "dark"}
-          onChange={() => {
-            toggleTheme();
-          }}
+          control={
+            <ThemeSwitch
+              sx={{ m: 1 }}
+              checked={mode === "dark"}
+              onChange={() => {
+                toggleTheme();
+              }}
+            />
+          }
           label={isOpen ? "Toggle theme" : ""}
           slotProps={{
             typography: {

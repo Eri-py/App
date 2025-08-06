@@ -19,9 +19,9 @@ export const Route = createRootRoute({
 function Root() {
   // Initialize theme mode and theme from localStorage or system preference.
   const systemTheme = useMediaQuery("(prefers-color-scheme: dark)");
-  const [mode, setMode] = useState<string>(() => {
+  const [mode, setMode] = useState<"light" | "dark">(() => {
     const currentThemeMode = localStorage.getItem("currentThemeMode");
-    if (currentThemeMode !== null) {
+    if (currentThemeMode === "light" || currentThemeMode === "dark") {
       return currentThemeMode;
     }
     return systemTheme ? "dark" : "light";
