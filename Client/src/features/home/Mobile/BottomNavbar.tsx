@@ -1,10 +1,13 @@
 import IconButton from "@mui/material/IconButton";
-import ChatIcon from "@mui/icons-material/Chat";
-// import AddIcon from "@mui/icons-material/Add";
+import AddIcon from "@mui/icons-material/Add";
+import HomeIcon from "@mui/icons-material/Home";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import StorefrontIcon from "@mui/icons-material/Storefront";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import { useNavigationButtons } from "../hooks/useNavigationButtons";
 import Stack from "@mui/material/Stack";
+import { alpha, useTheme } from "@mui/material/styles";
 // import Badge, { badgeClasses } from "@mui/material/Badge";
 // import { styled } from "@mui/material/styles";
 
@@ -16,7 +19,8 @@ import Stack from "@mui/material/Stack";
 // `;
 
 export function BottomNavbar() {
-  const { handleMessagesClick, handleProfileClick } = useNavigationButtons();
+  const theme = useTheme();
+  const { handleCreateClick, handleProfileClick } = useNavigationButtons();
 
   return (
     <Stack
@@ -26,30 +30,30 @@ export function BottomNavbar() {
       justifyContent="space-between"
       position="sticky"
       sx={{
-        border: "1px solid black",
+        borderTop: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
         backgroundColor: "background.default",
         bottom: 0,
         left: 0,
       }}
     >
-      <IconButton size="large" onClick={handleMessagesClick}>
-        <ChatIcon />
+      <IconButton size="large">
+        <HomeIcon style={{ fontSize: "1.75rem" }} />
       </IconButton>
 
-      <IconButton onClick={handleProfileClick}>
-        <AccountCircleIcon style={{ fontSize: "2rem" }} />
+      <IconButton size="large">
+        <AutoAwesomeIcon style={{ fontSize: "1.75rem" }} />
       </IconButton>
 
-      <IconButton size="large" onClick={handleMessagesClick}>
-        <ChatIcon />
+      <IconButton size="large" onClick={handleCreateClick}>
+        <AddIcon style={{ fontSize: "1.75rem" }} />
       </IconButton>
 
-      <IconButton onClick={handleProfileClick}>
-        <AccountCircleIcon style={{ fontSize: "2rem" }} />
+      <IconButton size="large">
+        <StorefrontIcon style={{ fontSize: "1.75rem" }} />
       </IconButton>
 
-      <IconButton size="large" onClick={handleMessagesClick}>
-        <ChatIcon />
+      <IconButton size="large" onClick={handleProfileClick}>
+        <AccountCircleIcon style={{ fontSize: "1.75rem" }} />
       </IconButton>
     </Stack>
   );
