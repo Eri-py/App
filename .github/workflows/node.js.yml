@@ -27,7 +27,7 @@ jobs:
           cache-dependency-path: WebClient/package-lock.json
       - name: Restore dependencies
         run: npm ci
-        working-directory: Client
+        working-directory: WebClient
       - name: Build
         run: npm run build
-        working-directory: Client
+        working-directory: WebClient
