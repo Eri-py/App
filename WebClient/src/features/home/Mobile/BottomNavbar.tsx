@@ -7,7 +7,6 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import { useNavigationButtons } from "../hooks/useNavigationButtons";
 import Stack from "@mui/material/Stack";
-import { alpha, useTheme } from "@mui/material/styles";
 // import Badge, { badgeClasses } from "@mui/material/Badge";
 // import { styled } from "@mui/material/styles";
 
@@ -19,7 +18,6 @@ import { alpha, useTheme } from "@mui/material/styles";
 // `;
 
 export function BottomNavbar() {
-  const theme = useTheme();
   const { handleCreateClick, handleProfileClick } = useNavigationButtons();
 
   return (
@@ -30,7 +28,6 @@ export function BottomNavbar() {
       justifyContent="space-between"
       position="sticky"
       sx={{
-        borderTop: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
         backgroundColor: "background.default",
         bottom: 0,
         left: 0,
