@@ -32,7 +32,7 @@
     "@eslint/js": "^9.25.0",
     "@tanstack/router-plugin": "^1.121.34",
     "@types/js-cookie": "^3.0.6",
-    "@types/node": "^24.1.0",
+    "@types/node": "^24.2.1",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
