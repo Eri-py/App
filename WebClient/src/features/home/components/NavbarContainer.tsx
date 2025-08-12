@@ -16,7 +16,9 @@ export function NavbarContainer({ children }: { children: ReactNode }) {
         left: 0,
         zIndex: 1100,
         backgroundColor: "background.default",
-        borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
+        borderBottom: isSmOrLarger
+          ? `1px solid ${alpha(theme.palette.primary.main, 0.5)}`
+          : undefined,
         height: isSmOrLarger ? "3.75rem" : "3.25rem",
       }}
     >

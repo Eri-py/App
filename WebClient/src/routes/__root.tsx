@@ -35,6 +35,7 @@ function Root() {
   const { data, isPending, refetch } = useQuery({
     queryKey: ["userDetails"],
     queryFn: getUserDetails,
+    refetchOnWindowFocus: false,
   });
 
   const refreshUser = () => {
