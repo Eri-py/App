@@ -1,6 +1,5 @@
 import { useFormContext, get } from "react-hook-form";
-import { useState } from "react";
-import type { ReactNode } from "@tanstack/react-router";
+import { useState, type ReactNode } from "react";
 
 import { useTheme } from "@mui/material/styles";
 import TextField, { type TextFieldProps } from "@mui/material/TextField";
