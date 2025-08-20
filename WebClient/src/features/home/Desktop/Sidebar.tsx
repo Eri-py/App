@@ -1,4 +1,4 @@
-import { useState, type ReactElement } from "react";
+import { useState, type ReactElement, type SetStateAction } from "react";
 import { styled } from "@mui/material/styles";
 
 import List from "@mui/material/List";
@@ -6,7 +6,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Stack from "@mui/material/Stack";
 import HomeIcon from "@mui/icons-material/Home";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
@@ -21,7 +20,6 @@ import { useThemeToggle } from "@/shared/hooks/useThemeToggle";
 
 const navigationItems: { label: string; icon: ReactElement }[] = [
   { label: "Home", icon: <HomeIcon /> },
-  { label: "Show & tell", icon: <AutoAwesomeIcon /> },
   { label: "Trade", icon: <StorefrontIcon /> },
   { label: "Events", icon: <EventIcon /> },
 ];
@@ -114,19 +112,30 @@ type SidebarProps = {
 
 export function Sidebar({ isOpen }: SidebarProps) {
   const [hobbiesExpanded, setHobbiesExpanded] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState("Home");
   const { mode, toggleTheme } = useThemeToggle();
 
   const handleHobbiesToggle = () => {
     setHobbiesExpanded(!hobbiesExpanded);
   };
 
-  const navigationElements = navigationItems.map((item) => {
+  const handleNavigationButtonClick = (label: SetStateAction<string>) => {
+    setActiveTab(label);
+  };
+
+  const navigationElements = navigationItems.map((item, idx) => {
+    const isActive = activeTab === item.label;
+
     if (!isOpen) {
       return (
         <ListItemButton
           key={item.label}
           sx={{
             borderRadius: "0.75rem",
+          }}
+          selected={isActive}
+          onClick={() => {
+            handleNavigationButtonClick(item.label);
           }}
         >
           <ListItemText
@@ -148,7 +157,14 @@ export function Sidebar({ isOpen }: SidebarProps) {
     }
 
     return (
-      <NavigationButton key={item.label}>
+      <NavigationButton
+        key={item.label}
+        sx={{ marginBottom: idx === navigationItems.length - 1 ? "0.5rem" : "0" }}
+        selected={isActive}
+        onClick={() => {
+          handleNavigationButtonClick(item.label);
+        }}
+      >
         <StyledListItemIcon>{item.icon}</StyledListItemIcon>
         <StyledExpandedPrimary primary={item.label} />
       </NavigationButton>
@@ -164,7 +180,7 @@ export function Sidebar({ isOpen }: SidebarProps) {
         paddingInline: "0.5rem",
       }}
     >
-      <List>
+      <List sx={{ gap: 12 }}>
         {navigationElements}
         {isOpen && (
           <>

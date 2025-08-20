@@ -103,7 +103,7 @@ public class LoginService(
         var refreshTokenDetails = jwtService.CreateRefreshToken(
             AuthConfig.RefreshTokenValidForDays
         );
-        // Add token to database
+        // Add refresh token to database
         var refreshTokenEntry = new RefreshTokenEntity
         {
             TokenHash = jwtService.HashToken(refreshTokenDetails.Value),

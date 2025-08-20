@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/messages")({
+export const Route = createFileRoute("/_app/profile")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <div>User opened their messages</div>;
+  return <div>User opened their profile</div>;
 }
