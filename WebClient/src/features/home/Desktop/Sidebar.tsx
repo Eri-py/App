@@ -1,4 +1,4 @@
-import { useState, type ReactElement, type SetStateAction } from "react";
+import { useEffect, useState, type ReactElement, type SetStateAction } from "react";
 import { styled } from "@mui/material/styles";
 
 import List from "@mui/material/List";
@@ -17,13 +17,16 @@ import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 import { useThemeToggle } from "@/shared/hooks/useThemeToggle";
+import { useLocation } from "@tanstack/react-router";
 
+// Currently supported sidbar tabs
 const navigationItems: { label: string; icon: ReactElement }[] = [
   { label: "Home", icon: <HomeIcon /> },
   { label: "Trade", icon: <StorefrontIcon /> },
   { label: "Events", icon: <EventIcon /> },
 ];
 
+// Dummy hobbies list. //TODO: Replace with actual API call
 const hobbiesList = [
   "Vintage Baseball Cards",
   "Comic Book Collecting",
@@ -112,20 +115,26 @@ type SidebarProps = {
 
 export function Sidebar({ isOpen }: SidebarProps) {
   const [hobbiesExpanded, setHobbiesExpanded] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState("Home");
   const { mode, toggleTheme } = useThemeToggle();
 
-  const handleHobbiesToggle = () => {
-    setHobbiesExpanded(!hobbiesExpanded);
-  };
+  // Get the current active tab based on the primary route
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState("");
+  useEffect(() => {
+    const primaryRoute = location.pathname.split("/")[1] || "Home";
+    setActiveTab(primaryRoute);
+  }, [location.pathname]);
 
+  // Handle navigation button clicks.
   const handleNavigationButtonClick = (label: SetStateAction<string>) => {
-    setActiveTab(label);
+    // setActiveTab(label);
+    console.log(label);
   };
 
   const navigationElements = navigationItems.map((item, idx) => {
     const isActive = activeTab === item.label;
 
+    // Collapsed sidebar view for navigation buttons
     if (!isOpen) {
       return (
         <ListItemButton
@@ -156,6 +165,7 @@ export function Sidebar({ isOpen }: SidebarProps) {
       );
     }
 
+    // Expanded sidebar view for navigation buttons
     return (
       <NavigationButton
         key={item.label}
@@ -180,12 +190,17 @@ export function Sidebar({ isOpen }: SidebarProps) {
         paddingInline: "0.5rem",
       }}
     >
-      <List sx={{ gap: 12 }}>
+      <List>
         {navigationElements}
         {isOpen && (
           <>
             <Divider />
-            <NavigationButton sx={{ marginTop: "1rem" }} onClick={handleHobbiesToggle}>
+            <NavigationButton
+              sx={{ marginTop: "1rem" }}
+              onClick={() => {
+                setHobbiesExpanded(!hobbiesExpanded);
+              }}
+            >
               <ListItemText secondary="HOBBIES" />
               {hobbiesExpanded ? <ExpandLess /> : <ExpandMore />}
             </NavigationButton>
@@ -201,6 +216,7 @@ export function Sidebar({ isOpen }: SidebarProps) {
           </>
         )}
       </List>
+
       <Stack component="footer" paddingBottom="1rem">
         <FormControlLabel
           control={
