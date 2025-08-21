@@ -19,5 +19,4 @@ updates:
     directory: "/ApiServer/"
     # Check the for updates every Wednesday
     schedule:
-      interval: "weekly"
-      day: "wednesday"
+      interval: "daily"
