@@ -18,5 +18,24 @@ export function useNavigationButtons() {
     navigate({ to: "/profile" });
   };
 
-  return { handleCreateClick, handleMessagesClick, handleProfileClick };
+  const handleHomeClick = () => {
+    navigate({ to: "/" });
+  };
+
+  const handleTradeClick = () => {
+    navigate({ to: "/trade" });
+  };
+
+  const handleEventsClick = () => {
+    navigate({ to: "/events" });
+  };
+
+  return {
+    handleCreateClick,
+    handleMessagesClick,
+    handleProfileClick,
+    handleHomeClick,
+    handleTradeClick,
+    handleEventsClick,
+  };
 }

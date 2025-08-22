@@ -5,7 +5,7 @@ const validSearchSchema = z.object({
   q: z.string(),
 });
 
-export const Route = createFileRoute("/search")({
+export const Route = createFileRoute("/_app/search")({
   component: Search,
   validateSearch: validSearchSchema,
 });

@@ -1,4 +1,4 @@
-import { useState, type ReactElement } from "react";
+import { useEffect, useState, type ReactElement, type SetStateAction } from "react";
 import { styled } from "@mui/material/styles";
 
 import List from "@mui/material/List";
@@ -6,7 +6,6 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Stack from "@mui/material/Stack";
 import HomeIcon from "@mui/icons-material/Home";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
@@ -18,14 +17,17 @@ import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 import { useThemeToggle } from "@/shared/hooks/useThemeToggle";
+import { useLocation } from "@tanstack/react-router";
+import { useNavigationButtons } from "../hooks/useNavigationButtons";
 
+// Currently supported sidbar tabs
 const navigationItems: { label: string; icon: ReactElement }[] = [
   { label: "Home", icon: <HomeIcon /> },
-  { label: "Show & tell", icon: <AutoAwesomeIcon /> },
   { label: "Trade", icon: <StorefrontIcon /> },
   { label: "Events", icon: <EventIcon /> },
 ];
 
+// Dummy hobbies list. //TODO: Replace with actual API call
 const hobbiesList = [
   "Vintage Baseball Cards",
   "Comic Book Collecting",
@@ -115,18 +117,45 @@ type SidebarProps = {
 export function Sidebar({ isOpen }: SidebarProps) {
   const [hobbiesExpanded, setHobbiesExpanded] = useState<boolean>(true);
   const { mode, toggleTheme } = useThemeToggle();
+  const { handleHomeClick, handleEventsClick, handleTradeClick } = useNavigationButtons();
 
-  const handleHobbiesToggle = () => {
-    setHobbiesExpanded(!hobbiesExpanded);
+  // Get the current active tab based on the primary route
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState("");
+  useEffect(() => {
+    const primaryRoute = location.pathname.split("/")[1] || "Home";
+    setActiveTab(primaryRoute);
+  }, [location.pathname]);
+
+  // Handle navigation button clicks.
+  const handleNavigationButtonClick = (label: SetStateAction<string>) => {
+    switch (label) {
+      case "Home":
+        handleHomeClick();
+        break;
+      case "Trade":
+        handleTradeClick();
+        break;
+      case "Events":
+        handleEventsClick();
+        break;
+    }
   };
 
-  const navigationElements = navigationItems.map((item) => {
+  const navigationElements = navigationItems.map((item, idx) => {
+    const isActive = item.label.localeCompare(activeTab, undefined, { sensitivity: "base" }) === 0;
+    console.log(`${item.label} is active: ${isActive}`);
+    // Collapsed sidebar view for navigation buttons
     if (!isOpen) {
       return (
         <ListItemButton
           key={item.label}
           sx={{
             borderRadius: "0.75rem",
+          }}
+          selected={isActive}
+          onClick={() => {
+            handleNavigationButtonClick(item.label);
           }}
         >
           <ListItemText
@@ -147,8 +176,16 @@ export function Sidebar({ isOpen }: SidebarProps) {
       );
     }
 
+    // Expanded sidebar view for navigation buttons
     return (
-      <NavigationButton key={item.label}>
+      <NavigationButton
+        key={item.label}
+        sx={{ marginBottom: idx === navigationItems.length - 1 ? "0.5rem" : "0" }}
+        selected={isActive}
+        onClick={() => {
+          handleNavigationButtonClick(item.label);
+        }}
+      >
         <StyledListItemIcon>{item.icon}</StyledListItemIcon>
         <StyledExpandedPrimary primary={item.label} />
       </NavigationButton>
@@ -169,7 +206,12 @@ export function Sidebar({ isOpen }: SidebarProps) {
         {isOpen && (
           <>
             <Divider />
-            <NavigationButton sx={{ marginTop: "1rem" }} onClick={handleHobbiesToggle}>
+            <NavigationButton
+              sx={{ marginTop: "1rem" }}
+              onClick={() => {
+                setHobbiesExpanded(!hobbiesExpanded);
+              }}
+            >
               <ListItemText secondary="HOBBIES" />
               {hobbiesExpanded ? <ExpandLess /> : <ExpandMore />}
             </NavigationButton>
@@ -185,6 +227,7 @@ export function Sidebar({ isOpen }: SidebarProps) {
           </>
         )}
       </List>
+
       <Stack component="footer" paddingBottom="1rem">
         <FormControlLabel
           control={
