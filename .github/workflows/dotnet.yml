@@ -26,5 +26,5 @@ jobs:
         run: dotnet build --no-restore
         working-directory: ApiServer/
       - name: Test
-        run: dotnet test --no-build --verbosity normal  App.Tests/App.Tests.csproj
+        run: dotnet test --no-build --verbosity normal  Hobbyist.Tests/Hobbyist.Tests.csproj
         working-directory: ApiServer/

@@ -36,7 +36,7 @@ export function LogoWithName({ size, align, color }: LogoWithNameProps) {
       <Stack direction="row" alignSelf={align ?? "unset"} gap={0.5}>
         <Logo width={iconSize} color={color} />
         <Typography color={color ?? "primary"} fontSize={textSize} fontWeight={700}>
-          App
+          Hobbyist
         </Typography>
       </Stack>
     );
