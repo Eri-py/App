@@ -13,9 +13,11 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AppTradeRouteImport } from './routes/_app/trade'
 import { Route as AppSearchRouteImport } from './routes/_app/search'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppMessagesRouteImport } from './routes/_app/messages'
+import { Route as AppEventsRouteImport } from './routes/_app/events'
 import { Route as AppCreateRouteImport } from './routes/_app/create'
 
 const AppRoute = AppRouteImport.update({
@@ -37,6 +39,11 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppTradeRoute = AppTradeRouteImport.update({
+  id: '/trade',
+  path: '/trade',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSearchRoute = AppSearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -52,6 +59,11 @@ const AppMessagesRoute = AppMessagesRouteImport.update({
   path: '/messages',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEventsRoute = AppEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCreateRoute = AppCreateRouteImport.update({
   id: '/create',
   path: '/create',
@@ -60,18 +72,22 @@ const AppCreateRoute = AppCreateRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/create': typeof AppCreateRoute
+  '/events': typeof AppEventsRoute
   '/messages': typeof AppMessagesRoute
   '/profile': typeof AppProfileRoute
   '/search': typeof AppSearchRoute
+  '/trade': typeof AppTradeRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/create': typeof AppCreateRoute
+  '/events': typeof AppEventsRoute
   '/messages': typeof AppMessagesRoute
   '/profile': typeof AppProfileRoute
   '/search': typeof AppSearchRoute
+  '/trade': typeof AppTradeRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/': typeof AppIndexRoute
@@ -80,9 +96,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/_app/create': typeof AppCreateRoute
+  '/_app/events': typeof AppEventsRoute
   '/_app/messages': typeof AppMessagesRoute
   '/_app/profile': typeof AppProfileRoute
   '/_app/search': typeof AppSearchRoute
+  '/_app/trade': typeof AppTradeRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/_app/': typeof AppIndexRoute
@@ -91,18 +109,22 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/create'
+    | '/events'
     | '/messages'
     | '/profile'
     | '/search'
+    | '/trade'
     | '/auth/login'
     | '/auth/register'
     | '/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/create'
+    | '/events'
     | '/messages'
     | '/profile'
     | '/search'
+    | '/trade'
     | '/auth/login'
     | '/auth/register'
     | '/'
@@ -110,9 +132,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_app'
     | '/_app/create'
+    | '/_app/events'
     | '/_app/messages'
     | '/_app/profile'
     | '/_app/search'
+    | '/_app/trade'
     | '/auth/login'
     | '/auth/register'
     | '/_app/'
@@ -154,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/trade': {
+      id: '/_app/trade'
+      path: '/trade'
+      fullPath: '/trade'
+      preLoaderRoute: typeof AppTradeRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/search': {
       id: '/_app/search'
       path: '/search'
@@ -175,6 +206,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMessagesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/events': {
+      id: '/_app/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof AppEventsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/create': {
       id: '/_app/create'
       path: '/create'
@@ -187,17 +225,21 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppCreateRoute: typeof AppCreateRoute
+  AppEventsRoute: typeof AppEventsRoute
   AppMessagesRoute: typeof AppMessagesRoute
   AppProfileRoute: typeof AppProfileRoute
   AppSearchRoute: typeof AppSearchRoute
+  AppTradeRoute: typeof AppTradeRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppCreateRoute: AppCreateRoute,
+  AppEventsRoute: AppEventsRoute,
   AppMessagesRoute: AppMessagesRoute,
   AppProfileRoute: AppProfileRoute,
   AppSearchRoute: AppSearchRoute,
+  AppTradeRoute: AppTradeRoute,
   AppIndexRoute: AppIndexRoute,
 }
 

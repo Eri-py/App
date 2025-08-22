@@ -18,6 +18,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 
 import { useThemeToggle } from "@/shared/hooks/useThemeToggle";
 import { useLocation } from "@tanstack/react-router";
+import { useNavigationButtons } from "../hooks/useNavigationButtons";
 
 // Currently supported sidbar tabs
 const navigationItems: { label: string; icon: ReactElement }[] = [
@@ -116,6 +117,7 @@ type SidebarProps = {
 export function Sidebar({ isOpen }: SidebarProps) {
   const [hobbiesExpanded, setHobbiesExpanded] = useState<boolean>(true);
   const { mode, toggleTheme } = useThemeToggle();
+  const { handleHomeClick, handleEventsClick, handleTradeClick } = useNavigationButtons();
 
   // Get the current active tab based on the primary route
   const location = useLocation();
@@ -127,13 +129,22 @@ export function Sidebar({ isOpen }: SidebarProps) {
 
   // Handle navigation button clicks.
   const handleNavigationButtonClick = (label: SetStateAction<string>) => {
-    // setActiveTab(label);
-    console.log(label);
+    switch (label) {
+      case "Home":
+        handleHomeClick();
+        break;
+      case "Trade":
+        handleTradeClick();
+        break;
+      case "Events":
+        handleEventsClick();
+        break;
+    }
   };
 
   const navigationElements = navigationItems.map((item, idx) => {
-    const isActive = activeTab === item.label;
-
+    const isActive = item.label.localeCompare(activeTab, undefined, { sensitivity: "base" }) === 0;
+    console.log(`${item.label} is active: ${isActive}`);
     // Collapsed sidebar view for navigation buttons
     if (!isOpen) {
       return (
