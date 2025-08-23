@@ -144,7 +144,6 @@ export function Sidebar({ isOpen }: SidebarProps) {
 
   const navigationElements = navigationItems.map((item, idx) => {
     const isActive = item.label.localeCompare(activeTab, undefined, { sensitivity: "base" }) === 0;
-    console.log(`${item.label} is active: ${isActive}`);
     // Collapsed sidebar view for navigation buttons
     if (!isOpen) {
       return (

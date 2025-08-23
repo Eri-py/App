@@ -6,7 +6,7 @@
       "request": "launch",
       "program": "dotnet",
       "args": ["watch", "run", "--non-interactive"],
-      "cwd": "${workspaceFolder}/Server/src/App.Api",
+      "cwd": "${workspaceFolder}/ApiServer/Hobbyist.Api",
       "stopAtEntry": false,
       "console": "integratedTerminal",
       "env": {

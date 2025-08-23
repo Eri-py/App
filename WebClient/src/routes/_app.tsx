@@ -12,6 +12,12 @@ import { BottomNavbar } from "@/features/home/Mobile/BottomNavbar";
 
 export const Route = createFileRoute("/_app")({
   component: Layout,
+  beforeLoad: ({ context }) => {
+    return {
+      ...context,
+      user: "This is the user",
+    };
+  },
 });
 
 function Layout() {
