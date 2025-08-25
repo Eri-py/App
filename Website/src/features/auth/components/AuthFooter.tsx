@@ -16,12 +16,12 @@ export function AuthFooter({ mode }: AuthFooterProps) {
     login: {
       question: "Don't have an account?",
       linkText: "sign up here",
-      target: "/auth/register",
+      target: "/register",
     },
     register: {
       question: "Already have an account?",
       linkText: "login here",
-      target: "/auth/login",
+      target: "/login",
     },
   };
 

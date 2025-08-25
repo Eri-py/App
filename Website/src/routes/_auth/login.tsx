@@ -6,9 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 
-import { ThemeProvider, useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 
 import {
@@ -21,13 +19,11 @@ import {
 import { OtpPage } from "@/features/auth/components/OtpPage";
 import { UsernameAndPassword } from "@/features/auth/LoginSteps/UsernameAndPassword";
 import { LogoWithName } from "@/shared/components/Logo";
-import { useBreakpoint } from "@/shared/hooks/useBreakpoint";
 import { useServerError, type ServerError } from "@/shared/hooks/useServerError";
 import { useAuth } from "@/shared/hooks/useAuth";
-import { mainTheme } from "@/shared/themes/mainTheme";
-import { FormContainer } from "@/features/auth/components/FormContainer";
+import { useAuthLayout } from "@/features/auth/hooks/useAuthLayout";
 
-export const Route = createFileRoute("/auth/login")({
+export const Route = createFileRoute("/_auth/login")({
   component: Login,
 });
 
@@ -47,11 +43,9 @@ function Login() {
   } | null>(null);
 
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
-  const defaultTheme = useTheme();
-  const { isSmOrLarger } = useBreakpoint();
-  const desktopTheme = mainTheme(false); // Use light mode for desktop
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
+  const { theme, isSmOrLarger } = useAuthLayout();
 
   const methods = useForm<loginFormSchema>({
     mode: "onChange",
@@ -104,8 +98,7 @@ function Login() {
     completeLoginMutation.mutate(formData);
   };
 
-  const theme = isSmOrLarger ? desktopTheme : defaultTheme;
-  const form = (
+  return (
     <Stack
       paddingBlock={2}
       paddingInline={1}
@@ -150,17 +143,5 @@ function Login() {
         </form>
       </FormProvider>
     </Stack>
-  );
-
-  return (
-    <FormContainer>
-      {isSmOrLarger && (
-        <Box sx={{ position: "absolute", top: "2rem", left: "3rem" }}>
-          <LogoWithName size="large" color="white" />
-        </Box>
-      )}
-
-      {isSmOrLarger ? <ThemeProvider theme={desktopTheme}>{form}</ThemeProvider> : form}
-    </FormContainer>
   );
 }

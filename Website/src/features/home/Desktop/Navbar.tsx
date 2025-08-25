@@ -99,10 +99,10 @@ export function DesktopNavbar({ onMenuClick }: DesktopNavbarProps) {
           </Stack>
         ) : (
           <Stack direction="row" alignItems="center" gap={1}>
-            <AuthButton onClick={() => navigate({ to: "/auth/login" })} variant="text">
+            <AuthButton onClick={() => navigate({ to: "/login" })} variant="text">
               Login
             </AuthButton>
-            <AuthButton onClick={() => navigate({ to: "/auth/register" })} variant="contained">
+            <AuthButton onClick={() => navigate({ to: "/register" })} variant="contained">
               Sign up
             </AuthButton>
           </Stack>

@@ -18,8 +18,6 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-Console.WriteLine(builder.Configuration["ClientOrigin"]);
-
 if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddCors(options =>
