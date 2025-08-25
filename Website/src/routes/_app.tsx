@@ -1,17 +1,16 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import Stack from "@mui/material/Stack";
 
-import { MobileSearchMode } from "@/features/home/Mobile/SearchView";
 import { useBreakpoint } from "@/shared/hooks/useBreakpoint";
 import { getUserDetails } from "@/api/AuthApi";
 import { AuthContext } from "@/features/app/hooks/useAuth";
-import { BottomNavbar } from "@/features/app/components/Navigation/BottomNavbar";
-import { DesktopNavbar } from "@/features/app/components/Navigation/DesktopNavbar";
-import { Sidebar } from "@/features/app/components/Navigation/Sidebar";
-import { MobileNavbar } from "@/features/app/components/Navigation/MobileNavbar";
+import { BottomNavbar } from "@/features/app/Navbar/BottomNavbar";
+import { DesktopNavbar } from "@/features/app/Navbar/DesktopNavbar";
+import { MobileNavbar } from "@/features/app/Navbar/MobileNavbar";
+import { Sidebar } from "@/features/app/Sidebar/Sidebar";
 
 export const Route = createFileRoute("/_app")({
   component: AppLayout,
@@ -19,15 +18,7 @@ export const Route = createFileRoute("/_app")({
 
 function AppLayout() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [isMobileSearch, setIsMobileSearch] = useState<boolean>(false);
   const { isSmOrLarger } = useBreakpoint();
-
-  // Reset mobile mode if the window becomes larger
-  useEffect(() => {
-    if (isSmOrLarger) {
-      setIsMobileSearch(false);
-    }
-  }, [isSmOrLarger]);
 
   // Fetch user details on Website mount.
   const { data, isPending } = useQuery({
@@ -48,41 +39,33 @@ function AppLayout() {
       ) : (
         <Stack>
           {/* Header */}
-          {!isMobileSearch && (
-            <>
-              {isSmOrLarger ? (
-                <DesktopNavbar onMenuClick={() => setIsMenuOpen(!isMenuOpen)} />
-              ) : (
-                <MobileNavbar onSearchClick={() => setIsMobileSearch(true)} />
-              )}
-            </>
+          {isSmOrLarger ? (
+            <DesktopNavbar onMenuClick={() => setIsMenuOpen(!isMenuOpen)} />
+          ) : (
+            <MobileNavbar onSearchClick={() => {}} /> // TODO: Decide how to handle mobile search mode
           )}
-
-          {isMobileSearch && <MobileSearchMode onBack={() => setIsMobileSearch(false)} />}
 
           {/* Main content area */}
-          {!isMobileSearch && (
-            <Stack
-              direction="column"
-              height={{ xs: "calc(100dvh - 3.25rem - 3rem)", sm: "calc(100dvh - 3.75rem)" }}
-            >
-              {isSmOrLarger ? (
-                <Stack direction="row" flex={1} overflow="hidden" gap={2}>
-                  <Sidebar isOpen={isMenuOpen} />
-                  <Stack flex={1} alignItems="center" overflow="auto" padding={1} gap="1.75rem">
-                    <Outlet />
-                  </Stack>
-                </Stack>
-              ) : (
-                <Stack flex={1} alignItems="center" overflow="auto">
+          <Stack
+            direction="column"
+            height={{ xs: "calc(100dvh - 3.25rem - 3rem)", sm: "calc(100dvh - 3.75rem)" }}
+          >
+            {isSmOrLarger ? (
+              <Stack direction="row" flex={1} overflow="hidden" gap={2}>
+                <Sidebar isOpen={isMenuOpen} />
+                <Stack flex={1} alignItems="center" overflow="auto" padding={1} gap="1.75rem">
                   <Outlet />
                 </Stack>
-              )}
-            </Stack>
-          )}
+              </Stack>
+            ) : (
+              <Stack flex={1} alignItems="center" overflow="auto">
+                <Outlet />
+              </Stack>
+            )}
+          </Stack>
 
           {/* Mobile footer */}
-          {!isSmOrLarger && !isMobileSearch && <BottomNavbar />}
+          {!isSmOrLarger && <BottomNavbar />}
         </Stack>
       )}
     </AuthContext.Provider>

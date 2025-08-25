@@ -12,9 +12,9 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { LogoWithName } from "@/shared/components/Logo";
 import { useAuth } from "@/features/app/hooks/useAuth";
 import { useNavigate } from "@tanstack/react-router";
-import { NavbarContainer } from "./NavbarContainer";
-import { useNavigationButtons } from "../../hooks/useNavigationButtons";
-import { Searchbar } from "../Searchbar/Searchbar";
+import { useNavigationButtons } from "../hooks/useNavigationButtons";
+import { NavbarContainer } from "./components/NavbarContainer";
+import { Searchbar } from "./Searchbar/Searchbar";
 
 const CustomBadge = styled(Badge)`
   & .${badgeClasses.badge} {

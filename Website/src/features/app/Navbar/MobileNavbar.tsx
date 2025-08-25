@@ -9,7 +9,7 @@ import ChatIcon from "@mui/icons-material/Chat";
 
 import { LogoWithName } from "@/shared/components/Logo";
 import { useAuth } from "@/features/app/hooks/useAuth";
-import { NavbarContainer } from "./NavbarContainer";
+import { NavbarContainer } from "./components/NavbarContainer";
 
 const CustomBadge = styled(Badge)`
   & .${badgeClasses.badge} {
