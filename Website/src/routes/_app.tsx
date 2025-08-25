@@ -4,14 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 
 import Stack from "@mui/material/Stack";
 
-import { DesktopNavbar } from "@/features/home/Desktop/Navbar";
-import { Sidebar } from "@/features/home/Desktop/Sidebar";
-import { MobileNavbar } from "@/features/home/Mobile/Navbar";
 import { MobileSearchMode } from "@/features/home/Mobile/SearchView";
 import { useBreakpoint } from "@/shared/hooks/useBreakpoint";
-import { BottomNavbar } from "@/features/home/Mobile/BottomNavbar";
 import { getUserDetails } from "@/api/AuthApi";
 import { AuthContext } from "@/features/app/hooks/useAuth";
+import { BottomNavbar } from "@/features/app/components/Navigation/BottomNavbar";
+import { DesktopNavbar } from "@/features/app/components/Navigation/DesktopNavbar";
+import { Sidebar } from "@/features/app/components/Navigation/Sidebar";
+import { MobileNavbar } from "@/features/app/components/Navigation/MobileNavbar";
 
 export const Route = createFileRoute("/_app")({
   component: AppLayout,
