@@ -31,7 +31,6 @@ import { OtpPage } from "@/features/auth/components/OtpPage";
 import { Password } from "@/features/auth/RegisterSteps/Password";
 import { PersonalDetails } from "@/features/auth/RegisterSteps/PersonalDetails";
 import { UsernameAndEmail } from "@/features/auth/RegisterSteps/UsernameAndEmail";
-import { useAuth } from "@/shared/hooks/useAuth";
 
 import { useAuthLayout } from "@/features/auth/hooks/useAuthLayout";
 
@@ -73,7 +72,6 @@ function Register() {
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
   const { isSmOrLarger, theme } = useAuthLayout();
   const navigate = useNavigate();
-  const { refreshUser } = useAuth();
 
   const methods = useForm<registrationFormSchema>({
     mode: "onChange",
@@ -97,10 +95,7 @@ function Register() {
 
   const completeRegistrationMutation = useMutation({
     mutationFn: (data: completeRegistrationRequest) => completeRegistration(data),
-    onSuccess: () => {
-      refreshUser();
-      navigate({ to: "/" });
-    },
+    onSuccess: () => navigate({ to: "/" }),
     onError: (error: ServerError) => handleServerError(error),
   });
 

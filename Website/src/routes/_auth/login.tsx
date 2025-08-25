@@ -20,7 +20,6 @@ import { OtpPage } from "@/features/auth/components/OtpPage";
 import { UsernameAndPassword } from "@/features/auth/LoginSteps/UsernameAndPassword";
 import { LogoWithName } from "@/shared/components/Logo";
 import { useServerError, type ServerError } from "@/shared/hooks/useServerError";
-import { useAuth } from "@/shared/hooks/useAuth";
 import { useAuthLayout } from "@/features/auth/hooks/useAuthLayout";
 
 export const Route = createFileRoute("/_auth/login")({
@@ -44,7 +43,6 @@ function Login() {
 
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
   const navigate = useNavigate();
-  const { refreshUser } = useAuth();
   const { theme, isSmOrLarger } = useAuthLayout();
 
   const methods = useForm<loginFormSchema>({
@@ -67,10 +65,7 @@ function Login() {
 
   const completeLoginMutation = useMutation({
     mutationFn: (data: completeLoginRequest) => completeLogin(data),
-    onSuccess: () => {
-      refreshUser();
-      navigate({ to: "/" });
-    },
+    onSuccess: () => navigate({ to: "/" }),
     onError: (error: ServerError) => handleServerError(error),
   });
 

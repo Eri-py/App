@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import ChatIcon from "@mui/icons-material/Chat";
 
 import { LogoWithName } from "@/shared/components/Logo";
-import { useAuth } from "@/shared/hooks/useAuth";
+import { useAuth } from "@/features/app/hooks/useAuth";
 import { NavbarContainer } from "../components/NavbarContainer";
 
 const CustomBadge = styled(Badge)`
