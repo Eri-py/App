@@ -5,15 +5,11 @@ export type AuthContextTypes = getUserResponse & {
   refreshUser: () => void;
 };
 
-export const AuthContext = createContext<AuthContextTypes>({
-  isAuthenticated: false,
-  user: null,
-  refreshUser: () => {},
-});
+export const AuthContext = createContext<AuthContextTypes | null>(null);
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useAuth must be used within an AuthProvider.");
   }
   return context;

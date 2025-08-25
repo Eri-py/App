@@ -10,7 +10,7 @@ import { BreakpointContext } from "@/shared/hooks/useBreakpoint";
 import { mainTheme } from "@/shared/themes/mainTheme";
 import { getUserDetails } from "@/api/AuthApi";
 import { AuthContext, type AuthContextTypes } from "@/shared/hooks/useAuth";
-import { ThemeToggleContext, type ThemeToggleType } from "@/shared/hooks/useThemeToggle";
+import { ThemeToggleContext, type ThemeToggleTypes } from "@/shared/hooks/useThemeToggle";
 
 export const Route = createRootRoute({
   component: Root,
@@ -56,7 +56,7 @@ function Root() {
     refreshUser,
   };
 
-  const themeProviderValues: ThemeToggleType = {
+  const themeProviderValues: ThemeToggleTypes = {
     mode: mode,
     toggleTheme: toggleTheme,
   };
