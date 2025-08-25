@@ -1,12 +1,12 @@
 import { createContext, useContext } from "react";
 
-export const BreakpointContext = createContext<{ isSmOrLarger: boolean }>({
-  isSmOrLarger: false,
-});
+type BreakpointContextTypes = { isSmOrLarger: boolean };
+
+export const BreakpointContext = createContext<BreakpointContextTypes | null>(null);
 
 export function useBreakpoint() {
   const context = useContext(BreakpointContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useBreakpoint must be used within a BreakpointProvider.");
   }
   return context;
