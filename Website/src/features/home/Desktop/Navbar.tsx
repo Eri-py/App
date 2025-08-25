@@ -11,7 +11,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 import { Searchbar } from "./Searchbar";
 import { LogoWithName } from "@/shared/components/Logo";
-import { useAuth } from "@/shared/hooks/useAuth";
+import { useAuth } from "@/features/app/hooks/useAuth";
 import { useNavigate } from "@tanstack/react-router";
 import { useNavigationButtons } from "../hooks/useNavigationButtons";
 import { NavbarContainer } from "../components/NavbarContainer";

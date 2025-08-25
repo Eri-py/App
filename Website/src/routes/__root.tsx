@@ -1,5 +1,4 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { ThemeProvider } from "@mui/material/styles";
@@ -8,8 +7,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 
 import { BreakpointContext } from "@/shared/hooks/useBreakpoint";
 import { mainTheme } from "@/shared/themes/mainTheme";
-import { getUserDetails } from "@/api/AuthApi";
-import { AuthContext, type AuthContextTypes } from "@/shared/hooks/useAuth";
 import { ThemeToggleContext, type ThemeToggleTypes } from "@/shared/hooks/useThemeToggle";
 
 export const Route = createRootRoute({
@@ -31,29 +28,12 @@ function Root() {
   // XS would be used for mobile screens while the others would be tablet and larger.
   const isSmOrLarger = useMediaQuery(theme.breakpoints.up("sm"));
 
-  // Fetch user details on Website mount.
-  const { data, isPending, refetch } = useQuery({
-    queryKey: ["userDetails"],
-    queryFn: getUserDetails,
-    refetchOnWindowFocus: false,
-  });
-
-  const refreshUser = () => {
-    refetch();
-  };
-
   const toggleTheme = () => {
     const newMode = mode === "light" ? "dark" : "light";
 
     // Update mode state and localstorage
     setMode(newMode);
     localStorage.setItem("currentThemeMode", newMode);
-  };
-
-  const authContextValue: AuthContextTypes = {
-    isAuthenticated: data?.data.isAuthenticated || false,
-    user: data?.data.user || null,
-    refreshUser,
   };
 
   const themeProviderValues: ThemeToggleTypes = {
@@ -65,13 +45,9 @@ function Root() {
     <ThemeToggleContext.Provider value={themeProviderValues}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <AuthContext.Provider value={authContextValue}>
-          {!isPending && (
-            <BreakpointContext.Provider value={{ isSmOrLarger }}>
-              <Outlet />
-            </BreakpointContext.Provider>
-          )}
-        </AuthContext.Provider>
+        <BreakpointContext.Provider value={{ isSmOrLarger }}>
+          <Outlet />
+        </BreakpointContext.Provider>
       </ThemeProvider>
     </ThemeToggleContext.Provider>
   );
