@@ -6,10 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type { AxiosResponse } from "axios";
 
-import { ThemeProvider } from "@emotion/react";
-import { useTheme } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 
 import {
@@ -22,7 +19,6 @@ import {
 } from "@/api/AuthApi";
 import { HorizontalLinearStepper } from "@/shared/components/HorizontalLinearStepper";
 import { LogoWithName } from "@/shared/components/Logo";
-import { useBreakpoint } from "@/shared/hooks/useBreakpoint";
 import { useServerError, type ServerError } from "@/shared/hooks/useServerError";
 import {
   dateOfBirthSchema,
@@ -36,10 +32,10 @@ import { Password } from "@/features/auth/RegisterSteps/Password";
 import { PersonalDetails } from "@/features/auth/RegisterSteps/PersonalDetails";
 import { UsernameAndEmail } from "@/features/auth/RegisterSteps/UsernameAndEmail";
 import { useAuth } from "@/shared/hooks/useAuth";
-import { mainTheme } from "@/shared/themes/mainTheme";
-import { FormContainer } from "@/features/auth/components/FormContainer";
 
-export const Route = createFileRoute("/auth/register")({
+import { useAuthLayout } from "@/features/auth/hooks/useAuthLayout";
+
+export const Route = createFileRoute("/_auth/register")({
   component: Register,
 });
 
@@ -75,9 +71,7 @@ function Register() {
   const [otpExpiresAt, setOtpExpiresAt] = useState<string | null>(null);
 
   const { serverError, continueDisabled, handleServerError, clearServerError } = useServerError();
-  const defaultTheme = useTheme();
-  const { isSmOrLarger } = useBreakpoint();
-  const desktopTheme = mainTheme(false); // Use light mode for desktop
+  const { isSmOrLarger, theme } = useAuthLayout();
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
 
@@ -152,8 +146,7 @@ function Register() {
     completeRegistrationMutation.mutate(formData);
   };
 
-  const theme = isSmOrLarger ? desktopTheme : defaultTheme;
-  const form = (
+  return (
     <Stack
       paddingBlock={2}
       paddingInline={1}
@@ -211,17 +204,5 @@ function Register() {
         </form>
       </FormProvider>
     </Stack>
-  );
-
-  return (
-    <FormContainer>
-      {isSmOrLarger && (
-        <Box sx={{ position: "absolute", top: "2rem", left: "3rem" }}>
-          <LogoWithName size="large" color="white" />
-        </Box>
-      )}
-
-      {isSmOrLarger ? <ThemeProvider theme={desktopTheme}>{form}</ThemeProvider> : form}
-    </FormContainer>
   );
 }
