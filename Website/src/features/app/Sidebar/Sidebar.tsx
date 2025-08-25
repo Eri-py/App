@@ -18,7 +18,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 
 import { useThemeToggle } from "@/shared/hooks/useThemeToggle";
 import { useLocation } from "@tanstack/react-router";
-import { useNavigationButtons } from "../../hooks/useNavigationButtons";
+import { useNavigationButtons } from "../hooks/useNavigationButtons";
 
 // Currently supported sidbar tabs
 const navigationItems: { label: string; icon: ReactElement }[] = [
